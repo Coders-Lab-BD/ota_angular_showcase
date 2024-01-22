@@ -1,0 +1,241 @@
+
+<div class="modal" tabindex="-1" id="ticketModal" role="dialog">
+  <div class="container">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" id="ticketView">
+        <div class="modal-header">
+          <button #btnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-header">
+            <div class="official_partner col-lg-3" *ngIf="iscompanyInfo">
+              <img src={{coreUrl+agencyInfo.vAgencyPhoto}}>
+            </div>
+            <div class="ticket_title col-lg-5">
+              <h1>Ticket & Receipt</h1>
+            </div>
+            <div class="ticket_number col-lg-4" *ngIf="iscompanyInfo">
+              <p>{{agencyInfo.nvAgencyName}}</p>
+              <p>{{agencyInfo.nvAgencyAddress}}</p>
+              <p>{{agencyInfo.nvAgencyCityName}}-{{agencyInfo.vAgencyPostalCode}}</p>
+              <p>Email: {{agencyInfo.nvAgencyEmail}}</p>
+              <p>Phone: {{agencyInfo.nvAgencyPhoneNumber}}</p>
+            </div>
+        </div>
+        <div class="modal-body">
+          <div class="passenger_info">
+            <div class="row">
+
+
+              <div class="col-lg-6" *ngFor="let data of data?.adult">
+                <span>Passenger name: </span>
+                <b><span>{{data?.title}} {{data?.fName}} {{data?.lName}}</span></b><br>
+                <span>Ticket Number: </span>
+                <b><span> {{data?.ticketNumber}}</span></b>
+                <br><br>
+              </div>
+              <div class="col-lg-6" *ngFor="let data of data?.child">
+                <span>Passenger name: </span>
+                <b><span>{{data?.title}}/{{data?.fName}} {{data?.lName}}</span></b><br>
+                <span>Ticket Number: </span>
+                <b><span> {{data?.ticketNumber}}</span></b>
+                <br><br>
+              </div>
+              <div class="col-lg-6" *ngFor="let data of data?.infant">
+                <span>Passenger name: </span>
+                <b><span>{{data?.title}}/{{data?.fName}} {{data?.lName}}</span></b><br>
+                <span>Ticket Number: </span>
+                <b><span> {{data?.ticketNumber}}</span></b>
+                <br><br>
+              </div>
+
+              <span></span>
+              <br>
+
+              <div class="col-lg-6">
+                <div *ngFor="let pnrair of data?.pnrList">
+                  <span>Reservation PNR No: </span>
+                  <b><span>{{pnrair.pnr}}</span></b> <br>
+                  <span>Airlines PNR No: </span>
+                  <b><span>{{pnrair.airlinesPNR}}</span></b> <br>
+                </div>
+                
+                <span>Issue Date: </span>
+                <b><span>{{data?.bookingTime | date:'dd-MMM-yyyy'}}</span></b> <br>
+                <span>Issuing Airline: </span>
+                <b><span>{{data?.fligtDetails[0].flightDetails[0].airlinesName}}</span></b> <br>
+              </div>
+            </div>
+          </div>
+
+          <div class="travel_info_wrapper">
+            <h2>Your travel information</h2>
+            <p>All times shown are local for each city</p>
+            <div class="travel_info_inner" style="margin-bottom: 10px;" *ngFor="let flight of data?.fligtDetails; let i = index">
+              <div class="departure_info">
+                <span><i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+                <h2 >Departing From: {{flight.departureCity}}, {{flight.arrivalCity}}</h2>
+              </div>
+              <div class="departure_operator_info">
+                <p ><b>Leg {{i+1}} </b> | {{flight.departureCity}} ({{flight.departureAirport}}) to {{flight.arrivalCity}} ({{flight.arrivalAirport}}) | Operated by {{flight.flightDetails[0].airlinesName}}</p>
+              </div>
+              <div class="departure_flight_info">
+                <ul>
+                  <li>
+                    <label for="">Flight</label>
+                    <span class="fl">{{flight.carrierWithFlightNumber}}</span>
+                    <p>{{flight.flightDetails[0].cabinClass}}</p>
+                  </li>
+                  <li>
+                    <label for="">Check-in</label>
+                    <p>{{ (flight.departureDate | date:'dd-MMM-yyyy') }}</p>
+                    <span class="fl">{{ subtractMinutesFromTime(flight.departureTime,30)}}</span>
+                  </li>
+                  <li>
+                    <label for="">Departure</label>
+                    <p>{{flight.departureDate | date:'dd-MMM-yyyy'}}</p>
+                    <span class="fl">{{flight.departureTime}}</span>
+                  </li>
+                  <li class="col-1">
+                    <div class="ticket_plane_graphic">
+                      <img src="../../../assets/images/ticket/plane.png" alt="...">
+                    </div>
+                  </li>
+                  <li>
+                    <span class="fl">{{flight.departureCity}}</span>
+                  </li>
+                
+                </ul>
+
+                <ul>
+                  <li></li>
+                  <li></li>
+                  <li>
+                    <label for="">Arrival</label>
+                    <p>{{flight.arrivalDate | date:'dd-MMM-yyyy'}}</p>
+                    <span class="fl">{{flight.arrivalTime}}</span>
+                  </li>
+                  <li>
+                    <div class="ticket_plane_graphic">
+                      <img src="../../../assets/images/ticket/plane.png" alt="...">
+                    </div>
+                  </li>
+                  <li>
+                    <span class="fl">{{flight.arrivalCity}}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="isFare">
+          <div class="fare_info_wrapper">
+            <h2>Fare information</h2>
+            <div>
+            <ul class="fare_info_details" *ngIf="fareDetails?.adultTotalFare">
+              <li>
+                <label for="">Passenger Type</label>
+                <p>Adult</p>
+              </li>
+              <li>
+                <label for="">Total Passenger</label>
+                <p>{{fareDetails?.adultTotalPass}}</p>
+              </li>
+              <li>
+                <label for="">Base Fare</label>
+                <p>{{(fareDetails?.adultBaseFare) | currency: 'Tk ' }}</p>
+              </li>
+              <li>
+                <label for="">Tax Fare</label>
+                <p>{{(fareDetails?.adultTaxFare) | currency: 'Tk ' }}
+                </p>
+              </li>
+              <li>
+                <label for="">Total fare</label>
+                <p>{{(fareDetails?.adultTotalFare) | currency: 'Tk ' }}</p>
+              </li>
+            </ul>
+            <ul class="fare_info_details" *ngIf="fareDetails?.childTotalFare">
+              <li>
+                <label for="">Passenger Type</label>
+                <p>Child</p>
+              </li>
+              <li>
+                <label for="">Total Passenger</label>
+                <p>{{fareDetails?.childTotalPass}}</p>
+              </li>
+              <li>
+                <label for="">Base Fare</label>
+                <p>{{(fareDetails?.childBaseFare) | currency: 'Tk ' }}</p>
+              </li>
+              <li>
+                <label for="">Tax Fare</label>
+                <p>{{(fareDetails?.childTaxFare) | currency: 'Tk ' }}
+                </p>
+              </li>
+              <li>
+                <label for="">Total fare</label>
+                <p>{{(fareDetails?.childTotalFare) | currency: 'Tk ' }}</p>
+              </li>
+            </ul>
+            <ul class="fare_info_details" *ngIf="fareDetails?.infantTotalFare">
+              <li>
+                <label for="">Passenger Type</label>
+                <p>Infant</p>
+              </li>
+              <li>
+                <label for="">Total Passenger</label>
+                <p>{{fareDetails?.infantTotalPass}}</p>
+              </li>
+              <li>
+                <label for="">Base Fare</label>
+                <p>{{(fareDetails?.infantBaseFare) | currency: 'Tk ' }}</p>
+              </li>
+              <li>
+                <label for="">Tax Fare</label>
+                <p>{{(fareDetails?.infantTaxFare) | currency: 'Tk ' }}
+                </p>
+              </li>
+              <li>
+                <label for="">Total fare</label>
+                <p>{{(fareDetails?.infantTotalFare)| currency: 'Tk ' }}</p>
+              </li>
+            </ul>
+            <ul class="fare_info_details" *ngIf="reissueTotalFare>0">
+              <li></li>
+              <li></li>
+              <li></li>
+              <li><label for="">Date Change Charges</label></li>
+              <li><p>{{(reissueTotalFare)| currency: 'Tk ' }}</p>
+              </li>
+            </ul>
+            <ul class="fare_info_details" *ngIf="refundTotalFare>0">
+              <li></li>
+              <li></li>
+              <li></li>
+              <li><label for="">Refund Charges </label></li>
+              <li><p>{{(refundTotalFare)| currency: 'Tk ' }}</p>
+              </li>
+            </ul>
+            <ul class="fare_info_details">
+              <li></li>
+              <li></li>
+              <li></li>
+              <li style="font-weight: bold;">
+                <span  *ngIf="refundTotalFare>0">Amount To Be Refunded  </span>
+                <span *ngIf="refundTotalFare<=0">Total Fare  </span>
+              </li>
+              <li>
+              <span>{{(fareDetails?.totalFare+reissueTotalFare-refundTotalFare) | currency: 'Tk ' }}</span>
+              </li>
+            </ul>
+            </div>
+          </div>
+          </div>
+          <div class="print_ticket_btn" [hidden]="ticketprint">
+            <a (click)="print()" id="cmd" class="site_cta orange_cta">Print Ticket</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

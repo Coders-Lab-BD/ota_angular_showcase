@@ -1,0 +1,5 @@
+<aside app-sidebar></aside>
+<nav app-header *ngIf="_router.url == '/home/index'"></nav>
+<nav app-second-header *ngIf="_router.url != '/home/index'"></nav>
+<router-outlet></router-outlet>
+

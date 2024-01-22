@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title></title>
+
+    <base href="/" />
+    <!-- Toastr -->
+    <link rel="stylesheet" href="./assets/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="./assets/plugins/sweetalert2/sweetalert2.min.css">
+    <!-- Font files -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
+    <link href="./assets/plugins/select2-4/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/dist/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./assets/flatpicker/flatpicker.css">
+    <link rel="stylesheet" href="./assets/dist/css/main.css" >
+    <link rel="stylesheet" href="./assets/dist/css/responsive.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/handsontable-pro@5.0.1/dist/handsontable.full.min.css" rel="stylesheet" media="screen">
+    <link rel="icon" type="image/x-icon" href="./assets/dist/img/favicon.png">
+
+  </head>
+  <body class="main_page" style="background-color: #E5EEF4;">
+    <app-root></app-root>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+      $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Toastr -->
+    <script src="./assets/plugins/toastr/toastr.min.js"></script>
+    <script src="./assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script src="./assets/dist/js/main.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handsontable-pro@5.0.1/dist/handsontable.full.min.js"></script>
+    <script src="https://kit.fontawesome.com/247b94b8b0.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/fontawesome.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
+    <script src="./assets/plugins/select2-4/dist/js/select2.min.js"></script>
+    <script>
+      $(function () {
+        'use strict'
+        $('.connectedSortable').sortable({
+          placeholder         : 'sort-highlight',
+          connectWith         : '.connectedSortable',
+          handle              : '.card-header, .nav-tabs',
+          forcePlaceholderSize: true,
+          zIndex              : 999999
+        })
+        $('.connectedSortable .card-header, .connectedSortable .nav-tabs-custom').css('cursor', 'move')
+      })
+    </script>
+
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $("#ui-datepicker-div").css("display","none");
+
+     });
+     function sweetAlertNotify(iconTitle,message)
+      {
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        })
+
+        Toast.fire({
+          icon: iconTitle,
+          title: message
+        })
+      }
+      $("body").not("input[ngbdatepicker]").click(function (e) {
+      if ($(e.target).not("input[ngbdatepicker]").length > 0 &&
+          $(e.target).closest("ngb-datepicker").length == 0) {
+          $("ngb-datepicker").remove();
+      }
+    });
+      function toastr_success(title, message) {
+        // if (title.length > 0) {
+        //   toastr.success(message, title);
+        //   sweetAlertNotify();
+        // } else {
+        //   toastr.success(message, "Success");
+        // }
+        //sweetAlertNotify('success',message);
+        if(message.length>0)
+        {
+          sweetAlertNotify('success',message);
+        }else{
+          // sweetAlertNotify('success',"Something wen't wrong");
+        }
+      }
+      function toastr_info(title, message) {
+        // if (title.length > 0) {
+        //   toastr.info(message, title);
+        // } else {
+        //   toastr.info(message, "Information");
+        // }
+        if(message.length>0)
+        {
+          sweetAlertNotify('info',message);
+        }else{
+          // sweetAlertNotify('info',"Something wen't wrong");
+        }
+      }
+      function toastr_error(title, message) {
+        // if (title.length > 0) {
+        //   toastr.error(message, title);
+        // } else {
+        //   toastr.error(message, "Error");
+        // }
+        if(message.length>0)
+        {
+          sweetAlertNotify('error',message);
+        }else{
+          // sweetAlertNotify('error',"Something wen't wrong");
+        }
+      }
+      function toastr_warning(title, message) {
+        // if (title.length > 0) {
+        //   toastr.warning(message, title);
+        // } else {
+        //   toastr.warning(message, "Warning");
+        // }
+        if(message.length>0)
+        {
+          sweetAlertNotify('warning',message);
+        }else{
+          // sweetAlertNotify('warning',"Something wen't wrong");
+        }
+      }
+
+      toastr.options = {
+        closeButton: true,
+        debug: false,
+        newestOnTop: false,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "5000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+      };
+    </script>
+    <script>
+      $(document).mouseup(function(e){
+          var container = $("#elementID");
+
+          // If the target of the click isn't the container
+          if(!container.is(e.target) && container.has(e.target).length === 0){
+              container.hide();
+          }
+      });
+    </script>
+    <script>
+      window['env'] = {
+        adminUrl: 'http://b2b.travel-ion.com:8080/'
+      };
+    </script>
+    <script src="main.js"></script>
+    <script scr="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/sha256.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+  </body>
+</html>

@@ -1,0 +1,328 @@
+<main>
+    <div class="search_main_wrapper area">
+
+        <div class="container">
+            <div class="main_searchbar_wrapper">
+               <div class="card table-responsive p-0">
+
+                <div class="card-header">
+                  <h6 class="card-title">
+                      <i class="fa fa-sticky-note"></i>
+                    Proposal Information
+                  </h6>
+
+                </div>
+                <div class="card-body" >
+
+                    <div class="row" style="padding-bottom: 20px;">
+                      <div class="col-sm-12 col-md-6 ">
+                          <div class="row">
+                            <label style="width: 70px; font-weight: bold;">Show </label>
+                            <select style="width: 70px;" (change)="lengthChange($any($event.target).value)" class="custom-select custom-select-sm form-control form-control-sm">
+                              <option value="10">10</option>
+                              <option value="25">25</option>
+                              <option value="50">50</option>
+                              <option value="100">100</option>
+                            </select>
+                            <label style="width: 80px; padding-left: 10px; font-weight: bold;"> entries </label>
+                          </div>
+
+                      </div>
+                      <div class="col-sm-12 col-md-6" style="text-align: end;">
+                        <label style="width: 70px; text-align: left;">Search:</label>
+                        <input style="width: 160px; display: inline-block;" type="search" class="form-control form-control-sm" (keydown)="EnterSubmit($event)" [(ngModel)]="searchValue" (keyup)="searchClick()">
+                        <button style="width: 30px; margin-bottom: 2px;" type="submit" class="btn btn-sm btn-default" (click)="searchClick()">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row justify-content-center">
+                      <div *ngIf="isProcessing" class="col-12" style="text-align: center;">
+                        <h3>Processing...</h3>
+                      </div>
+                      <div *ngIf="!isProcessing && recordsFiltered == 0" class="col-12" style="text-align: center;">
+                        <h3>No data found</h3>
+                      </div>
+                      <div *ngIf="!isProcessing" class="col-12 row">
+                        <table class="table table-bordered table-striped ">
+                          <thead>
+                            <tr>
+                              <th>Index</th>
+                              <th>Flight Date</th>
+                              <th>Route</th>
+                              <th>Agency Name</th>
+                              <th>Proposal Date</th>
+                              <th>Cabin Type Name</th>
+                              <th>Flight Name</th>
+                              <th>Airlines Name</th>
+                              <th>Total Payable</th>
+                              <th class="text-center">View</th>
+
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let record of tableData; let i = index">
+                              <td>{{start + i}}</td>
+                              <td>{{record.flightDate | date : "dd-MMM-yyyy"}}</td>
+                              <td>{{record.route}}</td>
+                              <td>{{record.nvAgencyName}}</td>
+                              <td>{{record.dAgencyProposalDate | date : "dd-MMM-yyyy"}}</td>
+                              <td>{{record.nvCabinTypeName}}</td>
+                              <td>{{record.nvFlightName}}</td>
+                              <td>{{record.nvAirlinesName}}</td>
+                              <td>{{record.nDiscountTotal}}</td>
+                              <td class="text-center" (click)="PrintAgencyProposal(record.vAgencyProposalId)"><i class="fa fa-eye" style="background-color: #3AA394; padding: 5px; border-radius: 5px; color: #fff; cursor: pointer;" aria-hidden="true"></i></td>
+
+
+
+
+                            </tr>
+                          </tbody>
+                        </table>
+
+
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12 col-md-6">
+                        <div *ngIf="!filteredRecordsShow">
+                          Showing {{start}} to {{end}} of {{recordsTotal}} entries
+                        </div>
+                        <div *ngIf="filteredRecordsShow">
+                          Showing {{start}} to {{end}} of {{recordsFiltered}} entries (filtered from {{recordsTotal}} total entries)
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6" style="text-align: end;">
+                        <div style="display: inline-block;">
+                          <ul class="pagination">
+                            <li class="page-item"  *ngFor = "let page of pageList" [ngClass]="page.class">
+                              <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link" (click)="pageClick(page.value)">{{page.title}}</a>
+                            </li>
+
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+
+               </div>
+
+               <div id="agencyProposal" style="display: none;">
+                <div class="container">
+                    <div id="headInfo">
+                        <table style="    font-family: Arial, Helvetica, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;">
+                            <tr>
+                                <th style="
+                                padding: 8px;padding-top: 12px;
+                                padding-bottom: 12px;
+                                text-align: left;
+                                color: #000;width: 10%;border-style: none;"><img style="width: 50px;height: 60px;" id="img"  alt="..."></th>
+                                <th style="
+                                padding: 8px;padding-top: 12px;
+                                padding-bottom: 12px;
+                                text-align: left;
+                                color: #000;width: 30%;border-style: none;">
+                                    <table style="    font-weight: 100;
+                                    font-size: 12px;
+                                    font-family: sans-serif;border-style: none;">
+                                        <tr><td style="font-size: 14px;font-weight: bold;" id="agencyName">
+                                        </td></tr>
+                                        <tr><td id="agencyPhoneEmail">
+                                        </td></tr>
+                                        <tr><td id="agencyAddress">
+                                        </td></tr>
+                                    </table>
+                                </th>
+                                <th style="
+                                padding: 8px;padding-top: 12px;
+                                padding-bottom: 12px;
+                                text-align: left;
+                                color: #000;width: 30%;border-style: none;font-size: 20px;">Agency Proposal</th>
+                                <th style="width: 30%; font-size: 12px;">
+                                  Agency Manual ID : <span id="agencyManualId"></span>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <div>
+                        <p style="font-size: 18px;
+                        font-weight: bold;"><i class="fa fa-plane"></i> Flight Information</p>
+                        <table style="    font-family: Arial, Helvetica, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;">
+                        <tr>
+                          <th style="
+                            padding: 8px;padding-top: 12px;
+                            padding-bottom: 12px;
+                            text-align: left;
+                            width: 33.3%; background-color: #808080; color: #fff;"> <i class="fa fa-users"></i> Travellers</th>
+                                    <th style="
+                                    padding: 8px;padding-top: 12px;
+                            padding-bottom: 12px;
+                            text-align: left;
+                            width: 33.3%; background-color: #808080; color: #fff;"><i class="fa fa-puzzle-piece"></i> Class</th>
+                                    <th style="
+                                    padding: 8px;padding-top: 12px;
+                            padding-bottom: 12px;
+                            text-align: left;
+                            width: 33.3%; background-color: #808080; color: #fff;"><i class="fa fa-plane"></i> Trip Type</th>
+                        </tr>
+                        <tr>
+                          <td style="
+                          padding: 8px;"><span id="travelerCount"></span></td>
+                          <td style="
+                          padding: 8px;" id="cabinType">
+                        </td>
+                          <td style="
+                          padding: 8px;" id="tripType">
+                        </td>
+                        </tr>
+                      </table>
+                    <table style="    font-family: Arial, Helvetica, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;">
+                        <tr>
+                          <th style="
+                            padding: 8px;padding-top: 12px;
+                            padding-bottom: 12px;
+                            text-align: left;
+                            width: 33.3%; background-color: #808080; color: #fff;"><i class="fa fa-plane"></i> Flying from</th>
+                                    <th style="
+                                    padding: 8px;padding-top: 12px;
+                            padding-bottom: 12px;
+                            text-align: left;
+                            width: 33.3%; background-color: #808080; color: #fff;"><i class="fa fa-plane"></i> Flying to</th>
+                                    <th style="
+                                    padding: 8px;padding-top: 12px;
+                            padding-bottom: 12px;
+                            text-align: left;
+                            width: 33.3%; background-color: #808080; color: #fff;"><i class="fa fa-calendar"></i> Departure date</th>
+                        </tr>
+                        <tr>
+                          <td style="
+                          padding: 8px;" id="flyingFrom">
+                        </td>
+                          <td style="
+                          padding: 8px;" id="flyingTo">
+                        </td>
+                          <td style="
+                          padding: 8px;" id="departureDate">
+
+                            </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <br>
+                    <div>
+                      <div id="flightTable">
+                          <table style="    font-family: Arial, Helvetica, sans-serif;
+                          border-collapse: collapse;
+                          width: 100%;">
+                          <tr>
+                          <th style="
+                              padding: 8px;padding-top: 12px;
+                              padding-bottom: 12px;
+                              text-align: left;
+                              ;width: 50%;" id="airportFromToCode"></th>
+                                      <th style="
+                                      padding: 8px;padding-top: 12px;
+                              padding-bottom: 12px;
+                              text-align: left;
+                              width: 50%; background-color: #808080;"></th>
+                          </tr>
+                          <tr>
+                          <td style="
+                          padding: 8px; align-items: center; justify-content: center;" ><img id="airlineImg" alt="Airline Image" style="width: 15px; height: 15px; margin-right: 8px;"> <span id="airlineName"></span></td>
+                          <td style="
+                          padding: 8px;"></td>
+                          </tr>
+                          <tr>
+                          <td style="
+                          padding: 8px;" ><i class="fa fa-plane" style=" margin-right: 8px;"></i> <span id="fromAirportCodeCity"></span></td>
+                          <td style="
+                          padding: 8px;" ><i class="fa fa-plane" style=" margin-right: 8px;"></i> <span id="toAirportCodeCity"></span></td>
+                          </tr>
+                          <tr>
+                          <td style="
+                          padding: 8px;" id="depFromDate"></td>
+                          <td style="
+                          padding: 8px;" id="depToDate"></td>
+                          </tr>
+                          </table>
+                      </div>
+                  </div>
+
+
+
+                    <div>
+                      <p style="font-size: 18px;
+                      font-weight: bold; background-color: #808080; color: #fff; padding: 10px 7px; font-family: Arial, Helvetica, sans-serif;">Price Summary</p>
+                      <div id="priceSummary">
+                          <table style="    font-family: Arial, Helvetica, sans-serif;
+                          border-collapse: collapse;
+                          width: 100%;">
+                          <tr>
+                          <th style="
+                              padding: 8px;padding-top: 12px;
+                              padding-bottom: 12px;
+                              text-align: left;
+                              color: #000;width: 25%;">Details</th>
+                                      <th style="
+                                      padding: 8px;padding-top: 12px;
+                              padding-bottom: 12px;
+                              text-align: left;
+                              color: #000;width: 25%;">Amount</th>
+                          </tr>
+                          <tbody id="adultRow">
+
+                          </tbody>
+                          <tbody id="childRow">
+
+                        </tbody>
+                        <tbody id="infantRow">
+
+
+                        </tbody>
+                        <tr>
+                          <td style="
+                          padding: 8px;font-weight: bold">Total Amount</td>
+                          <td style="
+                          padding: 8px;font-weight: bold">BDT <span id="totalAmount"></span></td>
+                          </tr>
+
+                          <tr>
+                          <td style="
+                          padding: 8px;">Discount</td>
+                          <td style="
+                          padding: 8px;">BDT <span id="totalDiscount"></span></td>
+                          </tr>
+                          <tr>
+                          <td style="
+                          padding: 8px;font-weight: bold">Total  Payable</td>
+                          <td style="
+                          padding: 8px;font-weight: bold">BDT <span id="totalPayable"></span></td>
+                          </tr>
+                          </table>
+                      </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+  </main>

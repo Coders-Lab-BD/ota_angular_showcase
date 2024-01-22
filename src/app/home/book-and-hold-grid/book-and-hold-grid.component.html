@@ -1,0 +1,141 @@
+<main>
+  <div class="search_main_wrapper area">
+    <div class="main_searchbar_wrapper">
+      <div class="container-fluid" >
+        <!-- [hidden]="!isDataGridShow" -->
+        <div class="card table-responsive p-0">
+          <div class="card-header">
+            <h6 class="card-title">
+              <i class="fa fa-plane"></i>
+              Recent Booking Flight
+            </h6>
+            <!-- <button #btnViewShow type="button" style="display: none;" (click)="ViewShow()"></button> -->
+          </div>
+          <div class="card-body">
+            <div class="row" style="padding-bottom: 20px;">
+              <div class="col-sm-12 col-md-6">
+                <label style="width: 60px;">Show </label>
+                <!--  -->
+                <select style="width: 70px;" (change)="lengthChange($any($event.target).value)"
+                  class="custom-select custom-select-sm form-control form-control-sm">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <label style="width: 70px; padding-left: 10px;"> entries </label>
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <label style="width: 70px; text-align: left;">Search:</label>
+                <input style="width: 160px; display: inline-block;" type="search" class="form-control form-control-sm">
+                <button style="width: 30px; margin-bottom: 2px;" type="submit" class="btn btn-sm btn-default"
+                  >
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div *ngIf="isProcessing" class="col-12" style="text-align: center;">
+                <h3>Processing...</h3>
+              </div>
+              <div *ngIf="!isProcessing && recordsFiltered == 0" class="col-12" style="text-align: center;">
+                <h3>No data found</h3>
+              </div>
+
+              <div  *ngIf="!isProcessing" class="col-12 row">
+                <table #dataTable class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="text-align:center">#</th>
+                      <th scope="col" style="text-align:center" *ngIf="this.providerColumn=='True'">Provider</th>
+                      <th scope="col" style="text-align:center">Booking ID</th>
+                      <th scope="col" style="text-align:center">Customer Name</th>
+                      <th scope="col" style="text-align:center">GDS PNR</th>
+                      <th scope="col" style="text-align:center">Airline PNR</th>
+                      <th scope="col" style="text-align:center">Route</th>
+                      <th scope="col" style="text-align:center">Flight Date</th>
+                      <th scope="col" style="text-align:center">TL Time Limit</th>
+                      <th scope="col" style="text-align:center">Ticket</th>
+                      <th scope="col" style="text-align:center">Original Status</th>
+                      <th scope="col" style="text-align:center">Current Status</th>
+                      <th scope="col" style="text-align:center">Booking Time</th>
+                      <th scope="col" style="text-align:center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let record of data; let i = index;">
+                      <td>{{i+start}}</td>
+                      <td *ngIf="this.providerColumn=='True'">
+                        <div style="text-align:center">{{record.providerName}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">
+                          <a style="color: blue; cursor: pointer;" (click)="edit(record.id)">{{record.bookingManualId}}</a>
+                        </div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.passengerName}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.gdsPnr}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{removeDuplicate(record.airlinesPnr)}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.routeName}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.flightDate | date:'dd-MM-yy'}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.bookingTimeLimit | date:'dd-MM-yy, h:mm a'}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.ticketNumber}}</div>
+                      </td>
+                      <td>
+                        <div style="text-align:center"><span
+                            class="float-middle badge" [style]="getBackgroundStyle(record.bookingStatus)">{{record.bookingStatus}}</span></div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">
+                          {{record.bookingCurrentStatus}}
+                        </div>
+                      </td>
+                      <td>
+                        <div style="text-align:center">{{record.bookingDate | date:'dd-MM-yy, h:mm a'}}</div>
+                      </td>
+                      <td>
+                        <div class="text-center fs-18">
+                          <a title="Edit" (click)="edit(record.id)" class="edit" ><i class="fa fa-edit"
+                              style="cursor: pointer; color: rgb(9, 145, 145);"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div>
+                  Showing {{start}} to {{end}} of {{this.totalRows}} entries
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <div style="display: inline-block;">
+                  <ul class="pagination">
+                    <li class="page-item"  *ngFor="let page of pageArray" [ngClass]="page.class">
+                      <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link" (click)="pageClick(page.value)">{{page.title}}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

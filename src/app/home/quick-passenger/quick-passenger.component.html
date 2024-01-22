@@ -1,0 +1,375 @@
+<main>
+  <div class="search_main_wrapper area">
+
+    <div class="container">
+      <div class="main_searchbar_wrapper">
+        <div class="card table-responsive p-0">
+          <div class="card-header d-flex justify-content-between">
+            <h6 class="card-title">
+              <i class="fa fa-users"></i>
+              Passenger Information
+            </h6>
+            <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal"
+             data-target="#createCountryModal" (click)="createPassenger()">
+              <i class="fas fa-plus-circle"></i> Create Passenger Information
+            </button>
+
+          </div>
+          <div class="card-body">
+
+            <div class="row" style="padding-bottom: 20px;">
+              <div class="col-sm-12 col-md-6 ">
+                <div class="row">
+                  <label style="width: 70px; font-weight: bold;">Show </label>
+                  <select style="width: 70px;" (change)="lengthChange($any($event.target).value)"
+                    class="custom-select custom-select-sm form-control form-control-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  <label style="width: 80px; padding-left: 10px; font-weight: bold;"> entries </label>
+                </div>
+
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <label style="width: 70px; text-align: left;">Search:</label>
+                <input style="width: 160px; display: inline-block;" type="search" class="form-control form-control-sm"
+                  (keydown)="EnterSubmit($event)" [(ngModel)]="searchValue" (keyup)="searchClick()">
+                <button style="width: 30px; margin-bottom: 2px;" type="submit" class="btn btn-sm btn-default"
+                  (click)="searchClick()">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div *ngIf="isProcessing" class="col-12" style="text-align: center;">
+                <h3>Processing...</h3>
+              </div>
+              <div *ngIf="!isProcessing && recordsFiltered == 0" class="col-12" style="text-align: center;">
+                <h3>No data found</h3>
+              </div>
+              <div *ngIf="!isProcessing" class="col-12 row">
+                <table class="table table-bordered table-striped ">
+                  <thead>
+                    <tr>
+                      <th>Index</th>
+                      <th>Title</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Birth Date</th>
+                      <th>Passport Number</th>
+                      <th>Expiry Date</th>
+                      <th>Passenger Type</th>
+                      <th class="text-center">Edit</th>
+                      <th class="text-center">Delete</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let record of tableData; let i = index">
+                      <td>{{start + i}}</td>
+                      <td>{{record.nvGenderTitleName}}</td>
+                      <td>{{record.nvFirstName}}</td>
+                      <td>{{record.nvLastName}}</td>
+                      <td>{{record.dBirthDate | date : "dd-MMM-yyyy"}}</td>
+                      <td>{{record.nvPassportNumber}}</td>
+                      <td>{{record.dExpiryDate | date : "dd-MMM-yyyy"}}</td>
+                      <td>{{record.nvPassengerTypeName}}</td>
+                      <td class="text-center" title="Edit Passenger Information" (click)="edit(record)"><i
+                          class="fa fa-edit" style=" cursor: pointer; font-weight: bold; color:#389F91;"
+                          aria-hidden="true"></i></td>
+                      <td class="text-center" title="Delete Passenger Information" (click)="remove(record.vPassengerInformationId,record.nvFirstName)"><i
+                        class="fa fa-trash" style=" cursor: pointer; font-weight: bold; color:#389F91;"
+                        aria-hidden="true"></i></td>
+
+                    </tr>
+                  </tbody>
+                </table>
+
+
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div *ngIf="!filteredRecordsShow">
+                  Showing {{start}} to {{end}} of {{recordsTotal}} entries
+                </div>
+                <div *ngIf="filteredRecordsShow">
+                  Showing {{start}} to {{end}} of {{recordsFiltered}} entries (filtered from {{recordsTotal}} total
+                  entries)
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <div style="display: inline-block;">
+                  <ul class="pagination">
+                    <li class="page-item" *ngFor="let page of pageList" [ngClass]="page.class">
+                      <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link"
+                        (click)="pageClick(page.value)">{{page.title}}</a>
+                    </li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+<button style="display: none;" type="button" #btnModalOpen class="btn btn-primary btn-sm float-right"
+  data-bs-toggle="modal" data-bs-target="#createPassengerModal" role="dialog" data-backdrop="static"
+  data-keyboard="false">
+</button>
+<div style="overflow-y:scroll;">
+  <div class="modal fade" id="createPassengerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="createPassengerModal" aria-hidden="true"  style="overflow: scroll;">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" style="font-weight: bold; font-size: 1.2rem;">{{header}}</h6>
+
+
+        <button #btnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+          (click)="reload();"></button>
+
+      </div>
+      <form [formGroup]="quickPassengerForm" (ngSubmit)="savePassengerInformation()" autocomplete="off">
+        <div class="modal-body">
+          <div class="card-body">
+
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="VAssignTitleWithGenderId" class="mb-2">Title <span
+                    class="text-danger align-self-center ml-1">*</span></label><br>
+                    <select class="form-select" formControlName="VAssignTitleWithGenderId">
+                      <option value="">Please Select One...</option>
+                      <option *ngFor="let opt of genderTypeList" [value]="opt.id">{{opt.text}}</option>
+                    </select>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="VPassengerTypeId" class="mb-2">Passenger Type <span
+                    class="text-danger align-self-center ml-1">*</span></label><br>
+                <select class="form-select" formControlName="VPassengerTypeId" (change)="setPassType($event)">
+                  <option value="">Please Select One...</option>
+                  <option *ngFor="let opt of PassengerTypeList" [value]="opt.id">{{opt.text}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="NvFirstName" class="mb-2">First Name <span
+                    class="text-danger align-self-center ml-1">*</span></label>
+                <input name="NvFirstName" type="text" id="FirstName"
+                oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '').toUpperCase();"
+                  [ngClass]="{ 'is-invalid': quickPassengerForm?.get('NvFirstName')?.errors && quickPassengerForm?.get('NvFirstName')?.touched }"
+                  class="form-control" placeholder="First Name" formControlName="NvFirstName">
+                <div class="invalid-feedback"
+                  *ngIf="quickPassengerForm?.get('NvFirstName')?.errors && quickPassengerForm?.get('NvFirstName')?.touched">
+                  You can't leave this empty.</div>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="NvLastName" class="mb-2">Last Name <span
+                    class="text-danger align-self-center ml-1">*</span></label>
+
+                <input type="text" id="LastName"
+                oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '').toUpperCase();"
+                  [ngClass]="{ 'is-invalid': quickPassengerForm?.get('NvLastName')?.errors && quickPassengerForm?.get('NvLastName')?.touched }"
+                  class="form-control" placeholder="Last Name" formControlName="NvLastName">
+                <div class="invalid-feedback"
+                  *ngIf="quickPassengerForm?.get('NvLastName')?.errors && quickPassengerForm?.get('NvLastName')?.touched">
+                  You can't leave this empty.</div>
+              </div>
+            </div>
+            
+
+            <div class="row mt-2">
+              <div class="col-md-6 form-group">
+                <label for="date" class="mb-2">Birth Date </label>
+                <input
+                  [ngClass]="{ 'is-invalid': quickPassengerForm.get('DBirthDate')?.errors && quickPassengerForm.get('DBirthDate')?.touched }"
+                  oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                  class="form-control bdate" id="bdate" placeholder="DD-MM-YYYY" formControlName="DBirthDate">
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="NvPassportNumber" class="mb-2">Passport Number <span
+                    class="text-danger align-self-center ml-1">*</span></label>
+
+                <input type="text" id="PassportNumber"
+                oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();"
+                (keyup)="flightHelper._setToUpper('PassportNumber')"
+                  [ngClass]="{ 'is-invalid': quickPassengerForm?.get('NvPassportNumber')?.errors && quickPassengerForm?.get('NvPassportNumber')?.touched }"
+                  class="form-control" placeholder="Passport Number" formControlName="NvPassportNumber">
+                <div class="invalid-feedback"
+                  *ngIf="quickPassengerForm?.get('NvPassportNumber')?.errors && quickPassengerForm?.get('NvPassportNumber')?.touched">
+                  You can't leave this empty.</div>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="date" class="mb-2">Passport Expire Date <span
+                  class="text-danger align-self-center ml-1">*</span></label>
+                <input oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                  [ngClass]="{ 'is-invalid': quickPassengerForm.get('DExpiryDate')?.errors && quickPassengerForm.get('DExpiryDate')?.touched }"
+                  class="form-control edate" id="pDate" placeholder="DD-MM-YYYY" formControlName="DExpiryDate">
+              </div>
+              
+              <div class="col-md-6 form-group">
+                <label for="VPassengerPhoneNumber" class="mb-2">Phone/Mobile No <span
+                    class="text-danger align-self-center ml-1">*</span></label><br>
+                 <input type="text" maxlength="11"
+                 oninput="this.value=this.value.replace(/\D/g,'')"
+                    [ngClass]="{ 'is-invalid': quickPassengerForm?.get('VPassengerPhoneNumber')?.errors && quickPassengerForm?.get('VPassengerPhoneNumber')?.touched }"
+                    class="form-control" placeholder="Phone/Mobile Number" formControlName="VPassengerPhoneNumber">
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="VPassengerEmail" class="mb-2">Email Address <span
+                    class="text-danger align-self-center ml-1">*</span></label><br>
+                 <input type="email"
+                    [ngClass]="{ 'is-invalid': quickPassengerForm?.get('VPassengerEmail')?.errors && quickPassengerForm?.get('VPassengerEmail')?.touched }"
+                    class="form-control" placeholder="Email Address" formControlName="VPassengerEmail">
+              </div>
+
+              <div id="pdf-container"></div>
+
+              <table class="table">
+                <tbody>
+                  <tr *ngIf="passFile">
+                    <td>
+                      Passport Attachment
+                    </td>
+                    <td>
+                      <a href="javascript:void(0);" (click)="openImageInNewWindow(passFile)">
+                        <img width="150px" src="{{passFile}}" alt="">
+                      </a>
+                    </td>
+                  </tr>
+                  <tr *ngIf="passPdf">
+                    <td>
+                      Passport Attachment
+                    </td>
+                    <td>
+                      <a class="custom-link" href="javascript:void(0);" (click)="displayBase64PDF(passPdf)">
+                        View passport pdf file
+                      </a>
+                    </td>
+                  </tr>
+                  <tr *ngIf="visaFile">
+                    <td>
+                      Visa Attachment
+                    </td>
+                    <td>
+                      <a href="javascript:void(0);" (click)="openImageInNewWindow(visaFile)">
+                        <img width="150px" src="{{visaFile}}" alt="">
+                      </a>
+                    </td>
+                  </tr>
+                  <tr *ngIf="visaPdf">
+                    <td>
+                      Visa Attachment
+                    </td>
+                    <td>
+                      <a class="custom-link" href="javascript:void(0);" (click)="displayBase64PDF(visaPdf)">
+                        View visa pdf file
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style=" display: flex;">
+                  <div  class="col-md-8 form-group"  style="margin-top:10px"  >
+                    <label class="mb-2">Update Passport Attachment </label><br>
+                    <div class="d-flex align-items-center">
+                      <input type="file" accept=".jpg,.pdf"  (change)="passOnChangeFile($event)"   #fileUpload>
+                      <div class="inner">
+                        <a *ngIf="passportUrl != ''" class="btn btn-primary btn-sm"  type="button" (click)="openFile(passportUrl)">View</a>
+                      </div>
+                    </div>
+
+                    <div col-md-12>
+                      <img *ngFor  = "let URLS of passFileURL" width="150px" [src]="URLS">
+                    </div>
+                  </div>
+
+                  <div col-md-4>
+                    <ul>
+                      <li *ngFor="let  name of passFileNames">{{name}} <button (click)="passRemoveFile(name)" class="remove-file">X</button></li>
+                    </ul>
+                  </div>
+              </div>
+              <div style=" display: flex;">
+                  <div  class="col-md-8 form-group"  style="margin-top:10px"  >
+                    <label class="mb-2">Update Visa Attachment </label><br>
+                    <div class="d-flex align-items-center">
+                      <input type="file" accept=".jpg,.pdf"  (change)="visaOnChangeFile($event)"   #fileUpload>
+                      <div class="inner">
+                        <a *ngIf="visaUrl != ''" class="btn btn-primary btn-sm"  type="button" (click)="openFile(visaUrl)">View</a>
+                      </div>
+
+                    </div>
+                    <div col-md-12>
+                      <img *ngFor  = "let URLS of visaFileURL" width="150px" [src]="URLS">
+                    </div>
+                  </div>
+
+                  <div col-md-4>
+                    <ul>
+                      <li *ngFor="let  name of visaFileNames">{{name}} <button (click)="visaRemoveFile(name)" class="remove-file">X</button></li>
+                    </ul>
+                  </div>
+              </div>
+
+            </div>
+
+
+
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button #btnClose type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-dark"
+            (click)="reload()">
+            <i class="fa fa-window-close"></i>
+            Close
+          </button>
+          <!-- [disabled]="!quickPassengerForm?.valid" -->
+          <button type="submit" class="btn btn-primary" >
+            <i class="fa fa-save"></i>
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="modal fade" id="fileModal">
+  <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button #filebtnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+          ></button>
+          </div>
+          <div class="modal-body">
+            <div class="card-body row">
+              <embed  [src]="url ? url : 'assets/images/passenger_Attachment/not_found.jpg'" width="100%" [height]="isPdf ? '600px' : '100%'" >
+            </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+</main>

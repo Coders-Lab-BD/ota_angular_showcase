@@ -1,0 +1,122 @@
+
+.view_more_flights_option span {
+  font-size: 12px;
+  display: inline-block;
+  text-decoration: none;
+  line-height: normal;
+  cursor: pointer;
+  background: #E97017;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: #111528;
+}
+.result_single_options ul li:first-child {
+  margin-right: 0;
+}
+.result_single_options ul li{
+  cursor: pointer;
+}
+.result_single_options ul li p{
+  margin-bottom: 0px;
+}
+.result_single_options ul{
+  align-items: center;
+}
+
+.col_head_value{
+  position: relative;
+}
+.total-day {
+  position: absolute;
+  right: -43px;
+  top: 5px;
+  color: #b32828;
+  font-weight: bold;
+  cursor: pointer;
+}
+.fare_details_wrapper ul{
+  justify-content: space-around;
+}
+/* .flight_search_result_section{
+  background: #E5EEF4;
+} */
+
+.roundtrip_summarybar {
+  bottom: 0px;
+}
+.roundtrip_summarybar.domestic_roundtrip_summarybar {
+  min-width: 980px;
+  max-width: 980px;
+}
+
+.fare_radio_button{
+  position: relative;
+}
+.radio-custom {
+  appearance: none;
+  width: 25px; /* Adjust width */
+  height: 25px; /* Adjust height */
+  border-radius: 50%;
+  border: 3px solid #E97017;
+  background-color: white; /* For the unselected state */
+  outline: none;
+  cursor: pointer;
+}
+
+.active_radio {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #E97017; /* For the selected state */
+  left: 50%;
+  top: 39%;
+  transform: translate(-52%, -48%);
+}
+
+/* top search bar */
+.inner_searchbar .site_form .inp_group p {
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 700;
+  background: 0 0;
+  border: none;
+  box-shadow: unset;
+  color: #fff;
+  padding: 0;
+  margin: 0;
+}
+.inner_searchbar .site_form .inp_group p i {
+  font-size: 12px;
+  padding-left: 4px;
+}
+.inner_searchbar .site_form .searchbar_faretype,
+.inner_searchbar .site_form .searchbar_triptype {
+  width: 10%;
+}
+.inner_searchbar .site_form .searchbar_options.searchbar_sched {
+  width: 26%;
+}
+.flight-travel {
+  max-width: 185px;
+}
+.loader_gif_image img {
+  height: 220px;
+}
+
+/* .loader_search_content ul {
+  max-width: fit-content;
+} */
+/* dom multicity */
+.domestic_multicity_tab_wrapper .roundtrip_summarybar {
+  min-width: 980px;
+  max-width: 806px;
+}
+.flight_details_tab li button {
+  background-color: #fff;
+}
+/* common flight search */
+.inner_searchbar.fixed_top .site_form {
+  max-width: 1351px;
+}

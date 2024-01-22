@@ -1,0 +1,348 @@
+/* .input-container{
+  margin-top: 60px !important;
+} */
+
+
+.ng-autocomplete {
+  display: table;
+  margin: 0 auto;
+  width: 239px;
+}
+@media only screen and (max-width: 767px) {
+  .ng-autocomplete {
+    display: table;
+    margin: 0 auto;
+    width: 335px;
+    margin-left: -7px;
+  }
+  #pills-tab{
+    display: none;
+  }
+}
+.departure-panel{
+  padding-left: 0px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+
+}
+.panel-hover:hover{
+  background-color: #ebebeb;
+}
+.panel-left-side{
+  padding-left: 20px !important;
+}
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+  line-height: 45px;
+  height: 45px;
+  padding: 0 16px;
+  text-align: left;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+span {
+  margin-left: 5px;
+}
+
+.custom-day {
+  text-align: center;
+  padding: 0.185rem 0.25rem;
+  display: inline-block;
+  height: 2rem;
+  width: 2rem;
+}
+.custom-day.focused {
+  background-color: #e6e6e6;
+}
+.custom-day.range, .custom-day:hover {
+  background-color: rgb(2, 117, 216);
+  color: white;
+}
+.custom-day.faded {
+  background-color: rgba(2, 117, 216, 0.5);
+}
+
+.search_form_top .inp_group .form-group label{
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.search_form_top .inp_group .form-group h5{
+  font-weight: 900;
+  font-size: 27px;
+  line-height: 1.3;
+  color: #111528;
+  margin: 0;
+}
+
+.search_form_top .inp_group .form-group h5 span{
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.3;
+  color: #111528;
+  margin: 0;
+}
+
+.search_form_top .inp_group .form-group p {
+  display: block;
+  margin-block-start: 0em;
+  margin-block-end: -1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+
+element.style {
+  transform: translate(-5px, 33px) !important;
+}
+.traveller-class-font{
+  font-weight: bold;
+}
+.traveller-class-child-select{
+  border: 1px solid #000;
+  padding: 2 px;
+  text-align: center;
+  padding-left: 8px;
+  font-size: 16px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-weight: normal;
+  width: 42px;
+  padding-right: 10px;
+}
+.traveller-class-child-list{
+  /* border: 1px solid #eee; */
+  justify-content: start;
+  border-bottom: 0px;
+  /* box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); */
+  /* border-radius: 50px; */
+}
+.traveller-class-child-label{
+  font-size: 13px;
+}
+.traveller-class-child-div{
+  padding-left: 3px;
+  padding-right: 3px;
+}
+.traveller-class-label{
+  font-size: 14px;
+  color: #000;
+  font-weight: 600;
+  display: flex;
+  justify-content: left;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.traveller-label{
+  font-size: 20px;
+  display: flex;
+  justify-content: left;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.traveller-economy-label{
+  display: flex;
+  justify-content: left;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.inp_group_traveller{
+  position: absolute;
+  top: 10%;
+}
+.traveller-class-optiongp{
+  font-weight: 600;
+  padding-left: 5px;
+}
+.air-search{
+  max-width: 100%;overflow-x: hidden;margin-left: 0;
+}
+.air-search-icon{
+  padding-left: 9px;padding-right: 10px;padding-top: 5px;
+}
+.air-search-code{
+  padding-right: 0px;padding-left: 0px;padding-top: 8px;font-size: 14px;font-weight: 700;text-align: right;
+}
+.air-search-name{
+  font-size: 12px;
+}
+.air-search-country{
+  color: #000;font-size: 14px;
+
+}
+.booking-flight{
+  width: 70%;
+  max-height: 35px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 5px;
+}
+
+.row-recent-booking{
+  align-items: stretch;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.card-recent-booking {
+  max-width: 25.333%;
+  padding: 0.75rem;
+  margin-bottom: 0.2rem;
+  border: 0;
+  flex-basis: 33.333%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background-color: #eee;
+  margin-right: 5px;
+  font-size: 13px;
+  text-align: center;
+  max-height: 40px;
+  min-width: 268px;
+}
+.card-text {
+  font-size: 85%;
+}
+.marquee-notice-content{
+  padding-left: 5px;
+}
+a:link{
+  color: #c0d8fa;
+}
+.recent-drag{
+  height: 40px;
+}
+/* a:link {
+  color: green;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:visited {
+  color: pink;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+} */
+@media only screen and (min-width: 1410px) and (max-width: 1500px) {
+  .traveller_select_box{
+    left:-59px;
+  }
+}
+@media only screen and (min-width: 1500px) {
+  .traveller_select_box{
+    left:-59px;
+  }
+}
+@media only screen and (min-width: 1300px) and (max-width: 1409px) {
+  .traveller_select_box{
+    left:-95px;
+  }
+}
+@media only screen and (min-width: 1200px) and (max-width: 1300px) {
+  .traveller_select_box{
+    left:-95px;
+  }
+}
+@media only screen and (min-width: 500px) and (max-width: 767px) {
+  /* .autocomplete-container.active {
+    z-index: 999;
+    width: -webkit-fill-available !important;
+    position: absolute !important;
+    margin: -6px !important;
+    margin-left: -83px !important;
+    margin-right: 161px !important;
+  } */
+  .input-container input {
+    width: 307px !important;
+    margin-left: 2px !important;
+  }
+  .suggestions-container.is-visible {
+    width: 307px !important;
+    margin-left: 1px !important;
+  }
+}
+.add-city{
+  margin: 20px;
+  margin-top: 24px;
+}
+.btn-add-city{
+  border-color: #1c636d;
+  box-shadow: none;
+  background-color: #fff;
+  padding: 5px;
+  border-radius: 10px;
+}
+.btn-remove-city{
+  padding: 0;
+  font-size: 25px;
+  margin: 0;
+  margin-top: 34px;
+  float: left;
+}
+.multi_travel{
+  display: block;
+  position: absolute;
+  background: #fff;
+  width: 100%;
+  min-width: 300px;
+  top: 135%;
+  right: -2px;
+  border-radius: 6px;
+  box-shadow: 0 0 20px rgb(0 0 0 / 7%);
+  z-index: 99;
+  margin-top: 10px;
+  transition: all 0.3s linear;
+  padding: 10px 0;
+  opacity: unset;
+  visibility: visible;
+}
+.multi_text{
+  margin: 0;
+  line-height: 1;
+  color: #1e2647;
+  font-weight: bold;
+  font-size: 15px;
+  margin-left: 5px;
+}
+@media only screen and (min-width: 280px) and (max-width: 667px){
+  .search_travellers {
+    display: block;
+    padding-bottom: 60px;
+  }
+  .recent_searches .inp_group {
+    width: 50% !important;
+    margin-bottom: 0px !important;
+    margin-right: 0px !important;
+  }
+  .logo-img{
+    display: none !important;
+  }
+  .multi_travel{
+    right: -71px !important;
+    min-width: 257px !important;
+  }
+  /* .search_cat ul {
+    overflow-x: scroll;
+    white-space: nowrap;
+    max-width: 256px;
+    margin-bottom: 5px;
+    overflow-y: hidden;
+  }
+  .search_cat ul li {
+    padding: 6px 0;
+  } */
+}

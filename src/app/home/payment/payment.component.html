@@ -1,0 +1,198 @@
+<main>
+  <div class="search_main_wrapper area">
+      <!-- /.news_wrapper -->
+      <div class="container">
+        <div class="container">
+          <div class="payment_wrapper">
+              <h2 style="color: #fff;">Payment Request</h2>
+            <form [formGroup]="paymentForm" class="site_form">
+              <div class="trx_date site_form">
+                <p><label style="color: #fff;">Deposite date<span style="color: red;">*</span></label>
+                <input class="form-control date" [ngClass]="{ 'is-invalid': paymentForm.get('TransactionDate')?.errors && paymentForm.get('TransactionDate')?.touched }"  formControlName="TransactionDate" name="TransactionDate" id="TransactionDate" placeholder="DD-MM-YYYY"></p>
+              </div>
+              <!-- /.trx_date -->
+              <div class="deposite_info" style="margin-left:0;margin-right:0">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-12">
+                      <div class="inp_group">
+                        <label>Payment Mode<span style="color: red;">*</span></label>
+                        <select (change)="getPaymentModeList($event)" class="form-control" formControlName="PaymentModeId">
+                          <option value="">Select Please ...</option>
+                          <option [value]="paymentMode.id" *ngFor="let paymentMode of paymentModes">{{paymentMode.shortName}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                      <div class="inp_group">
+                        <label>Payment Type<span style="color: red;">*</span></label>
+                        <select (change)="show($event)" [ngClass]="{ 'is-invalid': paymentForm.get('PaymentTypeId')?.errors && paymentForm.get('PaymentTypeId')?.touched }" class="form-control" formControlName="PaymentTypeId">
+                          <option value="">Select Please ...</option>
+                          <option *ngFor="let paymentTerm of paymentTerms" [value]="paymentTerm.id">{{paymentTerm.shortName}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="menu" >
+                    <div class="row">
+                      <div class="col-lg-6 col-sm-12" *ngIf="!isBankDeposit && isbankTransfer" >
+                        <div class="inp_group">
+                          <label>Deposite from<span style="color: red;">*</span></label>
+                          <select (change)="changeBank($event)"
+                          [ngClass]="{ 'is-invalid': paymentForm.get('OrganizationId')?.errors && paymentForm.get('OrganizationId')?.touched }"
+                          class="form-control" id="OrganizationId" formControlName="OrganizationId">
+                            <option value="">Select Please ...</option>
+                            <option *ngFor="let item of banklists" [value]="item.vBankInformationId" >{{item.nvBankName}}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12"*ngIf="isBkash"></div>
+                      <div class="col-lg-6 col-sm-12"*ngIf="isbankTransfer || isBkash">
+                        <div class="inp_group">
+                          <label>Deposite at<span style="color: red;">*</span></label>
+                          <select (input)="amount($event)" [ngClass]="{ 'is-invalid': paymentForm.get('TravelionAccountId')?.errors && paymentForm.get('TravelionAccountId')?.touched }" class="form-control" formControlName="TravelionAccountId">
+                            <option value="">Select Please ...</option>
+                            <option *ngFor="let item of filteredDepositaccounts " [value]="item.serviceChargeType + ',' + item.serviceCharge + ',' + item.id">{{item.value}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-sm-12" *ngIf="isbankTransfer">
+                        <div class="inp_group">
+                          <label for="">{{!isBankDeposit?'Deposite From ':'Deposited at '}}Branch</label>
+                          <select [ngClass]="{ 'is-invalid': paymentForm.get('BranchName')?.errors && paymentForm.get('BranchName')?.touched }" class="form-control" id="BranchName" formControlName="BranchName">
+                            <option value="">Select Please ...</option>
+                            <option *ngFor="let item of bankBranchLists" [value]="item.BranchName">{{item.BranchName}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-sm-12" *ngIf="isbankTransfer">
+                        <div class="inp_group">
+                          <label for="">Reference no<span style="color: red;">*</span></label>
+                          <input type="text"  [ngClass]="{ 'is-invalid': paymentForm.get('ReferenceNo')?.errors && paymentForm.get('ReferenceNo')?.touched }" class="form-control" formControlName="ReferenceNo" name="ReferenceNo" id="ReferenceNo" (keypress)="shareService.amount('ReferenceNo')" style="text-align: left;">
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-sm-12" *ngIf="isbankTransfer">
+                        <div class="inp_group">
+                          <label for="">Document (maximum size: 1MB)<span style="color: red;">*</span></label>
+                          <input  id="paymentAttchement" type="file" (change)="fileProgress($event)" formControlName="Attchement">
+                          <div class="invalid-feedback" id="paymentAttchementError">
+                            Please provide Document (maximum size: 1MB)
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="deposited_amount_info site_form">
+                    <ul>
+                        <div class="menu" *ngIf="isBkash">
+                          <li>
+                            <p>Mobile Number</p>
+                            <p><input type="text" class="form-control" name="PayerRefrence" id="PayerRefrence"
+                              oninput="this.value=this.value.replace(/\D/g,'')"
+                              placeholder="mobile number"
+                              formControlName="PayerRefrence" maxlength="11" style="text-align: right;"></p>
+                          </li>
+                        </div>
+
+                        <li>
+                          <p>Amount deposited</p>
+                          <p class="d-flex align-items-center">
+                            <input
+                              type="text"
+                              class="form-control"
+                              autocomplete="off"
+                              style="text-align: right;"
+                              id="depositAmountInput"
+                              (keyup)="calculateAmount($event)"
+                              formControlName="Amount"
+                              oninput="this.value=this.value.replace(/\D/g,'')"
+                              placeholder="amount"
+                            >
+                          </p>
+                        </li>
+                        <li>
+                          <p>Service charge ({{ selectedCharge }} {{ isTk ? 'Tk' : '%' }})</p>
+                            <p class={{className}}>{{ selectedChargeAmount }} Tk</p>
+                        </li>
+                        <li>
+                            <p>Amount to be deposited</p>
+                            <p>{{selectDepositAmount | currency: 'Tk ' }}</p>
+                        </li>
+                        <li *ngIf="isBkashSubmit" style="justify-content: end;">
+                          <button
+                            style="border-radius: 50px !important;
+                            background: #E97017 !important;
+                            color: #111528 !important;
+                            width: 14%;
+                            min-height: 50px;
+                            border: none;
+                            font-weight: 700;"
+                            onmouseover="this.style.background='#111528';this.style.color='#fff'"
+                            onmouseout="this.style.background='#E97017';this.style.color='#111528'"
+                            (click)="generateTokenBkash()">Submit Request</button>
+                        </li>
+                        <li [hidden]="!isProcessingNagad" style="justify-content: end;">
+                          <button
+                            style="border-radius: 50px !important;
+                            background: #E97017 !important;
+                            color: #111528 !important;
+                            width: 10%;
+                            min-height: 50px;
+                            border: none;
+                            font-weight: 700;"
+                            onmouseover="this.style.background='#111528';this.style.color='#fff'"
+                            onmouseout="this.style.background='#E97017';this.style.color='#111528'"
+                            id="nagad"
+                            (click)="getNagad()">Payment Process</button>
+                        </li>
+                        <li [hidden]="!isNagadPayment" style="justify-content: end;">
+                          <button
+                            style="border-radius: 50px !important;
+                            background: #E97017 !important;
+                            color: #111528 !important;
+                            width: 10%;
+                            min-height: 50px;
+                            border: none;
+                            font-weight: 700;"
+                            onmouseover="this.style.background='#111528';this.style.color='#fff'"
+                            onmouseout="this.style.background='#E97017';this.style.color='#111528'"
+                            id="nagadpayment"
+                            (click)="nagadPaymentVerification()">Payment Verification</button>
+                        </li>
+                        <li [hidden]="isProcess" style="justify-content: end;">
+                          <button type="submit"
+                            style="border-radius: 50px !important;
+                            background: #E97017 !important;
+                            color: #111528 !important;
+                            width: 10%;
+                            min-height: 50px;
+                            border: none;
+                            font-weight: 700;"
+                            onmouseover="this.style.background='#111528';this.style.color='#fff'"
+                            onmouseout="this.style.background='#E97017';this.style.color='#111528'"
+                            id="bKash_button"
+                            disabled="disabled">Payment Request</button>
+                        </li>
+                        <li *ngIf="isOfflineSubmit" style="justify-content: end;">
+                          <button type="submit"
+                            style="border-radius: 50px !important;
+                            background: #E97017 !important;
+                            color: #111528 !important;
+                            width: 14%;
+                            min-height: 50px;
+                            border: none;
+                            font-weight: 700;"
+                            onmouseover="this.style.background='#111528';this.style.color='#fff'"
+                            onmouseout="this.style.background='#E97017';this.style.color='#111528'"
+                            id="save" (click)="savePayment()"
+                            >Submit Request</button>
+                        </li>
+                    </ul>
+                </div>
+              </div>
+            </form>
+          </div>
+      </div>
+      </div>
+  </div>
+</main>

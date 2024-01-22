@@ -1,0 +1,20 @@
+/* .nav-sidebar .nav-item > .nav-link {
+    margin-bottom: .2rem;
+  }
+   */
+   /* .nav-sidebar>sidebarmenu>.nav-item .nav-icon {
+    font-size: 1.2rem;
+    margin-right: .2rem;
+    text-align: center;
+    width: 1.6rem;
+} */
+
+.childParent > li > a >i{
+  font-size: 18px;
+  margin-left: 14px;
+}
+
+.childParent > li > a{
+  padding-bottom: 7px;
+  margin-bottom: 0px;
+}

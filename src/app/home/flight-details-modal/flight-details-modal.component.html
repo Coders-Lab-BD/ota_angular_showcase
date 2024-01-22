@@ -1,0 +1,733 @@
+<div class="modal fade flightDetails_modal_wrapper" id="flightDetailsModal" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Flight Details</h4>
+        <button type="button" class="close" data-bs-dismiss="modal"><i class="fa fa-times"
+            aria-hidden="true"></i></button>
+      </div>
+
+      <div class="modal-body" *ngIf="data.length>0">
+        <div *ngIf="data[0].oneWay==true">
+          <div class="fare_details_wrapper" *ngIf="data[0]!='' && data[0]!=undefined">
+            <h2>{{data[0].fromFlight}} to {{data[0].toFlight}}, {{shareService.getDay(data[0].departureDate)}}
+              {{shareService.getMonthShort(data[0].departureDate)}}</h2>
+          </div>
+          <div class="result_single_info" *ngFor="let fItem of data[0].flightData[0];let i=index">
+            <ul>
+              <li>
+                <div class="result_single_col_info">
+                  <div class="flights_info_wrapper">
+                    <div class="flights_img">
+                      <img class="airline-logo-size" [src]="'../'+fItem.airlineLogo" alt="...">
+                    </div>
+                    <div class="flight_info">
+                      <span class="flight_shortname">{{fItem.airlineName}}</span>
+                      <span class="flight_code">{{fItem.airlineCode}}{{fItem.airlineNumber}}</span>
+                      <p><b>Available Seat: {{fItem.availableSeat}}</b></p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <p>{{fItem.differenceTime}}</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value" style="margin-left: 14px;">{{fItem.departureTime}}</span>
+                  <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                  <p>{{fItem.terminalDeparture}}</p>
+                  <p>{{fItem.departureCity}}</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">{{fItem.arrivalTime}}</span>
+                  <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                  <p>{{fItem.terminalArrival}}</p>
+                  <p>{{fItem.arrivalCity}}</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">Baggage:</span>
+                  <p>Adult</p>
+                  <p>Child</p>
+                  <p>Infant</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">Check In</span>
+                  <p>{{data[0].baggageAdult}}</p>
+                  <p>{{data[0].baggageChild}}</p>
+                  <p>{{data[0].baggageInfant}}</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">Cabin</span>
+                  <p>{{data[0].cabinAdult}}</p>
+                  <p>{{data[0].cabinChild}}</p>
+                  <p>{{data[0].cabinInfant}}</p>
+                </div>
+              </li>
+            </ul>
+            <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+              <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                ({{fItem.arrivalAirportCode}})</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data[0].roundtrip==true">
+          <div class="fare_details_wrapper" *ngIf="data[0]!='' && data[0]!=undefined">
+            <h2>{{data[0].fromFlight}} to {{data[0].toFlight}}, {{shareService.getDay(data[0].departureDate)}}
+              {{shareService.getMonthShort(data[0].departureDate)}}</h2>
+          </div>
+          <div class="result_single_info">
+            <ul>
+              <li *ngIf="data[0].airlineLogo!=''">
+                <div class="result_single_col_info">
+                  <div class="flights_info_wrapper">
+                    <div class="flights_img">
+                      <img class="airline-logo-size" [src]="'../'+data[0].airlineLogo" alt="...">
+                    </div>
+                    <div class="flight_info">
+                      <span class="flight_shortname">{{data[0].airlineName}}</span>
+                      <span class="flight_code">{{data[0].airlineCode}}{{data[0].airlineNumber}}</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li *ngIf="data[0].differenceTime!=''">
+                <div class="result_single_col_info">
+                  <p>{{data[0].differenceTime}}</p>
+                </div>
+              </li>
+              <li *ngIf="data[0].departureTime!=''">
+                <div class="result_single_col_info">
+                  <span class="col_head_value" style="margin-left: 14px;">{{data[0].departureTime}}</span>
+                  <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                  <p>{{data[0].departureCity}}</p>
+                </div>
+              </li>
+              <li *ngIf="data[0].arrivalTime!=''">
+                <div class="result_single_col_info">
+                  <span class="col_head_value">{{data[0].arrivalTime}}</span>
+                  <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                  <p>{{data[0].arrivalCity}}</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">Baggage:</span>
+                  <p *ngIf="data[0].baggageAdult!='' && data[0].baggageAdult!=undefined">Adult</p>
+                  <p *ngIf="data[0].baggageChild!='' && data[0].baggageChild!=undefined">Child</p>
+                  <p *ngIf="data[0].baggageInfant!='' && data[0].baggageInfant!=undefined">Infant</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">Check In</span>
+                  <p>{{data[0].baggageAdult}}</p>
+                  <p>{{data[0].baggageChild}}</p>
+                  <p>{{data[0].baggageInfant}}</p>
+                </div>
+              </li>
+              <li>
+                <div class="result_single_col_info">
+                  <span class="col_head_value">Cabin</span>
+                  <p>{{data[0].cabinAdult}}</p>
+                  <p>{{data[0].cabinChild}}</p>
+                  <p>{{data[0].cabinInfant}}</p>
+                </div>
+              </li>
+            </ul>
+
+            <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                  ({{fItem.arrivalAirportCode}})</span>
+              </div> -->
+          </div>
+        </div>
+        <div *ngIf="data[0].multicity==true">
+          <div *ngFor="let item of data;let i=index">
+            <div *ngIf="item.trip==1">
+              <div class="fare_details_wrapper" *ngIf="item!='' && item!=undefined">
+                <h2>{{item.fromFlight}} to {{item.toFlight}}, {{shareService.getDay(item.departureDate)}}
+                  {{shareService.getMonthShort(item.departureDate)}}</h2>
+              </div>
+              <div class="result_single_info">
+                <ul>
+                  <li *ngIf="item.airlineLogo!=''">
+                    <div class="result_single_col_info">
+                      <div class="flights_info_wrapper">
+                        <div class="flights_img">
+                          <img class="airline-logo-size" [src]="'../'+item.airlineLogo" alt="...">
+                        </div>
+                        <div class="flight_info">
+                          <span class="flight_shortname">{{item.airlineName}}</span>
+                          <span class="flight_code">{{item.airlineCode}}{{item.airlineNumber}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf="item.differenceTime!=''">
+                    <div class="result_single_col_info">
+                      <p>{{item.differenceTime}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.departureTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value" style="margin-left: 14px;">{{item.departureTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.departureCity}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.arrivalTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">{{item.arrivalTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.arrivalCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Baggage:</span>
+                      <p *ngIf="item.baggageAdult!='' && item.baggageAdult!=undefined">Adult</p>
+                      <p *ngIf="item.baggageChild!='' && item.baggageChild!=undefined">Child</p>
+                      <p *ngIf="item.baggageInfant!='' && item.baggageInfant!=undefined">Infant</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Check In</span>
+                      <p>{{item.baggageAdult}}</p>
+                      <p>{{item.baggageChild}}</p>
+                      <p>{{item.baggageInfant}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Cabin</span>
+                      <p>{{item.cabinAdult}}</p>
+                      <p>{{item.cabinChild}}</p>
+                      <p>{{item.cabinInfant}}</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                    <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                      ({{fItem.arrivalAirportCode}})</span>
+                  </div> -->
+              </div>
+            </div>
+            <div *ngIf="item.trip==2">
+              <div class="fare_details_wrapper" *ngIf="item!='' && item!=undefined">
+                <h2>{{item.fromFlight}} to {{item.toFlight}}, {{shareService.getDay(item.departureDate)}}
+                  {{shareService.getMonthShort(item.departureDate)}}</h2>
+              </div>
+              <div class="result_single_info">
+                <ul>
+                  <li *ngIf="item.airlineLogo!=''">
+                    <div class="result_single_col_info">
+                      <div class="flights_info_wrapper">
+                        <div class="flights_img">
+                          <img class="airline-logo-size" [src]="'../'+item.airlineLogo" alt="...">
+                        </div>
+                        <div class="flight_info">
+                          <span class="flight_shortname">{{item.airlineName}}</span>
+                          <span class="flight_code">{{item.airlineCode}}{{item.airlineNumber}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf="item.differenceTime!=''">
+                    <div class="result_single_col_info">
+                      <p>{{item.differenceTime}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.departureTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value" style="margin-left: 14px;">{{item.departureTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.departureCity}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.arrivalTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">{{item.arrivalTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.arrivalCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Baggage:</span>
+                      <p *ngIf="item.baggageAdult!='' && item.baggageAdult!=undefined">Adult</p>
+                      <p *ngIf="item.baggageChild!='' && item.baggageChild!=undefined">Child</p>
+                      <p *ngIf="item.baggageInfant!='' && item.baggageInfant!=undefined">Infant</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Check In</span>
+                      <p>{{item.baggageAdult}}</p>
+                      <p>{{item.baggageChild}}</p>
+                      <p>{{item.baggageInfant}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Cabin</span>
+                      <p>{{item.cabinAdult}}</p>
+                      <p>{{item.cabinChild}}</p>
+                      <p>{{item.cabinInfant}}</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                    <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                      ({{fItem.arrivalAirportCode}})</span>
+                  </div> -->
+              </div>
+            </div>
+            <div *ngIf="item.trip==3">
+              <div class="fare_details_wrapper" *ngIf="item!='' && item!=undefined">
+                <h2>{{item.fromFlight}} to {{item.toFlight}}, {{shareService.getDay(item.departureDate)}}
+                  {{shareService.getMonthShort(item.departureDate)}}</h2>
+              </div>
+              <div class="result_single_info">
+                <ul>
+                  <li *ngIf="item.airlineLogo!=''">
+                    <div class="result_single_col_info">
+                      <div class="flights_info_wrapper">
+                        <div class="flights_img">
+                          <img class="airline-logo-size" [src]="'../'+item.airlineLogo" alt="...">
+                        </div>
+                        <div class="flight_info">
+                          <span class="flight_shortname">{{item.airlineName}}</span>
+                          <span class="flight_code">{{item.airlineCode}}{{item.airlineNumber}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf="item.differenceTime!=''">
+                    <div class="result_single_col_info">
+                      <p>{{item.differenceTime}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.departureTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value" style="margin-left: 14px;">{{item.departureTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.departureCity}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.arrivalTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">{{item.arrivalTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.arrivalCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Baggage:</span>
+                      <p *ngIf="item.baggageAdult!='' && item.baggageAdult!=undefined">Adult</p>
+                      <p *ngIf="item.baggageChild!='' && item.baggageChild!=undefined">Child</p>
+                      <p *ngIf="item.baggageInfant!='' && item.baggageInfant!=undefined">Infant</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Check In</span>
+                      <p>{{item.baggageAdult}}</p>
+                      <p>{{item.baggageChild}}</p>
+                      <p>{{item.baggageInfant}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Cabin</span>
+                      <p>{{item.cabinAdult}}</p>
+                      <p>{{item.cabinChild}}</p>
+                      <p>{{item.cabinInfant}}</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                    <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                      ({{fItem.arrivalAirportCode}})</span>
+                  </div> -->
+              </div>
+            </div>
+            <div *ngIf="item.trip==4">
+              <div class="fare_details_wrapper" *ngIf="item!='' && item!=undefined">
+                <h2>{{item.fromFlight}} to {{item.toFlight}}, {{shareService.getDay(item.departureDate)}}
+                  {{shareService.getMonthShort(item.departureDate)}}</h2>
+              </div>
+              <div class="result_single_info">
+                <ul>
+                  <li *ngIf="item.airlineLogo!=''">
+                    <div class="result_single_col_info">
+                      <div class="flights_info_wrapper">
+                        <div class="flights_img">
+                          <img class="airline-logo-size" [src]="'../'+item.airlineLogo" alt="...">
+                        </div>
+                        <div class="flight_info">
+                          <span class="flight_shortname">{{item.airlineName}}</span>
+                          <span class="flight_code">{{item.airlineCode}}{{item.airlineNumber}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li *ngIf="item.differenceTime!=''">
+                    <div class="result_single_col_info">
+                      <p>{{item.differenceTime}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.departureTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value" style="margin-left: 14px;">{{item.departureTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.departureCity}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="item.arrivalTime!=''">
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">{{item.arrivalTime}}</span>
+                      <p>{{item.depDayNameShort}} {{item.depDay}} {{item.depMonthNameShort}}</p>
+                      <p>{{item.arrivalCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Baggage:</span>
+                      <p *ngIf="item.baggageAdult!='' && item.baggageAdult!=undefined">Adult</p>
+                      <p *ngIf="item.baggageChild!='' && item.baggageChild!=undefined">Child</p>
+                      <p *ngIf="item.baggageInfant!='' && item.baggageInfant!=undefined">Infant</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Check In</span>
+                      <p>{{item.baggageAdult}}</p>
+                      <p>{{item.baggageChild}}</p>
+                      <p>{{item.baggageInfant}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">Cabin</span>
+                      <p>{{item.cabinAdult}}</p>
+                      <p>{{item.cabinChild}}</p>
+                      <p>{{item.cabinInfant}}</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                    <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                      ({{fItem.arrivalAirportCode}})</span>
+                  </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div *ngIf="data[0].airlineLogo1!='' && data[0].airlineLogo1!=undefined">
+            <div class="fare_details_wrapper" *ngIf="data[0]!='' && data[0]!=undefined">
+              <h2>{{data[0].fromFlight1}} to {{data[0].toFlight1}}, {{shareService.getDay(data[0].departureDate1)}}
+                {{shareService.getMonthShort(data[0].departureDate1)}}</h2>
+            </div>
+            <div class="result_single_info">
+              <ul>
+                <li *ngIf="data[0].airlineLogo1!=''">
+                  <div class="result_single_col_info">
+                    <div class="flights_info_wrapper">
+                      <div class="flights_img">
+                        <img class="airline-logo-size" [src]="'../'+data[0].airlineLogo1" alt="...">
+                      </div>
+                      <div class="flight_info">
+                        <span class="flight_shortname">{{data[0].airlineName1}}</span>
+                        <span class="flight_code">{{data[0].airlineCode1}}{{data[0].airlineNumber1}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li *ngIf="data[0].differenceTime1!=''">
+                  <div class="result_single_col_info">
+                    <p>{{data[0].differenceTime1}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].departureTime1!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value" style="margin-left: 14px;">{{data[0].departureTime1}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].departureCity1}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].arrivalTime1!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">{{data[0].arrivalTime1}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].arrivalCity1}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Baggage:</span>
+                    <p *ngIf="data[0].baggageAdult1!='' && data[0].baggageAdult1!=undefined">Adult</p>
+                    <p *ngIf="data[0].baggageChild1!='' && data[0].baggageChild1!=undefined">Child</p>
+                    <p *ngIf="data[0].baggageInfant1!='' && data[0].baggageInfant1!=undefined">Infant</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Check In</span>
+                    <p>{{data[0].baggageAdult1}}</p>
+                    <p>{{data[0].baggageChild1}}</p>
+                    <p>{{data[0].baggageInfant1}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Cabin</span>
+                    <p>{{data[0].cabinAdult1}}</p>
+                    <p>{{data[0].cabinChild1}}</p>
+                    <p>{{data[0].cabinInfant1}}</p>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                  <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                    ({{fItem.arrivalAirportCode}})</span>
+                </div> -->
+            </div>
+          </div>
+          <div *ngIf="data[0].airlineLogo2!='' && data[0].airlineLogo2!=undefined">
+            <div class="fare_details_wrapper" *ngIf="data[0]!='' && data[0]!=undefined">
+              <h2>{{data[0].fromFlight2}} to {{data[0].toFlight2}}, {{shareService.getDay(data[0].departureDate2)}}
+                {{shareService.getMonthShort(data[0].departureDate2)}}</h2>
+            </div>
+            <div class="result_single_info">
+              <ul>
+                <li *ngIf="data[0].airlineLogo2!=''">
+                  <div class="result_single_col_info">
+                    <div class="flights_info_wrapper">
+                      <div class="flights_img">
+                        <img class="airline-logo-size" [src]="'../'+data[0].airlineLogo2" alt="...">
+                      </div>
+                      <div class="flight_info">
+                        <span class="flight_shortname">{{data[0].airlineName2}}</span>
+                        <span class="flight_code">{{data[0].airlineCode2}}{{data[0].airlineNumber2}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li *ngIf="data[0].differenceTime2!=''">
+                  <div class="result_single_col_info">
+                    <p>{{data[0].differenceTime2}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].departureTime2!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value" style="margin-left: 14px;">{{data[0].departureTime2}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].departureCity2}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].arrivalTime2!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">{{data[0].arrivalTime2}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].arrivalCity2}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Baggage:</span>
+                    <p *ngIf="data[0].baggageAdult2!='' && data[0].baggageAdult2!=undefined">Adult</p>
+                    <p *ngIf="data[0].baggageChild2!='' && data[0].baggageChild2!=undefined">Child</p>
+                    <p *ngIf="data[0].baggageInfant2!='' && data[0].baggageInfant2!=undefined">Infant</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Check In</span>
+                    <p>{{data[0].baggageAdult2}}</p>
+                    <p>{{data[0].baggageChild2}}</p>
+                    <p>{{data[0].baggageInfant2}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Cabin</span>
+                    <p>{{data[0].cabinAdult2}}</p>
+                    <p>{{data[0].cabinChild2}}</p>
+                    <p>{{data[0].cabinInfant2}}</p>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                  <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                    ({{fItem.arrivalAirportCode}})</span>
+                </div> -->
+            </div>
+          </div>
+          <div *ngIf="data[0].airlineLogo3!='' && data[0].airlineLogo3!=undefined">
+            <div class="fare_details_wrapper" *ngIf="data[0]!='' && data[0]!=undefined">
+              <h2>{{data[0].fromFlight3}} to {{data[0].toFlight3}}, {{shareService.getDay(data[0].departureDate3)}}
+                {{shareService.getMonthShort(data[0].departureDate3)}}</h2>
+            </div>
+            <div class="result_single_info">
+              <ul>
+                <li *ngIf="data[0].airlineLogo3!=''">
+                  <div class="result_single_col_info">
+                    <div class="flights_info_wrapper">
+                      <div class="flights_img">
+                        <img class="airline-logo-size" [src]="'../'+data[0].airlineLogo3" alt="...">
+                      </div>
+                      <div class="flight_info">
+                        <span class="flight_shortname">{{data[0].airlineName3}}</span>
+                        <span class="flight_code">{{data[0].airlineCode3}}{{data[0].airlineNumber3}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li *ngIf="data[0].differenceTime3!=''">
+                  <div class="result_single_col_info">
+                    <p>{{data[0].differenceTime3}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].departureTime3!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value" style="margin-left: 14px;">{{data[0].departureTime3}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].departureCity3}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].arrivalTime3!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">{{data[0].arrivalTime3}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].arrivalCity3}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Baggage:</span>
+                    <p *ngIf="data[0].baggageAdult3!='' && data[0].baggageAdult3!=undefined">Adult</p>
+                    <p *ngIf="data[0].baggageChild3!='' && data[0].baggageChild3!=undefined">Child</p>
+                    <p *ngIf="data[0].baggageInfant3!='' && data[0].baggageInfant3!=undefined">Infant</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Check In</span>
+                    <p>{{data[0].baggageAdult3}}</p>
+                    <p>{{data[0].baggageChild3}}</p>
+                    <p>{{data[0].baggageInfant3}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Cabin</span>
+                    <p>{{data[0].cabinAdult3}}</p>
+                    <p>{{data[0].cabinChild3}}</p>
+                    <p>{{data[0].cabinInfant3}}</p>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                  <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                    ({{fItem.arrivalAirportCode}})</span>
+                </div> -->
+            </div>
+          </div>
+          <div *ngIf="data[0].airlineLogo4!='' && data[0].airlineLogo4!=undefined">
+            <div class="fare_details_wrapper" *ngIf="data[0]!='' && data[0]!=undefined">
+              <h2>{{data[0].fromFlight4}} to {{data[0].toFlight4}}, {{shareService.getDay(data[0].departureDate4)}}
+                {{shareService.getMonthShort(data[0].departureDate4)}}</h2>
+            </div>
+            <div class="result_single_info">
+              <ul>
+                <li *ngIf="data[0].airlineLogo4!=''">
+                  <div class="result_single_col_info">
+                    <div class="flights_info_wrapper">
+                      <div class="flights_img">
+                        <img class="airline-logo-size" [src]="'../'+data[0].airlineLogo4" alt="...">
+                      </div>
+                      <div class="flight_info">
+                        <span class="flight_shortname">{{data[0].airlineName4}}</span>
+                        <span class="flight_code">{{data[0].airlineCode4}}{{data[0].airlineNumber4}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li *ngIf="data[0].differenceTime4!=''">
+                  <div class="result_single_col_info">
+                    <p>{{data[0].differenceTime4}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].departureTime4!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value" style="margin-left: 14px;">{{data[0].departureTime4}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].departureCity4}}</p>
+                  </div>
+                </li>
+                <li *ngIf="data[0].arrivalTime4!=''">
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">{{data[0].arrivalTime4}}</span>
+                    <p>{{data[0].depDayNameShort}} {{data[0].depDay}} {{data[0].depMonthNameShort}}</p>
+                    <p>{{data[0].arrivalCity4}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Baggage:</span>
+                    <p *ngIf="data[0].baggageAdult4!='' && data[0].baggageAdult4!=undefined">Adult</p>
+                    <p *ngIf="data[0].baggageChild4!='' && data[0].baggageChild4!=undefined">Child</p>
+                    <p *ngIf="data[0].baggageInfant4!='' && data[0].baggageInfant4!=undefined">Infant</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Check In</span>
+                    <p>{{data[0].baggageAdult4}}</p>
+                    <p>{{data[0].baggageChild4}}</p>
+                    <p>{{data[0].baggageInfant4}}</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="result_single_col_info">
+                    <span class="col_head_value">Cabin</span>
+                    <p>{{data[0].cabinAdult4}}</p>
+                    <p>{{data[0].cabinChild4}}</p>
+                    <p>{{data[0].cabinInfant4}}</p>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                  <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                    ({{fItem.arrivalAirportCode}})</span>
+                </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

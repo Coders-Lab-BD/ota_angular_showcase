@@ -1,0 +1,238 @@
+<main>
+  <div class="search_main_wrapper area">
+    <div class="main_searchbar_wrapper">
+      <div class="container-fluid">
+        <div class="card table-responsive p-0">
+          <div class="card-header">
+            <h6 class="card-title">
+              <i class="fa fa-plane"></i>
+              Change Request
+            </h6>
+            <button #btnViewShow type="button" style="display: none;"></button>
+          </div>
+          <div class="card-body">
+            <div class="row" style="padding-bottom: 20px;">
+              <div class="col-sm-12 col-md-6">
+                <label style="width: 60px;">Show </label>
+                <select style="width: 70px;" (change)="lengthChange($any($event.target).value)"
+                  class="custom-select custom-select-sm form-control form-control-sm">
+                  <!-- <option value="10">10</option> -->
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <label style="width: 70px; padding-left: 10px;"> entries </label>
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <label style="width: 70px; text-align: left;">Search:</label>
+                <input style="width: 160px; display: inline-block;" type="search" class="form-control form-control-sm"
+                  (keydown)="EnterSubmit($event)" [(ngModel)]="searchValue" (keyup)="searchClick()">
+                <button style="width: 30px; margin-bottom: 2px;" type="submit" class="btn btn-sm btn-default"
+                  (click)="searchClick()">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div *ngIf="isProcessing" class="col-12" style="text-align: center;">
+                <h3>Processing...</h3>
+              </div>
+              <div *ngIf="!isProcessing && recordsFiltered == 0" class="col-12" style="text-align: center;">
+                <h3>No data found</h3>
+              </div>
+              <div *ngIf="!isProcessing" class="col-12 row">
+                <table #dataTable class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="text-align:center">#</th>
+                      <th scope="col" style="text-align:center">PNR</th>
+                      <th scope="col" style="text-align:center">Booked By</th>
+                      <th scope="col" style="text-align:center">Created At</th>
+                      <th scope="col" style="text-align:center">Request Code</th>
+                      <th scope="col" style="text-align:center">Booking Code</th>
+                      <th scope="col" style="text-align:center">Request Type</th>
+                      <th scope="col" style="text-align:center">Status</th>
+                      <th scope="col" style="text-align:center">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let record of tableData; let i = index">
+                      <td *ngIf="record.vBookingId != null">{{record.index}}</td>
+                      <td *ngIf="record.vBookingId != null">
+                        <div style="text-align:center">{{record.itineraryNumber}}</div>
+                      </td>
+                      <td *ngIf="record.vBookingId != null">
+                        <div style="text-align:center">{{record.nvAgencyName}}</div>
+                      </td>
+                      <td *ngIf="record.vBookingId != null">
+                        <div style="text-align:center">{{record.dCreationDateTime}}</div>
+                      </td>
+                      <td *ngIf="record.vBookingId != null">
+                        <div style="text-align:center">{{record.requestCode}}</div>
+                      </td>
+                      <td *ngIf="record.vBookingId != null">
+                        <div style="text-align:center">{{record.vBookingManualId}}</div>
+                      </td>
+                      <td *ngIf="record.requestType != null">
+                        <div style="text-align:center"><span
+                            class="float-middle">{{record.requestType}}</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue requested by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Requested by Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue request rejected by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue request rejected by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue offer by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-primary">Offer by lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue offer accepted by Agnecy'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Offer Accept By Agnecy</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue offer rejected by Agnecy'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Offer Declined By Agnecy</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Re-Issue request completed by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Completed</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Partial payment offer accepted by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Offer accepted by Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Partial payment request by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Request by Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Refund request Offer by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Offer by lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Refund request by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Request by Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Partial payment offered by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Offered by lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change offer accepted by Agnecy'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Offer accepted by Agnecy</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change requested by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Requested by Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change offer by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Offer by lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Temporary cancel by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Completed</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Refund request completed by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Completed</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change request completed by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Completed</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change offer rejected by Agnecy'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Refund request rejected by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Void requested by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Requested by Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Void Requested processing by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-info">Processing by lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Void Requested completed by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-success">Completed</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Void Requested rejected by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Void Requested rejected by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Partial payment rejected by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change Request rejected by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By lab</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Partial payment offer rejected by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Date Change Request rejected by Agency'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By Agency</span></div>
+                      </td>
+                      <td *ngIf="record.nvTicketRequestStatusName != null  && record.nvTicketRequestStatusName == 'Refund request rejected by lab'">
+                        <div style="text-align:center"><span
+                            class="float-middle badge bg-danger">Declined By lab</span></div>
+                      </td>
+                      <td>
+                        <div class="text-center fs-18">
+                          <a title="Edit" class="edit" routerLink='/home/recent-booking-flight/{{record.vBookingId}}' (click)="edit(record.vBookingId)"><i class="fa fa-eye"
+                              style="cursor: pointer; color: rgb(9, 145, 145);"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div *ngIf="!filteredRecordsShow">
+                  Showing {{start}} to {{end}} of {{recordsTotal}} entries
+                </div>
+                <div *ngIf="filteredRecordsShow">
+                  Showing {{start}} to {{end}} of {{recordsFiltered}} entries (filtered from {{recordsTotal}} total
+                  entries)
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <div style="display: inline-block;">
+                  <ul class="pagination">
+                    <li class="page-item" *ngFor="let page of pageList" [ngClass]="page.class">
+                      <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link"
+                        (click)="pageClick(page.value)">{{page.title}}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

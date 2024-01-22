@@ -1,0 +1,62 @@
+<main>
+  <div class="search_main_wrapper area">
+      <!-- /.news_wrapper -->
+      <div class="container">
+        <div class="container">
+          <div class="payment_wrapper">
+              <h2 style="color: #fff;">Payment CheckOut</h2>
+            <form class="site_form">
+              <div class="deposite_info" style="margin-left:0;margin-right:0">
+                <div class="menu">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-12" *ngIf="this.message == 'Successful Transaction'">
+                      <div class="inp_group">
+                        <label for="">Date</label>
+                        <label for="">{{date | date : "dd-MMM-yyyy"}}</label>
+                      </div>
+                      <div class="inp_group">
+                        <label for="">Payment Type</label>
+                        <label for="">{{paymenttype}}</label>
+                      </div>
+                      <div class="inp_group">
+                        <label for="">Amount</label>
+                        <label for="">{{amount}}</label>
+                      </div>
+                      <div class="inp_group">
+                        <label for="">Service Charge</label>
+                        <label for="">{{charge}}</label>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-12" *ngIf="this.message == 'Not a Nagad account'">
+                      <div class="inp_group">
+                        <label for="">Message</label>
+                        <label for="">{{message}}</label>
+                      </div>
+                      <div class="inp_group">
+                        <label for="">Status</label>
+                        <label for="">{{status}}</label>
+                      </div>
+                    </div>
+                    <div style="justify-content: end;">
+                      <button type="submit"
+                        style="border-radius: 50px !important;
+                        background: #E97017 !important;
+                        color: #111528 !important;
+                        width: 12%;
+                        min-height: 50px;
+                        border: none;
+                        font-weight: 700;"
+                        onmouseover="this.style.background='#111528';this.style.color='#fff'"
+                        onmouseout="this.style.background='#E97017';this.style.color='#111528'"
+                        id="save" (click)="close()"
+                        >Back to payment</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+      </div>
+      </div>
+  </div>
+</main>

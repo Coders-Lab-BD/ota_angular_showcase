@@ -1,0 +1,94 @@
+/* UI Bootstrap Demo */
+.ui-bootstrap-carousel {
+  width:400px;
+  height:200px;
+  margin-left:20px;
+  border-radius: 3px;
+}
+.ui-bootstrap-carousel img {
+  width:400px;
+}
+/* angular-carousel Demo */
+.angular-carousel {
+  width:400px;
+  height:200px;
+  margin-left:20px;
+}
+.error-span{
+  color: rgb(182, 38, 38);
+  float: right;
+  font-size: 14px;
+}
+/* ngb-carousel .picsum-img-wrapper {
+  position: relative;
+  height: 0;
+  padding-top: 55%;
+}
+
+ngb-carousel .picsum-img-wrapper>img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+} */
+@media screen and (max-width: 1199px) {
+  .header_right_content ul {
+    display: flex !important;
+  }
+}
+
+
+.showHidePasswordIcon {
+  left: -15px;
+  float: right;
+  margin-top: -35px;
+  position: relative;
+  z-index: 2;
+}
+ /* OTP modal start */
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0
+}
+
+.card-2 {
+  background-color: #fff;
+  padding: 10px;
+  width: 350px;
+  height: 100px;
+  bottom: -50px;
+  left: 20px;
+  position: absolute;
+  border-radius: 5px
+}
+
+.card-2 .content {
+  margin-top: 50px
+}
+
+.card-2 .content a {
+  color: #124d5f
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border: 2px solid #124d5f
+}
+
+.validate {
+  border-radius: 20px;
+  height: 40px;
+  background-color: #124d5f ;
+  border: 1px solid #124d5f;
+  width: 140px
+}
+.cards .inputs input{
+  border: 1px solid #3ca897;
+}
+
+ /* OTP modal end */

@@ -1,0 +1,332 @@
+<div class="modal fade proposal_modal_wrapper" id="proposalModal" role="dialog">
+  <div class="container">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="proposal-title" style="color: white;">Make Proposal</h4>
+          <button type="button" class="close" data-bs-dismiss="modal"><i class="fa fa-times"
+              aria-hidden="true"></i></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="Percentage_calculate_wrapper">
+            <!-- Mark up Region -->
+            <div class="card mb-3">
+              <div class="card-header">
+                Make More Profit
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;" scope="col">Pax Type</th>
+                      <th style="text-align: center;" scope="col">Base Fare Per Pax</th>
+                      <th style="text-align: center;" scope="col">Taxes</th>
+                      <th style="text-align: center;" scope="col">Number of Pax</th>
+                      <th style="text-align: center;" scope="col">Total Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="isAdultFareVisible">
+                      <td style="text-align: center;" >Adult</td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="adultBaseFare"  (input)="adultBaseFareInputChange($event)"></td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="adultTaxFare" (input)="adultTaxFareInputChange($event)"></td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="adultTotalPassenger" readonly></td>
+                      <td style="text-align: center;"><input style="max-width: 200px; text-align: center;" type="text" class="form-control" [value]="adultTotalFare" readonly></td>
+                    </tr>
+                    <tr *ngIf="isChildFareVisible">
+                      <td style="text-align: center;">Child</td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="childBaseFare" (input)="childBaseFareInputChange($event)"></td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="childTaxFare" (input)="childTaxFareInputChange($event)"></td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="childTotalPassenger" readonly></td>
+                      <td style="text-align: center;"><input style="max-width: 200px; text-align: center;" type="text" class="form-control" [value]="childTotalFare" readonly></td>
+                    </tr>
+                    <tr *ngIf="isInfantFareVisible">
+                      <td style="text-align: center;">Infant</td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="infantBaseFare" (input)="infantBaseFareInputChange($event)"></td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="infantTaxFare" (input)="infantTaxFareInputChange($event)"></td>
+                      <td style="text-align: center;"><input style="max-width: 100px; text-align: center;" type="text" class="form-control" [value]="infantTotalPassenger" readonly></td>
+                      <td style="text-align: center;"><input style="max-width: 200px; text-align: center;" type="text" class="form-control" [value]="infantTotalFare" readonly></td>
+                    </tr>
+                    <tr >
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td style="text-align: center;">Total Price</td>
+                      <td style="text-align: center;"><input style="max-width: 200px; text-align: center;" type="text" class="form-control" [value]="adultTotalFare+childTotalFare+infantTotalFare" readonly></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+            </div>
+
+            <!-- Discount Region -->
+            <div class="card mb-3">
+              <div class="card-header">
+                Give Discount
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;" scope="col">Discount Type</th>
+                      <th style="text-align: center;" scope="col">Price Type</th>
+                      <th style="text-align: center;" scope="col"></th>
+                      <th style="text-align: center;" scope="col">Discount Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr >
+                      <td style="text-align: center;">
+                        <select (change)="selectType('discount')" id="discountTypeId" class="form-control" name="discountTypeId">
+                          <option value="Base">Base</option>
+                          <option value="Tax">Tax</option>
+                          <option value="Total">Total</option>
+                        </select>
+                        </td>
+                      <td style="text-align: center;">
+                        <select (change)="selectType('discount')" class="form-control" name="priceTypeDiscount" id="priceTypeDiscount">
+                          <option value="1">Amount</option>
+                          <option value="2">Percentage</option>
+                        </select>
+                      </td>
+                      <td style="text-align: center;">
+                        <input type="number" style="text-align: right;" id="discountAmount" class="form-control" placeholder="Amount/Percentage" (input)="calculateDisccoutn($event)">
+                      </td>
+                      <td style="text-align: center;"><input style="max-width: 200px; text-align: center;" type="text" class="form-control" value="{{discountAmount}}" readonly> </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class=" card ">
+              <div class="card-header">
+                <div class="d-flex justify-content-between">
+                  <td style="text-align: left;">Customer Price</td>
+                  <td style="text-align: right;">
+                      <input style="max-width: 200px; text-align: center;" type="text" class="form-control" value="{{clientTotal-discountAmount}}" readonly>
+                  </td>
+                </div>
+              
+            </div>
+            </div>
+            <div class="download_proposal_btn">
+              <a *ngIf="!btnLoad" (click)="downloadProposal()" class="site_cta orange_cta">DOWNLOAD PROPOSAL</a>
+              <a *ngIf="btnLoad" class="site_cta orange_cta" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Processing...
+              </a>
+            </div>
+            <div id="flightProposal" style="display: none;">
+              <div class="container">
+                <div id="headInfo">
+                  <table style="    font-family: Arial, Helvetica, sans-serif;
+                                  border-collapse: collapse;
+                                  width: 100%;">
+                    <tr>
+                      <th style="
+                                          padding: 8px;padding-top: 12px;
+                                          padding-bottom: 12px;
+                                          text-align: left;
+                                          color: #000;width: 10%;border-style: none;"><img
+                          style="width: 50px;height: 60px;" [src]="agencyPhoto" alt="..."></th>
+                      <th style="padding: 8px;padding-top: 12px;
+                                          padding-bottom: 12px;
+                                          text-align: left;
+                                          color: #000;width: 30%;border-style: none;">
+                        <table style="    font-weight: 100;
+                                              font-size: 12px;
+                                              font-family: sans-serif;border-style: none;">
+                          <tr>
+                            <td style="font-size: 14px;font-weight: bold;">{{agencyName}}</td>
+                          </tr>
+                          <tr>
+                            <td>{{agencyPhone}},{{agencyEmail}}</td>
+                          </tr>
+                          <tr>
+                            <td>{{agencyAddress}}</td>
+                          </tr>
+                        </table>
+                      </th>
+                      <th style="
+                                          padding: 8px;padding-top: 12px;
+                                          padding-bottom: 12px;
+                                          text-align: left;
+                                          color: #000;width: 30%;border-style: none;font-size: 20px;">Flight Proposal
+                      </th>
+
+                      <th style="width: 30%; font-size: 12px;">
+                        Agency Manual ID : {{agencyManualId}}
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+                <br>
+                <p
+                    style="font-size: 18px;
+                                  font-weight: bold; background-color: #808080; color: #fff; padding: 10px 7px; font-family: Arial, Helvetica, sans-serif;">
+                    Flight Details</p>
+                <div>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td style="text-align: center; font-weight:900" > Airlines Name</td>
+                        <td style="text-align: center; font-weight:900" > Carrier</td>
+                        <td style="text-align: center; font-weight:900" > Departure City</td>
+                        <td style="text-align: center; font-weight:900" > Arrival City</td>
+                        <td style="text-align: center; font-weight:900" > Departure Date</td>
+                        <td style="text-align: center; font-weight:900" > Departure Time</td>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let flightDetails of this.fligtDetails">
+                      <tr *ngFor="let flight of flightDetails; let i = index">
+                        <td style="text-align: center;">{{flight.airlinesName}}</td>
+                        <td style="text-align: center;">{{flight.carrierWithFlightNumber}}</td>
+                        <td style="text-align: center;">{{flight.departureAirport}}</td>
+                        <td style="text-align: center;">{{flight.arrivalAirport}}</td>
+                        <td style="text-align: center;">{{flight.departureDate}}</td>
+                        <td style="text-align: center;">{{flight.departureTime}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div>
+                  <p
+                    style="font-size: 18px;
+                                  font-weight: bold; background-color: #808080; color: #fff; padding: 10px 7px; font-family: Arial, Helvetica, sans-serif;">
+                    Price Summary</p>
+                  <div id="priceSummary">
+                    <table style="font-family: Arial, Helvetica, sans-serif;
+                                      border-collapse: collapse;
+                                      width: 100%;">
+                      <tr>
+                        <th style="
+                                          padding: 8px;padding-top: 12px;
+                                          padding-bottom: 12px;
+                                          text-align: left;
+                                          color: #000;width: 25%;">Details</th>
+                        <th style="
+                                                  padding: 8px;padding-top: 12px;
+                                          padding-bottom: 12px;
+                                          text-align: left;
+                                          color: #000;width: 25%;">Amount</th>
+                      </tr>
+                      <tr *ngIf="isAdultFareVisible">
+                        <td style="
+                                      padding: 8px;font-weight: bold;">Adult({{this.adultCount}})</td>
+                        <td style="
+                                      padding: 8px;"></td>
+                      </tr>
+                      <tr *ngIf="isAdultFareVisible">
+                        <td style="
+                                      padding: 8px;">Base Fare</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.adultBaseFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isAdultFareVisible">
+                        <td style="
+                                      padding: 8px;">Tax</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.adultTaxFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isAdultFareVisible">
+                        <td style="
+                                      padding: 8px;">Total</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.adultTotalFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isChildFareVisible">
+                        <td style="
+                                      padding: 8px;font-weight: bold">
+                          Child({{shareService.amountShowWithCommas(this.childCount)}})</td>
+                        <td style="
+                                      padding: 8px;"></td>
+                      </tr>
+                      <tr *ngIf="isChildFareVisible">
+                        <td style="
+                                      padding: 8px;">Base Fare</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.childBaseFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isChildFareVisible">
+                        <td style="
+                                      padding: 8px;">Tax</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.childTaxFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isChildFareVisible">
+                        <td style="
+                                      padding: 8px;">Total</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.childTotalFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isInfantFareVisible">
+                        <td style="
+                                      padding: 8px;font-weight: bold">Infant({{this.infantCount}})</td>
+                        <td style="
+                                      padding: 8px;"></td>
+                      </tr>
+                      <tr *ngIf="isInfantFareVisible">
+                        <td style="
+                                      padding: 8px;">Base Fare</td>
+                        <td style="
+                                      padding: 8px;">
+                          {{shareService.amountShowWithCommas(this.infantBaseFare)}}</td>
+                      </tr>
+                      <tr *ngIf="isInfantFareVisible">
+                        <td style="
+                                      padding: 8px;">Tax</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.infantTaxFare)}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="isInfantFareVisible">
+                        <td style="
+                                      padding: 8px;">Total</td>
+                        <td style="
+                                      padding: 8px;">{{shareService.amountShowWithCommas(this.infantTotalFare)}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="
+                                      padding: 8px;font-weight: bold">Total Amount</td>
+                        <td style="
+                                      padding: 8px;font-weight: bold">BDT
+                          {{shareService.amountShowWithCommas(clientTotal)}}</td>
+                      </tr>
+                      <tr *ngIf="discountAmount>0">
+                        <td style="
+                                      padding: 8px;">Discount</td>
+                        <td style="
+                                      padding: 8px;">BDT {{shareService.amountShowWithCommas(discountAmount)}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="
+                                      padding: 8px;font-weight: bold">Total Payable</td>
+                        <td style="
+                                      padding: 8px;font-weight: bold">BDT
+                          {{shareService.amountShowWithCommas(clientTotal-discountAmount)}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1090 @@
+<app-loader *ngIf="isLoad" fromFlight="{{selectedFlightDeparture[0].CityName}}"
+  toFlight="{{selectedFlightArrival[selectedFlightArrival.length-1].CityName}}"
+  departureDate="{{this.shareService.getDbToBd(selectedFlightDeparture[0].Date)}}"
+  returnDate="{{this.shareService.getDbToBd(selectedFlightArrival[selectedFlightArrival.length-1].Date)}}"
+  adult="{{adult}}" child="{{child}}" infant="{{infant}}"></app-loader>
+<main>
+  <div class="inner_hero_section area">
+    <div class="container">
+      <div class="notfound-flight" id="notFoundFlight" *ngIf="isNotFound===true">
+        <div class="">
+          <h1 style="color:#fff">Ooops! No flights found in this route</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flight_search_result_section area" *ngIf="isNotFound===false && isLoad===false">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-xl-12 col-lg-12">
+          <div class="search_results_wrapper">
+
+            <div class="search_result_heading" *ngIf="this.trip.length<0">
+              <h2 class="search_result_title" *ngIf="selectedFlightDeparture[0]!=undefined">
+                Flights from {{selectedFlightDeparture[0].CityName}} to
+                {{selectedFlightArrival[selectedFlightArrival.length-1].CityName}}</h2>
+            </div>
+            <!-- <div class="search_result_heading" *ngIf="this.trip.length>0">
+              <h2 class="search_result_title" *ngIf="selectedFlightDeparture[0]!=undefined">
+                Flights from {{this.trip[0].fromCity}} to
+                {{selectedFlightArrival[selectedFlightArrival.length-1].CityName}}</h2>
+            </div> -->
+
+            <div class="flight_search_result_wrapper int_roundtrip_search_wrapper int_multicity_search_wrapper">
+              <div id="resultBodySkeleton" *ngIf="flightSearchSkeleton===true">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="skleton_card__resultBody__big loading"></div>
+                    <div class="skleton_card__resultBody__big loading"></div>
+                  </div>
+                  <div class="col-md-9">
+                    <div class="skleton_card__resultBody__big loading"></div>
+                    <div class="skleton_card__resultBody__big loading"></div>
+                  </div>
+                </div>
+              </div>
+              <div id="resultBody" *ngIf="flightSearchSkeleton===false">
+                <div class="result_card_wrapper" *ngFor="let rootItem of getGroupByItinery();let rootI=index">
+                  <div class="int_roundtrip_flight_info_header">
+                    <ul class="int_flight_list">
+                      <li *ngFor="let splitItem of rootItem.split(',')">
+                        <div class="flights_img">
+                          <img class="airline-logo-size-group"
+                            [src]="'../'+flightHelper.getAirlineLogo(splitItem,airlines)" alt="...">
+                        </div>
+                        <div class="flight_info">
+                          <span class="flight_shortname">{{flightHelper.getAirlineName(splitItem,airlines)}}</span>
+                        </div>
+                      </li>
+                    </ul>
+                    <ul class="fare_info">
+                      <li style="text-align: left;">
+                        <span class="main_fare_content">
+                          New Fare: {{flightHelper.currency}} <a class="main_fare">{{getGroupHeadAmount(rootItem,"clientfare")}}</a><br>
+                          Previous Fare: {{flightHelper.currency}} <a class="main_fare">{{this.shareService.amountShowWithCommas(this.clientTotal)}}</a><br>
+                          lab Charge: {{flightHelper.currency}} <a class="main_fare">{{this.shareService.amountShowWithCommas(this.DateChangeFee)}}</a><br>
+                          Date Change Fee: As per Airlines policy.
+                        </span>
+                        <span class="main_fare" ></span>
+                        <span *ngIf="isAgentFare===true" class="agent_fare" [attr.id]="'agentPrice'+rootItem">Agent
+                          Fare:
+                          <b>{{flightHelper.currency}} {{getGroupHeadAmount(rootItem,"agentfare")}}</b></span>
+                      </li>
+                      <li>
+                        <div class="booking_btn">
+                          <a id="btnBook{{rootItem}}" (click)="bookAndHoldAction(rootItem)" class="site_cta line_cta">Select Flight</a>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="int_multicity_flight_batch_result_wrapper">
+
+                    <div [attr.id]="rootItem+tripItem" class="int_multicity_trip_set"
+                      *ngFor="let tripItem of getGroupByTrip(rootItem);let t=index">
+
+                      <div class="int_multicity_trip_info">
+                        <span class="trip_no">Trip {{tripItem}}</span>
+                        <span class="trip_place">{{selectedFlightDeparture[tripItem-1].CityName}} to
+                          {{selectedFlightArrival[tripItem-1].CityName}}</span>
+                        <span
+                          class="trip_dare">{{this.shareService.getDayNameShort(selectedFlightDeparture[tripItem-1].Date)}}
+                          {{this.shareService.getDay(selectedFlightDeparture[tripItem-1].Date)}}
+                          {{this.shareService.getMonthShort(selectedFlightDeparture[tripItem-1].Date)}}
+                          {{this.shareService.getYearShort(selectedFlightDeparture[tripItem-1].Date)}}</span>
+                        <span *ngIf="isShowViewMore(rootItem,tripItem)" [attr.id]="'txt'+rootItem+tripItem"
+                          (click)="viewMoreFlights(rootItem+tripItem)" class="moreflights_trigger">
+                          View More Flights</span>
+                      </div>
+
+                      <div class="int_multicity_trip_list">
+                        <div class="result_single_box"
+                          *ngFor="let tripDetails of getFilterItineryByGroup(rootItem,tripItem);let td=index">
+                          <div class="result_single_info">
+                            <ul>
+                              <li>
+                                <span class="flight_code_name"><b>Flight No:</b>
+                                  {{flightHelper.getFlightNoMore(tripDetails.flightSegmentData)}}
+                                </span>
+                              </li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">{{tripDetails.departureTime}}</span>
+                                  <span
+                                    title="{{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.departureAdjustment).format('DD-MMM-YYYY')}}"
+                                    *ngIf="tripDetails.departureAdjustment!=0 && tripDetails.departureAdjustment!=undefined"
+                                    style="color: #b32828;font-weight: bold;cursor: pointer;">+{{tripDetails.departureAdjustment}}Day</span>
+                                  <p>
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.departureAdjustment).format('ddd')}}
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.departureAdjustment).format('DD')}}
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.departureAdjustment).format('MMM')}}
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.departureAdjustment).format('YY')}}
+                                  </p>
+                                  <p>{{tripDetails.departureCity}}</p>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <p *ngIf="tripDetails.stop!=0">{{tripDetails.differenceTime}}</p>
+                                  <div class="stopage_wrapper">
+                                    <div class="tooltip_bar">
+                                      <span class="stopage_bar"></span>
+                                      <div *ngIf="tripDetails.stop==3" class="stopage_count_wrapper">
+                                        <span class="stopage_count"></span>
+                                        <span class="stopage_count"></span>
+                                        <span class="stopage_count"></span>
+                                      </div>
+                                      <div *ngIf="tripDetails.stop==2" class="stopage_count_wrapper">
+                                        <span class="stopage_count"></span>
+                                        <span class="stopage_count"></span>
+                                      </div>
+                                      <div *ngIf="tripDetails.stop==1" class="stopage_count_wrapper">
+                                        <span class="stopage_count"></span>
+                                      </div>
+                                    </div>
+                                    <div class="tooltip_data left" *ngIf="tripDetails.stop>0">
+                                      <div *ngFor="let sItem of tripDetails.flightSegmentData">
+                                        <div *ngIf="sItem.layOverDifference!=''">
+                                          <p>Plane Change</p>
+                                          <p>{{sItem.arrivalCity}} ({{sItem.arrivalAirportCode}})<br>
+                                            {{sItem.layOverDifference}} layover</p>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                  <p *ngIf="tripDetails.stop!=0">{{tripDetails.stop}} stop via
+                                    {{tripDetails.stopAllCity}} </p>
+                                  <p *ngIf="tripDetails.stop==0">Non stop </p>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">{{tripDetails.arrivalTime}}</span>
+                                  <span
+                                    title="{{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.arrivalAdjustment).format('DD-MMM-YYYY')}}"
+                                    *ngIf="tripDetails.arrivalAdjustment!=0 && tripDetails.arrivalAdjustment!=undefined"
+                                    style="color: #b32828;font-weight: bold;cursor: pointer;">+{{tripDetails.arrivalAdjustment}}Day</span>
+                                  <p>
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.arrivalAdjustment).format('ddd')}}
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.arrivalAdjustment).format('DD')}}
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.arrivalAdjustment).format('MMM')}}
+                                    {{flightHelper.getAdjustmentDate(selectedFlightDeparture[tripItem-1].Date,tripDetails.arrivalAdjustment).format('YY')}}
+                                  </p>
+                                  <p>{{tripDetails.arrivalCity}}</p>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <div class="flight_choose_btn">
+                                    <input type="radio" (click)="selectRadio(rootItem,tripDetails.id,tripItem)"
+                                      [attr.id]="'flight_select'+rootItem+tripItem+td"
+                                      [attr.name]="'flight_select'+rootItem+tripItem">
+                                    <label [attr.for]="'flight_select'+rootItem+tripItem+td"></label>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="int_multicity_flight_batch_result_wrapper_mobile">
+
+                    <ul class="multicity_trip_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                          data-bs-target="#trip_one" type="button" role="tab" aria-controls="pills-home"
+                          aria-selected="true">Trip
+                          1</button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#trip_two"
+                          type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Trip 2</button>
+                      </li>
+                    </ul>
+
+                    <div class="multicity_trip_tab_content tab-content" id="pills-tabContent">
+
+                      <div class="tab-pane fade show active" id="trip_one" role="tabpanel"
+                        aria-labelledby="pills-home-tab">
+                        <div class="int_multicity_trip_set">
+
+                          <div class="int_multicity_trip_info">
+                            <span class="trip_no">Trip 1</span>
+                            <span class="trip_place">New Delhi to Kolkata</span>
+                            <span class="trip_dare">Wed, 6 Oct</span>
+                            <span class="moreflights_trigger"><span>View</span>
+                              <span>Hide</span> More Flights</span>
+                          </div>
+
+                          <div class="int_multicity_trip_list">
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="tab-pane fade" id="trip_two" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        <div class="int_multicity_trip_set">
+
+                          <div class="int_multicity_trip_info">
+                            <span class="trip_no">Trip 1</span>
+                            <span class="trip_place">New Delhi to Kolkata</span>
+                            <span class="trip_dare">Wed, 6 Oct</span>
+                            <span class="moreflights_trigger"><span>View</span>
+                              <span>Hide</span> More Flights</span>
+                          </div>
+
+                          <div class="int_multicity_trip_list">
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="result_single_box">
+                              <div class="result_single_info">
+                                <ul>
+                                  <li>
+                                    <span class="flight_code_name"><b>Flight No:</b>
+                                      BD707</span>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">15:40</span>
+                                      <p>Thu 30 Sep</p>
+                                      <p>New Delhi</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <p>04h 50m</p>
+                                      <div class="stopage_wrapper">
+                                        <div class="tooltip_bar">
+                                          <span class="stopage_bar"></span>
+                                          <div class="stopage_count_wrapper">
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                            <span class="stopage_count"></span>
+                                          </div>
+                                        </div>
+                                        <div class="tooltip_data">
+                                          <p>Plane Change</p>
+                                          <p>Pune (PNQ) <br> 2hrs 15mins
+                                            layover</p>
+                                        </div>
+                                      </div>
+                                      <p>1 stop via Patna</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <span class="col_head_value">20:30</span>
+                                      <p>Fri 31 Sep</p>
+                                      <p>Kolkata</p>
+                                    </div>
+                                  </li>
+                                  <li>
+                                    <div class="result_single_col_info">
+                                      <div class="flight_choose_btn">
+                                        <input type="radio" id="flight_select_1" name="featured">
+                                        <label for="flight_select_1"></label>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="result_single_options">
+                    <ul>
+                      <!-- <li data-bs-toggle="modal" data-bs-target="#proposalModal">Make Proposal</li> -->
+                      <li>$ Refundable</li>
+                      <!-- <li class="fare_details_trigger" [attr.id]="'fareDetailsShowHide'+rootItem"
+                        (click)="flightHelper.fareShowHideAction(rootItem,'#flightDetailsWrap',
+                                            '#flightDetailsShowHide','.result_single_box','#fareDetailsShowHide','#fareDetailsWrap')">View
+                        Fare Details</li> -->
+                      <li class="flight_details_trigger" [attr.id]="'flightDetailsShowHide'+rootItem"
+                        (click)="flightHelper.flightShowHideAction(rootItem,'#flightDetailsWrap',
+                                            '#flightDetailsShowHide','.result_single_box','#fareDetailsShowHide','#fareDetailsWrap')">View
+                        Flight Details</li>
+                    </ul>
+
+                    <div class="fare_details_wrapper" [attr.id]="'flightDetailsWrap'+rootItem" style="display:none">
+                      <div *ngIf="selectedRadioFlightDetails!=undefined">
+                        <div *ngFor="let flightItem of getSelectedViewFlights(rootItem);let selectTrip=index">
+                          <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                    padding: 5px 0 10px 0;">
+                            {{selectedFlightDeparture[selectTrip].CityName}}
+                            to {{selectedFlightArrival[selectTrip].CityName}},
+                            {{shareService.getDay(selectedFlightDeparture[selectTrip].Date)}}
+                            {{shareService.getMonthShort(selectedFlightDeparture[selectTrip].Date)}}
+                            {{shareService.getYearShort(selectedFlightDeparture[selectTrip].Date)}}
+                          </h2>
+                          <div class="result_single_info"
+                            *ngFor="let fItem of flightItem.flightSegmentData;let i=index">
+                            <ul>
+                              <li style="min-width: 180px;max-width: 200px;">
+                                <div class="result_single_col_info">
+                                  <div class="flights_info_wrapper">
+                                    <div class="flights_img">
+                                      <img class="airline-logo-size" [src]="'../'+fItem.airlineLogo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                      <span class="flight_shortname">{{fItem.airlineName}}</span>
+                                      <span class="flight_code">{{fItem.airlineCode}}{{fItem.airlineNumber}}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">{{fItem.departureTime}}</span>
+                                  <span
+                                    title="{{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.departureAdjustment).format('DD-MMM-YYYY')}}"
+                                    *ngIf="flightItem.departureAdjustment!=0  && flightItem.departureAdjustment!=undefined"
+                                    style="color: #b32828;font-weight: bold;cursor: pointer;">+{{flightItem.departureAdjustment}}Day</span>
+                                  <p>
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.departureAdjustment).format('ddd')}}
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.departureAdjustment).format('DD')}}
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.departureAdjustment).format('MMM')}}
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.departureAdjustment).format('YY')}}
+                                  </p>
+                                  <p>{{fItem.terminalDeparture}}</p>
+                                  <p>{{fItem.departureCity}}</p>
+                                </div>
+                              </li>
+                              <li></li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <p>{{fItem.differenceTime}}</p>
+                                  <div class="stopage_wrapper">
+                                    <div class="tooltip_bar">
+                                      <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                              <li></li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">{{fItem.arrivalTime}}</span>
+                                  <span
+                                    title="{{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.arrivalAdjustment).format('DD-MMM-YYYY')}}"
+                                    *ngIf="flightItem.arrivalAdjustment!=0 && flightItem.arrivalAdjustment!=undefined"
+                                    style="color: #b32828;font-weight: bold;cursor: pointer;">+{{flightItem.arrivalAdjustment}}Day</span>
+                                  <p>
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.arrivalAdjustment).format('ddd')}}
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.arrivalAdjustment).format('DD')}}
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.arrivalAdjustment).format('MMM')}}
+                                    {{flightHelper.getAdjustmentDate(flightItem.departureDate,flightItem.arrivalAdjustment).format('YY')}}
+                                  </p>
+                                  <p>{{fItem.terminalArrival}}</p>
+                                  <p>{{fItem.arrivalCity}}</p>
+                                </div>
+                              </li>
+                              <li></li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">Baggage:</span>
+                                  <p *ngIf="flightItem.baggageAdult!=undefined && flightItem.baggageAdult!=''">Adult</p>
+                                  <p *ngIf="flightItem.baggageChild!=undefined && flightItem.baggageChild!=''">Child</p>
+                                  <p *ngIf="flightItem.baggageInfant!=undefined && flightItem.baggageInfant!=''">Infant
+                                  </p>
+                                </div>
+                              </li>
+                              <li></li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">Check In</span>
+                                  <p>{{flightItem.baggageAdult}}</p>
+                                  <p>{{flightItem.baggageChild}}</p>
+                                  <p>{{flightItem.baggageInfant}}</p>
+                                </div>
+                              </li>
+                              <li></li>
+                              <li>
+                                <div class="result_single_col_info">
+                                  <span class="col_head_value">Cabin</span>
+                                  <p>{{flightItem.cabinAdult}}</p>
+                                  <p>{{flightItem.cabinChild}}</p>
+                                  <p>{{flightItem.cabinInfant}}</p>
+                                </div>
+                              </li>
+                            </ul>
+                            <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                              <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                                ({{fItem.arrivalAirportCode}})</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="flight_details_wrapper" [attr.id]="'fareDetailsWrap'+rootItem" style="display: none;">
+                      <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                            [attr.data-bs-target]="'#pills-home'+rootItem" type="button" role="tab"
+                            aria-controls="pills-home" aria-selected="true">Fare Summary</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button (click)="dateChangeApi(false,rootItem)" class="nav-link" id="pills-contact-tab"
+                            data-bs-toggle="pill" [attr.data-bs-target]="'#pills-contact'+rootItem" type="button"
+                            role="tab" aria-controls="pills-contact" aria-selected="false">Cancellation</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button (click)="dateChangeApi(true,rootItem)" class="nav-link" id="pills-date-tab"
+                            data-bs-toggle="pill" [attr.data-bs-target]="'#pills-date'+rootItem" type="button"
+                            role="tab" aria-controls="pills-date" aria-selected="false">Date Change</button>
+                        </li>
+                      </ul>
+
+                      <div class="flight_details_tab_content tab-content" id="pills-tabContent">
+
+                        <div class="tab-pane fade show active" [attr.id]="'pills-home'+rootItem" role="tabpanel"
+                          aria-labelledby="pills-home-tab">
+                          <div *ngFor="let flightItem of getSelectedViewFlights(rootItem);let selectTrip=index">
+                            <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                            padding: 5px 0 10px 0;">
+                              {{selectedFlightDeparture[selectTrip].CityName}}
+                              to {{selectedFlightArrival[selectTrip].CityName}},
+                              {{shareService.getDay(selectedFlightDeparture[selectTrip].Date)}}
+                              {{shareService.getMonthShort(selectedFlightDeparture[selectTrip].Date)}}
+                              {{shareService.getYearShort(selectedFlightDeparture[selectTrip].Date)}}
+                            </h2>
+                            <div class="flight_details_tab_table table-responsive">
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th style="text-align: center;">Type</th>
+                                    <th style="text-align: center;">Passenger Count</th>
+                                    <th style="text-align: center;">Base Fare</th>
+                                    <th style="text-align: center;">Tax</th>
+                                    <th style="text-align: center;">Client Fare</th>
+                                    <th style="text-align: center;">Discount<span
+                                        *ngIf="flightItem.fareData.discountType!=''
+                                                                        && flightItem.fareData.discountType!=undefined">({{flightItem.fareData.discountType}})</span>
+                                    </th>
+                                    <th style="text-align: center;">AIT</th>
+                                    <th style="text-align: center;">Agent Fare</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngIf="adult!='0'">
+                                    <td>Adult</td>
+                                    <td>{{adult}}</td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.adultBaseClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.adultTaxClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.adultTotalClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.adultDiscount)}}</td>
+                                    <td class="amount">0</td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.adultAgentFare)}}
+                                    </td>
+                                  </tr>
+                                  <tr *ngIf="child!='0'">
+                                    <td>Child</td>
+                                    <td>{{child}}</td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.childBaseClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.childTaxClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.childTotalClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.childDiscount)}}</td>
+                                    <td class="amount">0</td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.childAgentFare)}}
+                                    </td>
+                                  </tr>
+                                  <tr *ngIf="infant!='0'">
+                                    <td>Infant</td>
+                                    <td>{{infant}}</td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.infantBaseClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.infantTaxClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.infantTotalClient)}}
+                                    </td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.infantDiscount)}}
+                                    </td>
+                                    <td class="amount">0</td>
+                                    <td class="amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.fareData.infantAgentFare)}}
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td class="tl-amount">Total :</td>
+                                    <td style="border: none;"></td>
+                                    <td class="tl-amount" style="border: none;"></td>
+                                    <td class="tl-amount" style="border: none;"></td>
+                                    <td class="tl-amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.clientFareTotal)}}</td>
+                                    <td class="tl-amount" style="border: none;"></td>
+                                    <td class="tl-amount" style="border: none;"></td>
+                                    <td class="tl-amount">
+                                      {{this.shareService.amountShowWithCommas(flightItem.agentFareTotal)}}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" [attr.id]="'pills-contact'+rootItem" role="tabpanel"
+                          aria-labelledby="pills-contact-tab">
+                          <div *ngFor="let flightItem of getSelectedViewFlights(rootItem);let trip=index">
+                            <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                            padding: 5px 0 10px 0;">{{flightItem.departureCity}} to
+                              {{flightItem.arrivalCity}},
+                              {{shareService.getDay(flightItem.departureDate)}}
+                              {{shareService.getMonthShort(flightItem.departureDate)}}
+                              {{shareService.getYearShort(flightItem.departureDate)}}
+                            </h2>
+                            <div class="flight_details_tab_table table-responsive">
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Time Frame <span>(From Schedule flight
+                                        departure)</span></th>
+                                    <th>Airline Fee + MMT Fee <span>(Per
+                                        passenger)</span></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="!getIsLoad('Cancel',trip+1)">0 hours to 96 hours*</td>
+                                    <td *ngIf="!getIsLoad('Cancel',trip+1)">
+                                      <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                        {{getCancellation(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                      <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                        {{getCancellation(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                      <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                        {{getCancellation(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="!getIsLoad('Cancel',trip+1)">96 hours to 365 hours*</td>
+                                    <td *ngIf="!getIsLoad('Cancel',trip+1)">
+                                      <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                        {{getCancellation(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                      <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                        {{getCancellation(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                      <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                        {{getCancellation(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <p class="table_note">*From the Date of Departure</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="tab-pane fade" [attr.id]="'pills-date'+rootItem" role="tabpanel"
+                          aria-labelledby="pills-date-tab">
+                          <div *ngFor="let flightItem of getSelectedViewFlights(rootItem);let trip=index">
+                            <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                            padding: 5px 0 10px 0;">{{flightItem.departureCity}} to
+                              {{flightItem.arrivalCity}},
+                              {{shareService.getDay(flightItem.departureDate)}}
+                              {{shareService.getMonthShort(flightItem.departureDate)}}
+                              {{shareService.getYearShort(flightItem.departureDate)}}
+                            </h2>
+                            <div class="flight_details_tab_table table-responsive">
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Time Frame <span>(From Schedule flight
+                                        departure)</span></th>
+                                    <th>Airline Fee + MMT Fee + Fare Difference
+                                      <span>(Per passenger)</span>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td *ngIf="getIsLoad('Date',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="getIsLoad('Date',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="!getIsLoad('Date',trip+1)">0 hours to 96 hours*</td>
+                                    <td *ngIf="!getIsLoad('Date',trip+1)">
+                                      <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                        {{getDateChanges(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                      <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                        {{getDateChanges(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                      <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                        {{getDateChanges(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td *ngIf="getIsLoad('Date',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="getIsLoad('Date',trip+1)">
+                                      <div class="skleton_text loading"></div>
+                                    </td>
+                                    <td *ngIf="!getIsLoad('Date',trip+1)">96 hours to 365 hours*</td>
+                                    <td *ngIf="!getIsLoad('Date',trip+1)">
+                                      <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                        {{getDateChanges(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                      <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                        {{getDateChanges(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                      <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                        {{getDateChanges(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <p class="table_note">*From the Date of Departure</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div> -->
+                  </div>
+
+                  <div class="result_single_options_mobile result_single_options">
+                    <ul>
+                      <!-- <li data-bs-toggle="modal" data-bs-target="#proposalModal">Make Proposal</li> -->
+                      <li>$ Refundable</li>
+                      <!-- <li class="fare_details_trigger" [attr.id]="'fareDetailsShowHide'+rootItem"
+                        (click)="flightHelper.fareShowHideAction(rootItem,'#flightDetailsWrap',
+                                            '#flightDetailsShowHide','.result_single_box','#fareDetailsShowHide','#fareDetailsWrap')">View
+                        Fare Details</li> -->
+                      <li class="flight_details_trigger" [attr.id]="'flightDetailsShowHide'+rootItem"
+                        (click)="flightHelper.flightShowHideAction(rootItem,'#flightDetailsWrap',
+                                            '#flightDetailsShowHide','.result_single_box','#fareDetailsShowHide','#fareDetailsWrap')">View
+                        Flight Details</li>
+                      <li>
+                        <div class="view_more_flights_option">
+                          <span class="more_flights_trigger"> <span>View</span> <span>Hide</span> More Flights</span>
+                        </div>
+                      </li>
+
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="result_pagination_wrapper">
+                <div class="view_more_btn">
+                  <a class="site_cta orange_cta">View More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

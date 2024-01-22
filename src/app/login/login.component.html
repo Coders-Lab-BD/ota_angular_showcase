@@ -1,0 +1,182 @@
+<header>
+
+  <div class="header_navbar_section area">
+    <div class="container">
+      <div class="header_navbar_wrapper">
+        <div class="header_logo">
+          <a href="">
+            <img src="assets/dist/img/header_logo.png" alt="...">
+          </a>
+        </div>
+        <!-- /.header_logo -->
+        <div class="header_right_content">
+          <ul>
+            <li class="login_label">New Here?</li>
+            <li><a routerLink="/register" class="site_cta">SIGN UP</a></li>
+          </ul>
+        </div>
+        <!-- /.header_right_content -->
+      </div>
+      <!-- /.header_navbar_wrapper -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.header_navbar_section -->
+
+</header>
+<main>
+  <div class="hero_section area">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 col-sm-12">
+          <div class="hero_carousel owl-carousel">
+            <div class="hero_carousel_slides">
+              <img [src]="'../'+sliderImages[0].image" alt="">
+            </div>
+            <div class="hero_carousel_slides">
+              <img [src]="'../'+sliderImages[1].image" alt="">
+            </div>
+            <div class="hero_carousel_slides">
+              <img [src]="'../'+sliderImages[2].image" alt="">
+            </div>
+          </div>
+          <!-- /.hero_carousel owl-carousel -->
+        </div>
+        <!-- /.col-md-6 -->
+        <div class="col-lg-6 col-sm-12">
+          <div class="hero_content_wrapper">
+            <div class="hero_content_inner">
+              <h2 class="section_title">Login to your account</h2>
+              <p>Type your username & password to begin!</p>
+              <form action="" [formGroup]="loginForm" (ngSubmit)="login()" class="site_form login_form">
+                <div class="row">
+                  <div class="col-md-12">
+                    <input class="form-control" type="email"
+                      [ngClass]="{'is-invalid': loginForm.get('Email')?.errors && loginForm.get('Email')?.touched}"
+                      formControlName="Email" placeholder="Email">
+                    <div class="invalid-feedback"
+                      *ngIf="loginForm.get('Email')?.hasError('required') && loginForm.get('Email')?.touched">
+                      Please choose a Email
+                    </div>
+                    <div class="invalid-feedback"
+                      *ngIf="loginForm.get('Email')?.hasError('Email') && loginForm.get('Email')?.touched">
+                      Please provide valid Email
+                    </div>
+                    <br>
+                  </div>
+                  <div class="col-md-12">
+
+                    <div class="inp_group">
+                      <input [type]="show_button ? 'text' : 'password'" [ngClass]="{'is-invalid': loginForm.get('Password')?.errors
+                                  && loginForm.get('Password')?.touched}" class="form-control"
+                        formControlName="Password" placeholder="Password">
+                      <i [class]="show_eye ? 'fa fa-eye showHidePasswordIcon' : 'fa fa-eye-slash showHidePasswordIcon'"
+                        (click)="showPassword()"></i>
+                    </div>
+
+                    <div class="invalid-feedback"
+                      *ngIf="loginForm.get('Password')?.hasError('required') && loginForm.get('Password')?.touched">
+                      Password is required
+                    </div>
+
+                    <!-- old code -->
+                    <!-- <input class="form-control" type="password" [ngClass]="{'is-invalid': loginForm.get('Password')?.errors && loginForm.get('Password')?.touched}"
+                                  formControlName="Password" placeholder="Password">
+                                  <div class="invalid-feedback" *ngIf="loginForm.get('Password')?.hasError('required') && loginForm.get('Password')?.touched">
+                                    Password is required
+                                  </div> -->
+                  </div>
+                  <!-- <div class="col-md-12">
+                                  <div class="inp_group">
+                                      <p>The page is protected by recaptcha and subject to the Google privacy policy and terms of service.</p>
+                                  </div>
+                              </div> -->
+                  <!-- <div class="col-md-12">
+                                <div class="inp_group inp_checkbox">
+                                    <input class="inp_field" type="checkbox" name="remember" id="">
+                                    <label for="remember">Remember me</label>
+                                </div>
+                              </div> -->
+                  <div class="col-md-12">
+                    <div class="inp_group" style="padding-bottom: 20px;padding-top: 20px;">
+                      <span class="error-span" *ngIf="errorMsg!='' && errorMsg!=undefined">* {{errorMsg}}</span>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="btn_group">
+                      <button class="site_cta" type="submit">Login</button>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="inp_group text-center forgot_pass">
+                      <p><a routerLink="/forgot-password">Forgot password?</a></p>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <!-- /.site_form -->
+            </div>
+            <!-- /.hero_content_inner -->
+          </div>
+          <!-- /.hero_content_wrapper -->
+        </div>
+        <!-- /.col-md-6 -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.hero_section area -->
+
+  <!-- Modal  -->
+  <button style="display: none;" type="button" #btnModalOpen class="btn btn-primary btn-sm float-right"
+  data-bs-toggle="modal" data-bs-target="#twoFactorAuthModal" role="dialog" data-backdrop="static"
+  data-keyboard="false">
+</button>
+
+<div class="modal fade" id="twoFactorAuthModal" data-bs-backdrop="static" data-bs-keyboard="false"
+  aria-labelledby="twoFactorAuthModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable d-flex align-items-center justify-content-center">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" style="font-weight: bold; font-size: 1.2rem;">Two Factor Authentication</h6>
+        <button #btnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+          ></button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="card-body">
+            <h3>Your OTP is sent to your device</h3>
+            <div class="row form-group">
+              <form [formGroup]="twoFactorLoginForm" (ngSubmit)="twoFactorLogin()" class="site_form login_form">
+                <div class="row">
+                  <div class="col-md-12 pb-3 d-flex justify-content-center align-items-center">
+                    <div class="position-relative">
+                        <div class="cards text-center">
+                            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
+                                <input class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="second" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="third" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="fifth" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" />
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="btn_group">
+                      <button class="site_cta" type="submit">Submit</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+  <!-- / Modal -->
+</main>

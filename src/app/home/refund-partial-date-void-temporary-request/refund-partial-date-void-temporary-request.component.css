@@ -1,0 +1,9 @@
+.container-fluid {
+  width: -webkit-fill-available;
+  padding-right: var(--bs-gutter-x, 3.75rem);
+  padding-left: var(--bs-gutter-x, 3.75rem);
+  margin-right: auto;
+  margin-left: auto;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+}

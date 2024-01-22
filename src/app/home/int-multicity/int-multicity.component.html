@@ -1,0 +1,2006 @@
+<app-loader *ngIf="isLoad" fromFlight="{{selectedFlightDeparture[0].CityName}}"
+  toFlight="{{selectedFlightArrival[selectedFlightArrival.length-1].CityName}}"
+  departureDate="{{this.shareService.getDbToBd(selectedFlightDeparture[0].Date)}}"
+  returnDate="{{this.shareService.getDbToBd(selectedFlightArrival[selectedFlightArrival.length-1].Date)}}"
+  adult="{{adult}}" child="{{child}}" infant="{{infant}}"></app-loader>
+<main>
+  <div class="inner_hero_section area">
+    <div class="container">
+      <div class="searchbar_summary_mobile_wrapper">
+        <div class="searchbar_summary_mobile" data-bs-toggle="modal" data-bs-target="#searchbarEditModal">
+          <div class="searchbar_summary_content">
+            <h2>Dhaka - Mumbai</h2>
+            <p>29 Oct | 1 Adult | Economy</p>
+          </div>
+          <div class="searchbar_edit">
+            <span><i class="fa fa-pencil" aria-hidden="true"></i></span>
+            <P>Edit</P>
+          </div>
+        </div>
+        <div class="filter_mobile_wrapper" data-bs-toggle="modal" data-bs-target="#mobileFilter">
+          <span><i class="fa fa-sliders" aria-hidden="true"></i></span>
+          <p>Filters</p>
+        </div>
+      </div>
+      <div class="inner_searchbar" *ngIf="!isMulticity">
+        <form action="" class="site_form">
+          <div class="searchbar_options cursor-pointer">
+            <div class="inp_group cursor-pointer">
+              <label for="">TRIP TYPE</label>
+              <select class="cursor-pointer" name="" id="tripType" [formControl]="selectTripType"
+                (change)="tripChange($event)">
+                <option [value]="1">Oneway</option>
+                <option [value]="2">Round Trip</option>
+                <option [value]="3">Multi City</option>
+              </select>
+            </div>
+          </div>
+          <div class="searchbar_options searchbar_dest">
+            <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(0)">
+              <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+            </div>
+            <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(0)" (click)="flightFrom(0)">
+              <label for="">FROM</label>
+              <select class="cursor-pointer" name="" id="" disabled>
+                <option value="">{{getSelectedData(0,"departure")}}</option>
+              </select>
+              <div class="ng-autocomplete" *ngIf="isSuggDeparture1">
+                <ng-autocomplete [data]="tempAirportsDeparture1" [searchKeyword]="keywords" placeholder="From"
+                  (selected)="selectEvent($event,'from',0)" (inputChanged)="onChangeSearch($event,'from',0)"
+                  (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate"
+                  [notFoundTemplate]="departureNotFound" #suggDeparture1>
+                </ng-autocomplete>
+
+                <ng-template #departureTemplate let-item>
+                  <div class="row air-search">
+                    <div class="col-md-2 air-search-icon">
+                      <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                      </div>
+                      <div class="row air-search-name" [innerHTML]="item.text">
+                      </div>
+                    </div>
+                    <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                    </div>
+                  </div>
+                </ng-template>
+
+                <ng-template #departureNotFound let-notFound>
+                  <div [innerHTML]="notFound"></div>
+                </ng-template>
+              </div>
+            </div>
+            <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(0)" (click)="flightTo(0)">
+              <label for="">TO</label>
+              <select class="cursor-pointer" name="" id="" disabled>
+                <option value="">{{getSelectedData(0,"return")}}</option>
+              </select>
+              <div class="ng-autocomplete" *ngIf="isSuggReturn1">
+                <ng-autocomplete [data]="tempAirportsArrival1" [searchKeyword]="keywords" placeholder="To"
+                  (selected)="selectEvent($event,'to',0)" (inputChanged)="onChangeSearch($event,'to',0)"
+                  (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate"
+                  [notFoundTemplate]="arrivalNotFoundTemplate" #suggReturn1>
+                </ng-autocomplete>
+
+                <ng-template #arrivalTemplate let-item>
+                  <div class="row air-search">
+                    <div class="col-md-2 air-search-icon">
+                      <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                      </div>
+                      <div class="row air-search-name" [innerHTML]="item.text">
+                      </div>
+                    </div>
+                    <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                    </div>
+                  </div>
+                </ng-template>
+
+                <ng-template #arrivalNotFoundTemplate let-notFound>
+                  <div [innerHTML]="notFound"></div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+          <div class="searchbar_options searchbar_sched cursor-pointer">
+            <div class="inp_group flat-datepick-from0 cursor-pointer"
+              (change)="changeDepartureReturnDate($event,'departure',0)" id="departureDate">
+              <label for="">DEPARTURE</label>
+              <select class="cursor-pointer" name="" id="" disabled>
+                <option value="">{{getSelectedDate(0,'departure')}}</option>
+              </select>
+            </div>
+            <div class="inp_group flat-datepick-to cursor-pointer"
+              (change)="changeDepartureReturnDate($event,'return',0)" id="returnDate">
+              <label for="">RETURN <i *ngIf="!shareService.isNullOrEmpty(getSelectedDate(0,'return'))"
+                  class="fa fa-times" (click)="returnCrossClick()"></i></label>
+              <select class="cursor-pointer" name="" id="" disabled>
+                <option value="">{{getSelectedDate(0,'return')}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="search_travellers flight-travel cursor-pointer" id="travellersDiv">
+            <div class="inp_group cursor-pointer" (click)="travellerFrom()" (clickOutside)="travellerInfoOutside()"
+              style="background: rgb(72 141 141);">
+              <div class="traveller-class-label">
+                <label class="flight-travel-label" for="">TRAVELLERS &amp; CLASS</label>
+              </div>
+              <select class="cursor-pointer" name="" id="" disabled>
+                <option value="">{{_getTotalTravellers()}}Travellers,{{selectedClassTypeName}}</option>
+              </select>
+            </div>
+            <div class="traveller_select_box" id="travellersBox" style="display: none;" style="min-width: 314px;">
+              <ul>
+                <li>
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Adults</p>
+                    <span>12 years+</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('adult')">-</span>
+                    <span>{{num1}}</span>
+                    <span class="counter_btn" (click)="plus('adult')">+</span>
+                  </div>
+                </li>
+                <li style="border-bottom: 0px;">
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Children</p>
+                    <span>2-12 years</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('child')">-</span>
+                    <span>{{num2}}</span>
+                    <span class="counter_btn" (click)="plus('child');">+</span>
+                  </div>
+                </li>
+                <li class="traveller-class-child-list" style="padding-top: 0;padding-bottom: 0;">
+                  <div *ngFor="let listItem of childList; index as i" class="traveller-class-child-div" id="childList1">
+                    <div *ngIf="listItem!=0 && listItem!=undefined">
+                      <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                      <select (change)="childSelect($any($event.target).value,i)"
+                        class="form-control traveller-class-child-select" id="child1{{i+1}}">
+                        <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+                <li class="traveller-class-child-list" style="padding-top: 0;padding-bottom: 0;">
+                  <div *ngFor="let listItem of childList2; index as i" class="traveller-class-child-div"
+                    id="childList2">
+                    <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                    <select (change)="childSelect($any($event.target).value,i)"
+                      class="form-control traveller-class-child-select" id="child2{{i+1}}">
+                      <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                    </select>
+                  </div>
+                </li>
+                <li>
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Infant</p>
+                    <span>Below 2 years</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('infant')">-</span>
+                    <span>{{num3}}</span>
+                    <span class="counter_btn" (click)="plus('infant')">+</span>
+                  </div>
+                </li>
+              </ul>
+              <div class="flight_class">
+                <p class="traveller-class-font">Class</p>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('C')" name="Travellers_Class" id="business" value="C">
+                  <label for="business" class="traveller-class-optiongp">Business</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('Y')" name="Travellers_Class" id="economy" value="Y"
+                    checked>
+                  <label for="economy" class="traveller-class-optiongp">Economy</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('J')" name="Travellers_Class" id="premiumEconomy"
+                    value="J">
+                  <label for="premiumEconomy" class="traveller-class-optiongp">Premium economy</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('F')" name="Travellers_Class" id="firstClass"
+                    value="F">
+                  <label for="firstClass" class="traveller-class-optiongp">First Class</label>
+                </div>
+              </div>
+              <div style="float: right;padding-right: 10px;">
+                <button class="btn btn-raised shadow my-button w-small btn_orange" (click)="save()">Apply</button>
+              </div>
+            </div>
+          </div>
+          <div class="searchbar_options searchbar_faretype">
+            <div class="inp_group">
+              <label for="">Fare Type</label>
+              <select class="form-control cursor-pointer" name="" id="">
+                <option value="">Show all</option>
+                <option  value="34BC9B43-75E7-49BF-B1B5-9D65441BAF31">less</option>
+                <option value="AAF637CB-ACDA-43DF-ABAE-88B0FCDFB8B7">more</option>
+              </select>
+            </div>
+          </div>
+          <div class="searchbar_options form_submit_btn">
+            <button class="site_cta orange_cta" (click)="flightSearchWork()">SEARCH</button>
+          </div>
+        </form>
+      </div>
+      <div class="inner_searchbar int_multicity" *ngIf="isMulticity">
+        <form action="" class="site_form">
+          <div class="searchbar_options cursor-pointer">
+            <div class="inp_group cursor-pointer">
+              <label for="">TRIP TYPE</label>
+              <select class="cursor-pointer" name="" id="tripType" [formControl]="selectTripType"
+                (change)="tripChange($event)">
+                <option [value]="1">One Way</option>
+                <option [value]="2">Round Trip</option>
+                <option [value]="3">Multicity</option>
+              </select>
+            </div>
+          </div>
+          <div class="searchbar_options int_multicity_dest cursor-pointer" (click)="topMulticitySection()">
+            <div class="inp_group cursor-pointer">
+              <label for="">FROM</label>
+              <select class="cursor-pointer" name="" id="">
+                <option value="">{{getMultiRoutes()}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="search_travellers flight-travel" id="travellersDiv">
+            <div class="inp_group cursor-pointer" (click)="travellerFrom()" (clickOutside)="travellerInfoOutside()"
+              style="background: rgb(72 141 141);">
+              <div class="traveller-class-label">
+                <label class="flight-travel-label" for="">TRAVELLERS &amp; CLASS</label>
+              </div>
+              <select class="cursor-pointer" name="" id="" disabled>
+                <option value="">{{_getTotalTravellers()}}Travellers,{{selectedClassTypeName}}</option>
+              </select>
+            </div>
+            <div class="traveller_select_box" id="travellersBox" style="min-width: 314px; display: none;">
+              <ul>
+                <li>
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Adults</p>
+                    <span>12 years+</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('adult')">-</span>
+                    <span>{{num1}}</span>
+                    <span class="counter_btn" (click)="plus('adult')">+</span>
+                  </div>
+                </li>
+                <li style="border-bottom: 0px;">
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Children</p>
+                    <span>2-12 years</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('child')">-</span>
+                    <span>{{num2}}</span>
+                    <span class="counter_btn" (click)="plus('child');">+</span>
+                  </div>
+                </li>
+                <li class="traveller-class-child-list cursor-pointer" style="padding-top: 0;padding-bottom: 0;">
+                  <div *ngFor="let listItem of childList; index as i" class="traveller-class-child-div" id="childList1">
+                    <div *ngIf="listItem!=0 && listItem!=undefined">
+                      <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                      <select (change)="childSelect($any($event.target).value,i)"
+                        class="form-control traveller-class-child-select" id="child1{{i+1}}">
+                        <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+                <li class="traveller-class-child-list cursor-pointer" style="padding-top: 0;padding-bottom: 0;">
+                  <div *ngFor="let listItem of childList2; index as i" class="traveller-class-child-div"
+                    id="childList2">
+                    <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                    <select (change)="childSelect($any($event.target).value,i)"
+                      class="form-control traveller-class-child-select" id="child2{{i+1}}">
+                      <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                    </select>
+                  </div>
+                </li>
+                <li>
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Infant</p>
+                    <span>Below 2 years</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('infant')">-</span>
+                    <span>{{num3}}</span>
+                    <span class="counter_btn" (click)="plus('infant')">+</span>
+                  </div>
+                </li>
+              </ul>
+              <div class="flight_class">
+                <p class="traveller-class-font">Class</p>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('C')" name="Travellers_Class" id="business" value="C">
+                  <label for="business" class="traveller-class-optiongp">Business</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('Y')" name="Travellers_Class" id="economy" value="Y"
+                    checked>
+                  <label for="economy" class="traveller-class-optiongp">Economy</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('J')" name="Travellers_Class" id="premiumEconomy"
+                    value="J">
+                  <label for="premiumEconomy" class="traveller-class-optiongp">Premium economy</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('F')" name="Travellers_Class" id="firstClass"
+                    value="F">
+                  <label for="firstClass" class="traveller-class-optiongp">First Class</label>
+                </div>
+              </div>
+              <div style="float: right;padding-right: 10px;">
+                <button class="btn btn-raised shadow my-button w-small btn_orange cursor-pointer"
+                  (click)="save()">Apply</button>
+              </div>
+            </div>
+          </div>
+          <div class="searchbar_options searchbar_faretype">
+            <div class="inp_group cursor-pointer">
+              <label for="">Fare Type</label>
+              <select class="inp_field cursor-pointer" name="" id="">
+                <option value="">Show all</option>
+                <option  value="34BC9B43-75E7-49BF-B1B5-9D65441BAF31">less</option>
+                <option value="AAF637CB-ACDA-43DF-ABAE-88B0FCDFB8B7">more</option>
+              </select>
+            </div>
+          </div>
+          <div class="searchbar_options form_submit_btn">
+            <button class="site_cta orange_cta cursor-pointer" (click)="flightSearchWork()">SEARCH</button>
+          </div>
+        </form>
+        <div *ngIf="isMulticityTopSection">
+          <div class="int_multicity_inner_dest" [attr.id]="'trip0'">
+            <form action="" class="site_form int_multicity_form_one cursor-pointer" style="justify-content:flex-start">
+              <div class="searchbar_options trip_no">
+                <label for="">TRIP 1</label>
+              </div>
+              <div class="searchbar_options searchbar_dest">
+                <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(0)">
+                  <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(0)" (click)="flightFrom(0)">
+                  <label for="">FROM</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(0,'departure')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggDeparture1">
+                    <ng-autocomplete [data]="tempAirportsDeparture1" [searchKeyword]="keywords" placeholder="From"
+                      (selected)="selectEvent($event,'from',0)" (inputChanged)="onChangeSearch($event,'from',0)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate1"
+                      [notFoundTemplate]="departureNotFound1" #suggDeparture1>
+                    </ng-autocomplete>
+
+                    <ng-template #departureTemplate1 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #departureNotFound1 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(0)" (click)="flightTo(0)">
+                  <label for="">TO</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(0,'return')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggReturn1">
+                    <ng-autocomplete [data]="tempAirportsArrival1" [searchKeyword]="keywords" placeholder="To"
+                      (selected)="selectEvent($event,'to',0)" (inputChanged)="onChangeSearch($event,'to',0)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate1"
+                      [notFoundTemplate]="arrivalNotFoundTemplate1" #suggReturn1>
+                    </ng-autocomplete>
+
+                    <ng-template #arrivalTemplate1 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #arrivalNotFoundTemplate1 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="searchbar_options searchbar_sched" style="width:50%">
+                <div class="inp_group flat-datepick-from0 cursor-pointer"
+                  (change)="changeDepartureReturnDate($event,'departure',0)" id="departureDate">
+                  <label for="">DEPARTURE</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedDate(0,'departure')}}</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div class="searchbar_options form_submit_btn int_multicity_booking_btn" style="left:63%"
+              [attr.id]="'tripAction0'">
+              <button class="site_cta line_cta cursor-pointer cursor-pointer" (click)="addRemoveCity(false,0)">+Add
+                City</button>
+            </div>
+          </div>
+          <div class="int_multicity_inner_dest" [attr.id]="'trip1'" style="display:none;">
+            <form action="" class="site_form int_multicity_form_one" style="justify-content:flex-start">
+              <div class="searchbar_options trip_no">
+                <label for="">TRIP 2</label>
+              </div>
+              <div class="searchbar_options searchbar_dest">
+                <div class="exchange_wrapper" (click)="exchangeDepartureArrival(1)">
+                  <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(1)" (click)="flightFrom(1)">
+                  <label for="">FROM</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(1,'departure')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggDeparture2">
+                    <ng-autocomplete [data]="tempAirportsDeparture2" [searchKeyword]="keywords" placeholder="From"
+                      (selected)="selectEvent($event,'from',1)" (inputChanged)="onChangeSearch($event,'from',1)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate2"
+                      [notFoundTemplate]="departureNotFound2" #suggDeparture2>
+                    </ng-autocomplete>
+
+                    <ng-template #departureTemplate2 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #departureNotFound2 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(1)" (click)="flightTo(1)">
+                  <label for="">TO</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(1,'return')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggReturn2">
+                    <ng-autocomplete [data]="tempAirportsArrival2" [searchKeyword]="keywords" placeholder="To"
+                      (selected)="selectEvent($event,'to',1)" (inputChanged)="onChangeSearch($event,'to',1)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate2"
+                      [notFoundTemplate]="arrivalNotFoundTemplate2" #suggReturn2>
+                    </ng-autocomplete>
+
+                    <ng-template #arrivalTemplate2 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #arrivalNotFoundTemplate2 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="searchbar_options searchbar_sched" style="width:50%">
+                <div class="inp_group flat-datepick-from1 cursor-pointer"
+                  (change)="changeDepartureReturnDate($event,'departure',1)" id="departureDate">
+                  <label for="">DEPARTURE</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedDate(1,'departure')}}</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div class="searchbar_options form_submit_btn int_multicity_booking_btn cursor-pointer"
+              [attr.id]="'tripAction1'" style="display:none;left:63%">
+              <span class="remove_destination cursor-pointer" (click)="addRemoveCity(true,1)"><i
+                  class="fa fa-times-circle" aria-hidden="true"></i></span>
+              <button class="site_cta line_cta cursor-pointer" (click)="addRemoveCity(false,1)">+Add City</button>
+            </div>
+          </div>
+          <div class="int_multicity_inner_dest" [attr.id]="'trip2'" style="display:none">
+            <form action="" class="site_form int_multicity_form_one" style="justify-content:flex-start">
+              <div class="searchbar_options trip_no">
+                <label for="">TRIP 3</label>
+              </div>
+              <div class="searchbar_options searchbar_dest">
+                <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(2)">
+                  <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+                </div>
+                <div class="inp_group" (clickOutside)="flightFromOutside(2)" (click)="flightFrom(2)">
+                  <label for="">FROM</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(2,'departure')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggDeparture3">
+                    <ng-autocomplete [data]="tempAirportsDeparture3" [searchKeyword]="keywords" placeholder="From"
+                      (selected)="selectEvent($event,'from',2)" (inputChanged)="onChangeSearch($event,'from',2)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate3"
+                      [notFoundTemplate]="departureNotFound3" #suggDeparture3>
+                    </ng-autocomplete>
+
+                    <ng-template #departureTemplate3 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #departureNotFound3 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(2)" (click)="flightTo(2)">
+                  <label for="">TO</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(2,'return')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggReturn3">
+                    <ng-autocomplete [data]="tempAirportsArrival3" [searchKeyword]="keywords" placeholder="To"
+                      (selected)="selectEvent($event,'to',2)" (inputChanged)="onChangeSearch($event,'to',2)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate3"
+                      [notFoundTemplate]="arrivalNotFoundTemplate3" #suggReturn3>
+                    </ng-autocomplete>
+
+                    <ng-template #arrivalTemplate3 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #arrivalNotFoundTemplate3 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="searchbar_options searchbar_sched cursor-pointer" style="width:50%">
+                <div class="inp_group flat-datepick-from2 cursor-pointer"
+                  (change)="changeDepartureReturnDate($event,'departure',2)" id="departureDate">
+                  <label for="">DEPARTURE</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedDate(2,'departure')}}</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div class="searchbar_options form_submit_btn int_multicity_booking_btn" [attr.id]="'tripAction2'"
+              style="display:none;left:63%">
+              <span class="remove_destination cursor-pointer" (click)="addRemoveCity(true,2)"><i
+                  class="fa fa-times-circle" aria-hidden="true"></i></span>
+              <button class="site_cta line_cta cursor-pointer" (click)="addRemoveCity(false,2)">+Add City</button>
+            </div>
+          </div>
+          <div class="int_multicity_inner_dest" [attr.id]="'trip3'" style="display:none">
+            <form action="" class="site_form int_multicity_form_one" style="justify-content:flex-start">
+              <div class="searchbar_options trip_no">
+                <label for="">TRIP 4</label>
+              </div>
+              <div class="searchbar_options searchbar_dest">
+                <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(3)">
+                  <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(3)" (click)="flightFrom(3)">
+                  <label for="">FROM</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(3,'departure')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggDeparture4">
+                    <ng-autocomplete [data]="tempAirportsDeparture4" [searchKeyword]="keywords" placeholder="From"
+                      (selected)="selectEvent($event,'from',3)" (inputChanged)="onChangeSearch($event,'from',3)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate4"
+                      [notFoundTemplate]="departureNotFound4" #suggDeparture4>
+                    </ng-autocomplete>
+
+                    <ng-template #departureTemplate4 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #departureNotFound4 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(3)" (click)="flightTo(3)">
+                  <label for="">TO</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedData(3,'return')}}</option>
+                  </select>
+                  <div class="ng-autocomplete" *ngIf="isSuggReturn4">
+                    <ng-autocomplete [data]="tempAirportsArrival4" [searchKeyword]="keywords" placeholder="To"
+                      (selected)="selectEvent($event,'to',3)" (inputChanged)="onChangeSearch($event,'to',3)"
+                      (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate4"
+                      [notFoundTemplate]="arrivalNotFoundTemplate4" #suggReturn4>
+                    </ng-autocomplete>
+
+                    <ng-template #arrivalTemplate4 let-item>
+                      <div class="row air-search">
+                        <div class="col-md-2 air-search-icon">
+                          <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                          </div>
+                          <div class="row air-search-name" [innerHTML]="item.text">
+                          </div>
+                        </div>
+                        <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template #arrivalNotFoundTemplate4 let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="searchbar_options searchbar_sched cursor-pointer" style="width:50%">
+                <div class="inp_group flat-datepick-from3 cursor-pointer"
+                  (change)="changeDepartureReturnDate($event,'departure',3)" id="departureDate">
+                  <label for="">DEPARTURE</label>
+                  <select class="cursor-pointer" name="" id="" disabled>
+                    <option value="">{{getSelectedDate(3,'departure')}}</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div class="searchbar_options form_submit_btn int_multicity_booking_btn cursor-pointer" style="left:63%"
+              [attr.id]="'tripAction3'">
+              <span class="remove_destination cursor-pointer" (click)="addRemoveCity(true,3)"><i
+                  class="fa fa-times-circle" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2"></div>
+      <div class="notfound-flight" id="notFoundFlight" *ngIf="isNotFound===true">
+        <div class="">
+          <h1 style="color:#fff">Ooops! No flights found in this route</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flight_search_result_section area" *ngIf="isNotFound===false && isLoad===false">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-3 col-lg-12">
+
+          <div class="flight_search_filter_wrapper">
+
+            <div class="sidebar_widget" *ngIf="appliedFilter.length>0">
+              <div class="filter_widget_wrapper applied_filters_widget">
+                <h2 class="widget_title">Applied Filters</h2>
+                <div class="widget_contents">
+                  <ul class="filters_list">
+                    <li *ngFor="let item of appliedFilter" [attr.class]="item.ScheduleClass">
+                      <i *ngIf="item.ArrowClass!=''" [attr.class]="item.ArrowClass"></i>{{item.Title}}
+                      <a (click)="removeAppliedFilterItem(item.Id,item.ScheduleClass)"><i
+                          [attr.class]="item.CancelClass"></i></a>
+                    </li>
+                  </ul>
+                  <span class="clear_filters"><a (click)="removeAllAppliedFilterItem()">Clear All</a></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sidebar_widget">
+              <div class="filter_widget_wrapper popular_filters">
+                <h2 class="widget_title">Popular Filters</h2>
+                <div class="widget_contents">
+                  <div class="filter_grp" *ngFor="let item of popularFilter;let i=index">
+                    <div class="inp_grp">
+                      <input type="checkbox" (click)="popularFilterItem(item,$event)" name=""
+                        [attr.id]="'popularFilterId'+(item.id.replaceAll('-','')).replaceAll(' ','')">
+                      <label class="cursor-pointer"
+                        [attr.for]="'popularFilterId'+(item.id.replaceAll('-','')).replaceAll(' ','')">{{item.title}}
+                        {{item.len}}</label>
+                    </div>
+                    <p>{{shareService.amountShowWithCommas(item.price)}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">One Way Price</h2>
+                <div class="widget_contents">
+                  <div class="inp_grp">
+                    <input type="range" class="range" data-toggle="tooltip" data-placement="top"
+                      [attr.title]="this.shareService.amountShowWithCommas(udMinRangeVal)" id="changeWayPriceID" min="1"
+                      max="100" (change)="changeWayPrice()" value="100">
+                  </div>
+                  <div class="price_range_text">
+                    <p>{{this.shareService.amountShowWithCommas(flightHelper._minimumRange(flightData))}}</p>
+                    <p>{{this.shareService.amountShowWithCommas(flightHelper._maximumRange(flightData))}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sidebar_widget" *ngFor="let filterFlight of selectedFlightDeparture;let tripIdx=index">
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Stops from {{filterFlight.CityName}}</h2>
+                <div class="widget_contents" *ngIf="stopCountList[tripIdx]!=undefined">
+                  <div class="filter_grp" *ngFor="let item of stopCountList[tripIdx].value;let stopIdx=index">
+                    <div class="inp_grp">
+                      <input type="checkbox" class="cursor-pointer" [attr.value]="item.id"
+                        (click)="stopWiseFilter(item,stopIdx,tripIdx,$event)" name=""
+                        [attr.id]="'stopId'+flightHelper.getMakeId(tripIdx,'STOP',stopIdx)">
+                      <label class="cursor-pointer"
+                        [attr.for]="'stopId'+flightHelper.getMakeId(tripIdx,'STOP',stopIdx)">
+                        {{item.title}} ({{item.stopCount}})</label>
+                    </div>
+                    <p>{{this.shareService.amountShowWithCommas(item.price)}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Refundable</h2>
+                <div class="widget_contents">
+                  <div class="filter_grp">
+                    <div class="inp_grp">
+                      <input type="checkbox" class="cursor-pointer" value="1" name=""
+                        (click)="filterRefund('Yes',tripIdx,$event)"
+                        [attr.id]="'chkRefundYes'+flightHelper.getMakeId(tripIdx,'REF')">
+                      <label [attr.for]="'chkRefundYes'+flightHelper.getMakeId(tripIdx,'REF')"
+                        class="cursor-pointer">Yes</label>
+                    </div>
+                  </div>
+                  <div class="filter_grp">
+                    <div class="inp_grp">
+                      <input type="checkbox" class="cursor-pointer" name="" value="2"
+                        (click)="filterRefund('No',tripIdx,$event)"
+                        [attr.id]="'chkRefundNo'+flightHelper.getMakeId(tripIdx,'NONREF')">
+                      <label [attr.for]="'chkRefundNo'+flightHelper.getMakeId(tripIdx,'NONREF')"
+                        class="cursor-pointer">No</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Departure From {{filterFlight.CityName}}</h2>
+                <div class="widget_contents">
+                  <div class="schedule_widget" *ngIf="departureTimeFilter[tripIdx]!=undefined">
+                    <div class="schedule_box cursor-pointer" *ngFor="let item of departureTimeFilter[tripIdx].value;
+                                      let deptIdx=index"
+                      [attr.id]="'deptScheduleBox'+flightHelper.getMakeId(tripIdx,'DEPT',deptIdx)">
+                      <input type="checkbox" name="chkScheduleWidget" [attr.value]="item.details"
+                        (click)="filterDepartureTime(item,deptIdx,tripIdx,$event)" style="display: none;"
+                        [attr.id]="'scheduleDept'+flightHelper.getMakeId(tripIdx,'DEPT',deptIdx)" />
+                      <label [attr.for]="'scheduleDept'+flightHelper.getMakeId(tripIdx,'DEPT',deptIdx)"
+                        class="cursor-pointer">
+                        <div [attr.id]="'deptWidget'+flightHelper.getMakeId(tripIdx,'DEPT',deptIdx)">
+                          <img [attr.src]="item.logo" alt="...">
+                          <p [attr.id]="'deptTitleId'+flightHelper.getMakeId(tripIdx,'DEPT',deptIdx)">
+                            {{getTitle(tripIdx,item.title)}}</p>
+                          <p [attr.id]="'deptPriceId'+flightHelper.getMakeId(tripIdx,'DEPT',deptIdx)">
+                            {{this.shareService.amountShowWithCommas(item.price)}}</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Arrival at {{selectedFlightArrival[tripIdx].CityName}}</h2>
+                <div class="widget_contents">
+                  <div class="schedule_widget" *ngIf="arrivalTimeFilter[tripIdx]!=undefined">
+                    <div class="schedule_box cursor-pointer"
+                      *ngFor="let item of arrivalTimeFilter[tripIdx].value;let arrIdx=index"
+                      [attr.id]="'arrScheduleBox'+flightHelper.getMakeId(tripIdx,'ARR',arrIdx)">
+                      <input type="checkbox" name="chkScheduleWidget" [attr.value]="item.details"
+                        (click)="filterArrivalTime(item,arrIdx,tripIdx,$event)" style="display: none;"
+                        [attr.id]="'scheduleArr'+flightHelper.getMakeId(tripIdx,'ARR',arrIdx)" />
+                      <label [attr.for]="'scheduleArr'+flightHelper.getMakeId(tripIdx,'ARR',arrIdx)"
+                        class="cursor-pointer">
+                        <div [attr.id]="'arrWidget'+flightHelper.getMakeId(tripIdx,'ARR',arrIdx)">
+                          <img [attr.src]="item.logo" alt="...">
+                          <p [attr.id]="'arrTitleId'+flightHelper.getMakeId(tripIdx,'ARR',arrIdx)">
+                            {{getTitle(tripIdx,item.title)}}</p>
+                          <p [attr.id]="'arrPriceId'+flightHelper.getMakeId(tripIdx,'ARR',arrIdx)">
+                            {{this.shareService.amountShowWithCommas(item.price)}}</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sidebar_widget">
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Airlines</h2>
+                <div class="widget_contents" id="airlineList">
+                  <div *ngFor="let item of airlines;let i=index">
+                    <div class="filter_grp" *ngIf="item.len!=0">
+                      <div class="inp_grp">
+                        <input type="checkbox" class="cursor-pointer" [value]="item.code"
+                          (change)="filterAirlines(item.code,$event)" class="filter" name="filter"
+                          id="filterId{{item.code}}">
+                        <label class="cursor-pointer" for="filterId{{item.code}}">{{item.name}} ({{item.len}})</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-9 col-lg-12">
+          <div class="search_results_wrapper">
+
+            <div class="search_result_heading">
+              <h2 class="search_result_title" *ngIf="paramModelData.Departure[0]!=undefined">
+                Flights from {{paramModelData.Departure[0].CityName}} to
+                {{paramModelData.Arrival[paramModelData.Arrival.length-1].CityName}}</h2>
+              <div class="all_fare_toggle">
+                <p>Show All Fare</p>
+                <label class="switch">
+                  <input type="checkbox" id="fareType" (click)="fareTypeChange($event)">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+            <div id="flightSearchBody" *ngIf="topFlightSearchSkeleton==false"
+              style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+              <div class="row">
+                <div class="col-sm-1" (click)="moveLeftFlight()" style="padding-right: 5px;
+                                    margin-left: 8px;
+                                    width: 0;
+                                    padding-top: 10px;
+                                    cursor: pointer;">
+                  <i class="fa fa-angle-left" aria-hidden="true"></i>
+                </div>
+                <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                  <drag-scroll #flightItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                    [scrollbar-hidden]="true">
+                    <div class="flight-item" drag-scroll-item *ngFor="let item of topFlights; let i=index">
+                      <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                        <a (click)="filterAirlines(item.code,undefined,true)">
+                          <div class="flights_img">
+                            <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                          </div>
+                          <div class="flight_info">
+                            <span class="flight_shortname">{{item.code}}</span>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  </drag-scroll>
+                </div>
+                <div class="col-sm-1" (click)="moveRightFlight()" style="padding-left: 11px;
+                                    width: 0;
+                                    padding-top: 10px;
+                                    cursor: pointer;">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+            <div id="flightSearchSkeleton" *ngIf="topFlightSearchSkeleton==true">
+              <div class="d-flex flex-row flex-nowrap flight-search">
+                <div class="skleton_card__flightSearch loading"></div>
+                <div class="skleton_card__flightSearch loading"></div>
+                <div class="skleton_card__flightSearch loading"></div>
+                <div class="skleton_card__flightSearch loading"></div>
+                <div class="skleton_card__flightSearch loading"></div>
+                <div class="skleton_card__flightSearch loading"></div>
+              </div>
+            </div>
+            <br />
+
+
+            <div class="flight_search_result_wrapper int_roundtrip_search_wrapper int_multicity_search_wrapper">
+              <div id="resultBodySkeleton" *ngIf="flightSearchSkeleton===true">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="skleton_card__resultBody__big loading"></div>
+                    <div class="skleton_card__resultBody__big loading"></div>
+                  </div>
+                  <div class="col-md-9">
+                    <div class="skleton_card__resultBody__big loading"></div>
+                    <div class="skleton_card__resultBody__big loading"></div>
+                  </div>
+                </div>
+              </div>
+              <div id="resultBody" *ngIf="flightSearchSkeleton===false">
+                <div class="result_card_wrapper" *ngFor="let rootItem of getGroupByItinery();let rootI=index">
+                  <div *ngFor="let ip of getProvider(rootItem)">
+                    <!-- {{rootItem|json}} -->
+                    <div class="int_roundtrip_flight_info_header">
+                      <ul class="int_flight_list">
+                        <li *ngFor="let splitItem of rootItem.split(',')">
+                          <div class="flights_img">
+                            <img class="airline-logo-size-group"
+                              [src]="'../'+flightHelper.getAirlineLogo(splitItem,airlines)" alt="...">
+                          </div>
+                          <div class="flight_info">
+                            <span class="flight_shortname">{{flightHelper.getAirlineName(splitItem,airlines)}}</span>
+                            <br/>
+                            <span class="flight_shortname" style="font-size:11px;">{{ip}}</span>
+                          </div>
+                        </li>
+                      </ul>
+                      <ul class="fare_info">
+                        <li>
+                          <span class="main_fare" [attr.id]="'clientPrice'+rootItem">{{flightHelper.currency}}
+                            {{getGroupHeadAmount1(rootItem,"clientfare",ip)}}</span>
+                          <span *ngIf="isAgentFare===true" class="agent_fare" [attr.id]="'agentPrice'+rootItem">Agent
+                            Fare:
+                            <b>{{flightHelper.currency}} {{getGroupHeadAmount1(rootItem,"agentfare",ip)}}</b></span>
+                        </li>
+                        <li>
+                          <div *ngIf="flightHelper.isInstant(bookInstantEnableDisable,rootItem)==false"
+                            class="booking_btn">
+                            <a id="btnBook{{rootItem+flightHelper.ReplaceParentheses(ip)}}" (click)="bookAndHoldAction1(rootItem,ip)"
+                              class="site_cta line_cta">BOOK &amp; HOLD</a>
+                          </div>
+                          <div *ngIf="flightHelper.isInstant(bookInstantEnableDisable,rootItem)==true"
+                            class="booking_btn">
+                            <a id="btnInstant{{rootItem+flightHelper.ReplaceParentheses(ip)}}" (click)="bookAndHoldAction1(rootItem,ip)"
+                              class="site_cta line_cta orange_line_cta">ISSUE NOW</a>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="int_multicity_flight_batch_result_wrapper">
+
+                      <div [attr.id]="rootItem+flightHelper.ReplaceParentheses(ip)+tripItem" class="int_multicity_trip_set"
+                        *ngFor="let tripItem of getGroupByTrip(rootItem);let t=index">
+
+                        <div class="int_multicity_trip_info">
+                          <span class="trip_no">Trip {{tripItem}}</span>
+                          <span class="trip_place">{{paramModelData.Departure[tripItem-1].CityName}} to
+                            {{paramModelData.Arrival[tripItem-1].CityName}}</span>
+                          <span
+                            class="trip_dare">{{this.shareService.getDayNameShort(paramModelData.Departure[tripItem-1].Date)}}
+                            {{this.shareService.getDay(paramModelData.Departure[tripItem-1].Date)}}
+                            {{this.shareService.getMonthShort(paramModelData.Departure[tripItem-1].Date)}}
+                            {{this.shareService.getYearShort(paramModelData.Departure[tripItem-1].Date)}}</span>
+                          <span *ngIf="isShowViewMore1(rootItem,tripItem,ip)" [attr.id]="'txt'+rootItem+tripItem"
+                            (click)="viewMoreFlights(rootItem+flightHelper.ReplaceParentheses(ip)+tripItem)" class="moreflights_trigger">
+                            View More Flights</span>
+                        </div>
+                        <div class="int_multicity_trip_list">
+                          <div class="result_single_box"
+                            *ngFor="let tripDetails of getTripDetails1(rootItem,tripItem,ip);let td=index">
+                            <div class="result_single_info">
+                              <ul>
+                                <li>
+                                  <span class="flight_code_name"><b>Flight No:</b>
+                                    {{flightHelper.getFlightNoMore(tripDetails.flightSegmentData)}}
+                                  </span>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <!-- {{tripDetails|json}} -->
+                                    <span class="col_head_value">{{tripDetails.departureTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('DD-MMM-YYYY')}}"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;"></span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('YY')}}
+                                    </p>
+                                    <p>{{tripDetails.departureCity}}</p>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <p>{{tripDetails.differenceTime}}</p>
+                                    <div class="stopage_wrapper">
+                                      <div class="tooltip_bar">
+                                        <span class="stopage_bar"></span>
+                                        <div *ngIf="tripDetails.stop==3" class="stopage_count_wrapper">
+                                          <span class="stopage_count"></span>
+                                          <span class="stopage_count"></span>
+                                          <span class="stopage_count"></span>
+                                        </div>
+                                        <div *ngIf="tripDetails.stop==2" class="stopage_count_wrapper">
+                                          <span class="stopage_count"></span>
+                                          <span class="stopage_count"></span>
+                                        </div>
+                                        <div *ngIf="tripDetails.stop==1" class="stopage_count_wrapper">
+                                          <span class="stopage_count"></span>
+                                        </div>
+                                      </div>
+                                      <div class="tooltip_data left" *ngIf="tripDetails.stop>0">
+                                        <div *ngFor="let sItem of tripDetails.flightSegmentData">
+                                          <div *ngIf="sItem.layOverDifference!=''">
+                                            <p>Plane Change</p>
+                                            <p>{{sItem.arrivalCity}} ({{sItem.arrivalAirportCode}})<br>
+                                              {{sItem.layOverDifference}} layover</p>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                    <p *ngIf="tripDetails.stop!=0">{{tripDetails.stop}} stop via
+                                      {{tripDetails.stopAllCity}} </p>
+                                    <p *ngIf="tripDetails.stop==0">Non stop </p>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <!-- {{tripDetails.arradjustment|json}} -->
+                                    <span class="col_head_value">{{tripDetails.arrivalTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('DD-MMM-YYYY')}}"
+                                      *ngIf="tripDetails.arradjustment!=0 && tripDetails.arradjustment!=undefined"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;">+{{tripDetails.arradjustment}}Day</span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('YY')}}
+                                    </p>
+                                    <p>{{tripDetails.arrivalCity}}</p>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <div class="flight_choose_btn">
+                                      <input type="radio" (click)="selectRadio1(rootItem,tripDetails.id,tripItem,ip)"
+                                        [attr.id]="'flight_select'+rootItem+tripItem+td+flightHelper.ReplaceParentheses(ip)"
+                                        [attr.name]="'flight_select'+rootItem+tripItem+flightHelper.ReplaceParentheses(ip)">
+                                      <label [attr.for]="'flight_select'+rootItem+tripItem+td+flightHelper.ReplaceParentheses(ip)"></label>
+                                    </div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="int_multicity_flight_batch_result_wrapper_mobile">
+                      <div [attr.id]="rootItem+tripItem" class="int_multicity_trip_set"
+                        *ngFor="let tripItem of getGroupByTrip(rootItem);let t=index">
+
+                        <div class="int_multicity_trip_info">
+                          <span class="trip_no">Trip {{tripItem}}</span>
+                          <span class="trip_place">{{paramModelData.Departure[tripItem-1].CityName}} to
+                            {{paramModelData.Arrival[tripItem-1].CityName}}</span>
+                          <span
+                            class="trip_dare">{{this.shareService.getDayNameShort(paramModelData.Departure[tripItem-1].Date)}}
+                            {{this.shareService.getDay(paramModelData.Departure[tripItem-1].Date)}}
+                            {{this.shareService.getMonthShort(paramModelData.Departure[tripItem-1].Date)}}
+                            {{this.shareService.getYearShort(paramModelData.Departure[tripItem-1].Date)}}</span>
+                          <span *ngIf="isShowViewMore1(rootItem,tripItem,ip)" [attr.id]="'txt'+rootItem+tripItem"
+                            (click)="viewMoreFlights(rootItem+flightHelper.ReplaceParentheses(ip)+tripItem)" class="moreflights_trigger">
+                            View More Flights</span>
+                        </div>
+                        <div class="int_multicity_trip_list">
+                          <div class="result_single_box"
+                            *ngFor="let tripDetails of getTripDetails1(rootItem,tripItem,ip);let td=index">
+                            <div class="result_single_info">
+                              <ul>
+                                <li>
+                                  <span class="flight_code_name"><b>Flight No:</b>
+                                    {{flightHelper.getFlightNoMore(tripDetails.flightSegmentData)}}
+                                  </span>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">{{tripDetails.departureTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('DD-MMM-YYYY')}}"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;"></span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.depadjustment).format('YY')}}
+                                    </p>
+                                    <p>{{tripDetails.departureCity}}</p>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <p>{{tripDetails.differenceTime}}</p>
+                                    <div class="stopage_wrapper">
+                                      <div class="tooltip_bar">
+                                        <span class="stopage_bar"></span>
+                                        <div *ngIf="tripDetails.stop==3" class="stopage_count_wrapper">
+                                          <span class="stopage_count"></span>
+                                          <span class="stopage_count"></span>
+                                          <span class="stopage_count"></span>
+                                        </div>
+                                        <div *ngIf="tripDetails.stop==2" class="stopage_count_wrapper">
+                                          <span class="stopage_count"></span>
+                                          <span class="stopage_count"></span>
+                                        </div>
+                                        <div *ngIf="tripDetails.stop==1" class="stopage_count_wrapper">
+                                          <span class="stopage_count"></span>
+                                        </div>
+                                      </div>
+                                      <div class="tooltip_data left" *ngIf="tripDetails.stop>0">
+                                        <div *ngFor="let sItem of tripDetails.flightSegmentData">
+                                          <div *ngIf="sItem.layOverDifference!=''">
+                                            <p>Plane Change</p>
+                                            <p>{{sItem.arrivalCity}} ({{sItem.arrivalAirportCode}})<br>
+                                              {{sItem.layOverDifference}} layover</p>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                    <p *ngIf="tripDetails.stop!=0">{{tripDetails.stop}} stop via
+                                      {{tripDetails.stopAllCity}} </p>
+                                    <p *ngIf="tripDetails.stop==0">Non stop </p>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">{{tripDetails.arrivalTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('DD-MMM-YYYY')}}"
+                                      *ngIf="tripDetails.arradjustment!=0 && tripDetails.arradjustment!=undefined"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;">+{{tripDetails.arradjustment}}Day</span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(paramModelData.Departure[tripItem-1].Date,tripDetails.arradjustment).format('YY')}}
+                                    </p>
+                                    <p>{{tripDetails.arrivalCity}}</p>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <div class="flight_choose_btn">
+                                      <input type="radio" (click)="selectRadio1(rootItem,tripDetails.id,tripItem,ip)"
+                                        [attr.id]="'flight_select'+rootItem+tripItem+td+flightHelper.ReplaceParentheses(ip)"
+                                        [attr.name]="'flight_select'+rootItem+tripItem">
+                                      <label [attr.for]="'flight_select'+rootItem+tripItem+td+flightHelper.ReplaceParentheses(ip)"></label>
+                                    </div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="result_single_options">
+                      <ul>
+                        <li data-bs-toggle="modal" (click)="showMakeProposal1(rootItem,ip)">Make Proposal</li>
+                        <li>$ Refundable</li>
+                        <li class="fare_details_trigger" [attr.id]="'fareDetailsShowHide'+rootItem+flightHelper.ReplaceParentheses(ip)"
+                          (click)="flightHelper.fareShowHideAction(rootItem+flightHelper.ReplaceParentheses(ip),'#flightDetailsWrap',
+                                              '#flightDetailsShowHide','.result_single_box','#fareDetailsShowHide','#fareDetailsWrap')">View Fare Details</li>
+                        <li class="flight_details_trigger" [attr.id]="'flightDetailsShowHide'+rootItem+flightHelper.ReplaceParentheses(ip)"
+                          (click)="flightHelper.flightShowHideAction(rootItem+flightHelper.ReplaceParentheses(ip),'#flightDetailsWrap',
+                                              '#flightDetailsShowHide','.result_single_box','#fareDetailsShowHide','#fareDetailsWrap')">View Flight Details</li>
+                      </ul>
+                      <div class="fare_details_wrapper" [attr.id]="'flightDetailsWrap'+rootItem+flightHelper.ReplaceParentheses(ip)" style="display:none">
+                        <div *ngIf="selectedRadioFlightDetails!=undefined">
+                          <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let selectTrip=index">
+                            <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                      padding: 5px 0 10px 0;">
+                              {{paramModelData.Departure[selectTrip].CityName}}
+                              to {{paramModelData.Arrival[selectTrip].CityName}},
+                              {{shareService.getDay(paramModelData.Departure[selectTrip].Date)}}
+                              {{shareService.getMonthShort(paramModelData.Departure[selectTrip].Date)}}
+                              {{shareService.getYearShort(paramModelData.Departure[selectTrip].Date)}}
+                            </h2>
+                            <div class="result_single_info"
+                              *ngFor="let fItem of flightItem.flightSegmentData;let i=index">
+                              <ul>
+                                <li style="min-width: 180px;max-width: 200px;">
+                                  <div class="result_single_col_info">
+                                    <div class="flights_info_wrapper">
+                                      <div class="flights_img">
+                                        <img class="airline-logo-size" [src]="'../'+fItem.airlineLogo" alt="...">
+                                      </div>
+                                      <div class="flight_info">
+                                        <span class="flight_shortname">{{fItem.airlineName}}</span>
+                                        <span class="flight_code">{{fItem.airlineCode}}{{fItem.airlineNumber}}</span>
+                                        <!-- <p><b>Avalable Seat: {{fItem.availableSeat}}</b></p> -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">{{fItem.departureTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('DD-MMM-YYYY')}}"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;"></span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('YY')}}
+                                    </p>
+                                    <p>{{fItem.terminalDeparture}}</p>
+                                    <p>{{fItem.departureCity}}</p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <p>{{fItem.differenceTime}}</p>
+                                    <div class="stopage_wrapper">
+                                      <div class="tooltip_bar">
+                                        <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">{{fItem.arrivalTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('DD-MMM-YYYY')}}"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;"></span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('YY')}}
+                                    </p>
+                                    <p>{{fItem.terminalArrival}}</p>
+                                    <p>{{fItem.arrivalCity}}</p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">Baggage:</span>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.adult)">Adult</p>
+                                    <p *ngIf="!shareService.isObjectEmpty(flightItem.child)">Child</p>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.infant)">Infant</p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">Check In</span>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.adult)">{{flightItem.baggageAdult}}
+                                    </p>
+                                    <p *ngIf="!shareService.isObjectEmpty(flightItem.child)">{{flightItem.baggageChild}}
+                                    </p>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.infant)">{{flightItem.baggageInfant}}
+                                    </p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">Cabin</span>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.adult)">{{flightItem.cabinAdult}}</p>
+                                    <p *ngIf="!shareService.isObjectEmpty(flightItem.child)">{{flightItem.cabinChild}}</p>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.infant)">{{flightItem.cabinInfant}}
+                                    </p>
+                                  </div>
+                                </li>
+                              </ul>
+                              <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                                <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                                  ({{fItem.arrivalAirportCode}})</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flight_details_wrapper" [attr.id]="'fareDetailsWrap'+rootItem+flightHelper.ReplaceParentheses(ip)" style="display: none;">
+                        <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+                          <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                              [attr.data-bs-target]="'#pills-home'+rootItem" type="button" role="tab"
+                              aria-controls="pills-home" aria-selected="true">Fare Summary</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button (click)="dateChangeApi1(false,rootItem,ip)" class="nav-link" id="pills-contact-tab"
+                              data-bs-toggle="pill" [attr.data-bs-target]="'#pills-contact'+rootItem" type="button"
+                              role="tab" aria-controls="pills-contact" aria-selected="false">Cancellation</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button (click)="dateChangeApi1(true,rootItem,ip)" class="nav-link" id="pills-date-tab"
+                              data-bs-toggle="pill" [attr.data-bs-target]="'#pills-date'+rootItem" type="button"
+                              role="tab" aria-controls="pills-date" aria-selected="false">Date Change</button>
+                          </li>
+                        </ul>
+                        <div class="flight_details_tab_content tab-content" id="pills-tabContent">
+
+                          <div class="tab-pane fade show active" [attr.id]="'pills-home'+rootItem" role="tabpanel"
+                            aria-labelledby="pills-home-tab">
+                            <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let selectTrip=index">
+                              <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                              padding: 5px 0 10px 0;">
+                                {{paramModelData.Departure[selectTrip].CityName}}
+                                to {{paramModelData.Arrival[selectTrip].CityName}},
+                                {{shareService.getDay(paramModelData.Departure[selectTrip].Date)}}
+                                {{shareService.getMonthShort(paramModelData.Departure[selectTrip].Date)}}
+                                {{shareService.getYearShort(paramModelData.Departure[selectTrip].Date)}}
+                              </h2>
+                              <div class="flight_details_tab_table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th style="text-align: center;">Type</th>
+                                      <th style="text-align: center;">Passenger Count</th>
+                                      <th style="text-align: center;">Base Fare ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Tax ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Client Fare ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Discount<span
+                                          *ngIf="flightItem.fareData.discountType!=''
+                                                                          && flightItem.fareData.discountType!=undefined">({{flightItem.fareData.discountType}})</span>
+                                        ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">AIT ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Agent Fare ({{flightHelper.currency}})</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngIf="adult!='0'">
+                                      <td>Adult</td>
+                                      <td>{{adult}}</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultBaseClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultTaxClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultTotalClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultDiscount)}}</td>
+                                      <td class="amount">0</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultAgentFare)}}
+                                      </td>
+                                    </tr>
+                                    <tr *ngIf="child!='0'">
+                                      <td>Child</td>
+                                      <td>{{child}}</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childBaseClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childTaxClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childTotalClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childDiscount)}}</td>
+                                      <td class="amount">0</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childAgentFare)}}
+                                      </td>
+                                    </tr>
+                                    <tr *ngIf="infant!='0'">
+                                      <td>Infant</td>
+                                      <td>{{infant}}</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantBaseClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantTaxClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantTotalClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantDiscount)}}
+                                      </td>
+                                      <td class="amount">0</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantAgentFare)}}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tl-amount">Total :</td>
+                                      <td style="border: none;"></td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.clientFareTotal)}}</td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.agentFareTotal)}}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="tab-pane fade" [attr.id]="'pills-contact'+rootItem" role="tabpanel"
+                            aria-labelledby="pills-contact-tab">
+                            <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let trip=index">
+                              <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                              padding: 5px 0 10px 0;">{{flightItem.departureCity}} to
+                                {{flightItem.arrivalCity}},
+                                {{shareService.getDay(flightItem.departureDate)}}
+                                {{shareService.getMonthShort(flightItem.departureDate)}}
+                                {{shareService.getYearShort(flightItem.departureDate)}}
+                              </h2>
+                              <div class="flight_details_tab_table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Time Frame <span>(From Schedule flight
+                                          departure)</span></th>
+                                      <th>Airline Fee + MMT Fee <span>(Per
+                                          passenger)</span></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">0 hours to 96 hours*</td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getCancellation(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getCancellation(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getCancellation(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">96 hours to 365 hours*</td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getCancellation(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getCancellation(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getCancellation(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <p class="table_note">*From the Date of Departure</p>
+                              </div>
+                            </div>
+                            <!-- /.flight_details_tab_table table-responsive -->
+                          </div>
+                          <div class="tab-pane fade" [attr.id]="'pills-date'+rootItem" role="tabpanel"
+                            aria-labelledby="pills-date-tab">
+                            <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let trip=index">
+                              <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                              padding: 5px 0 10px 0;">{{flightItem.departureCity}} to
+                                {{flightItem.arrivalCity}},
+                                {{shareService.getDay(flightItem.departureDate)}}
+                                {{shareService.getMonthShort(flightItem.departureDate)}}
+                                {{shareService.getYearShort(flightItem.departureDate)}}
+                              </h2>
+                              <div class="flight_details_tab_table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Time Frame <span>(From Schedule flight
+                                          departure)</span></th>
+                                      <th>Airline Fee + MMT Fee + Fare Difference
+                                        <span>(Per passenger)</span>
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">0 hours to 96 hours*</td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getDateChanges(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">96 hours to 365 hours*</td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getDateChanges(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <p class="table_note">*From the Date of Departure</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="result_single_options_mobile result_single_options">
+                      <ul>
+                        <li data-bs-toggle="modal" (click)="showMakeProposal1(rootItem,ip)">Make Proposal</li>
+                        <li>$ Refundable</li>
+                        <li data-bs-toggle="modal" (click)="showFareDetailsMobile1(rootItem,ip)">View Fare Details</li>
+                        <li data-bs-toggle="modal" (click)="showFlightDetailsMobile1(rootItem,ip)">View Flight Details</li>
+                      </ul>
+                      <div class="fare_details_wrapper" [attr.id]="'flightDetailsWrap'" style="display:none">
+                        <div *ngIf="selectedRadioFlightDetails!=undefined">
+                          <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let selectTrip=index">
+                            <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                    padding: 5px 0 10px 0;">
+                              {{paramModelData.Departure[selectTrip].CityName}}
+                              to {{paramModelData.Arrival[selectTrip].CityName}},
+                              {{shareService.getDay(paramModelData.Departure[selectTrip].Date)}}
+                              {{shareService.getMonthShort(paramModelData.Departure[selectTrip].Date)}}
+                              {{shareService.getYearShort(paramModelData.Departure[selectTrip].Date)}}
+                            </h2>
+                            <div class="result_single_info"
+                              *ngFor="let fItem of flightItem.flightSegmentData;let i=index">
+                              <ul>
+                                <li style="min-width: 180px;max-width: 200px;">
+                                  <div class="result_single_col_info">
+                                    <div class="flights_info_wrapper">
+                                      <div class="flights_img">
+                                        <img class="airline-logo-size" [src]="'../'+fItem.airlineLogo" alt="...">
+                                      </div>
+                                      <div class="flight_info">
+                                        <span class="flight_shortname">{{fItem.airlineName}}</span>
+                                        <span class="flight_code">{{fItem.airlineCode}}{{fItem.airlineNumber}}</span>
+                                        <!-- <p><b>Avalable Seat: {{fItem.availableSeat}}</b></p> -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">{{fItem.departureTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('DD-MMM-YYYY')}}"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;"></span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.departureAdjustment).format('YY')}}
+                                    </p>
+                                    <p>{{fItem.terminalDeparture}}</p>
+                                    <p>{{fItem.departureCity}}</p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <p>{{fItem.differenceTime}}</p>
+                                    <div class="stopage_wrapper">
+                                      <div class="tooltip_bar">
+                                        <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">{{fItem.arrivalTime}}</span>
+                                    <span
+                                      title="{{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('DD-MMM-YYYY')}}"
+                                      style="color: #b32828;font-weight: bold;cursor: pointer;"></span>
+                                    <p>
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('ddd')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('DD')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('MMM')}}
+                                      {{flightHelper.getAdjustmentDate(flightItem.departureDate,fItem.arrivalAdjustment).format('YY')}}
+                                    </p>
+                                    <p>{{fItem.terminalArrival}}</p>
+                                    <p>{{fItem.arrivalCity}}</p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">Baggage:</span>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.adult)">Adult</p>
+                                    <p *ngIf="!shareService.isObjectEmpty(flightItem.child)">Child</p>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.infant)">Infant</p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">Check In</span>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.adult)">{{flightItem.baggageAdult}}
+                                    </p>
+                                    <p *ngIf="!shareService.isObjectEmpty(flightItem.child)">{{flightItem.baggageChild}}
+                                    </p>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.infant)">{{flightItem.baggageInfant}}
+                                    </p>
+                                  </div>
+                                </li>
+                                <li></li>
+                                <li>
+                                  <div class="result_single_col_info">
+                                    <span class="col_head_value">Cabin</span>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.adult)">{{flightItem.cabinAdult}}</p>
+                                    <p *ngIf="!shareService.isObjectEmpty(flightItem.child)">{{flightItem.cabinChild}}</p>
+                                    <p *ngIf="!shareService.isNullOrEmpty(flightItem.infant)">{{flightItem.cabinInfant}}
+                                    </p>
+                                  </div>
+                                </li>
+                              </ul>
+                              <div class="break_info" *ngIf="fItem.layOverDifference!=''">
+                                <span>Changes of planes | {{fItem.layOverDifference}} layover in {{fItem.arrivalCity}}
+                                  ({{fItem.arrivalAirportCode}})</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flight_details_wrapper" [attr.id]="'fareDetailsWrap'" style="display: none;">
+                        <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+                          <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                              [attr.data-bs-target]="'#pills-home'+rootItem" type="button" role="tab"
+                              aria-controls="pills-home" aria-selected="true">Fare Summary</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button (click)="dateChangeApi1(false,rootItem,ip)" class="nav-link" id="pills-contact-tab"
+                              data-bs-toggle="pill" [attr.data-bs-target]="'#pills-contact'+rootItem" type="button"
+                              role="tab" aria-controls="pills-contact" aria-selected="false">Cancellation</button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button (click)="dateChangeApi1(true,rootItem,ip)" class="nav-link" id="pills-date-tab"
+                              data-bs-toggle="pill" [attr.data-bs-target]="'#pills-date'+rootItem" type="button"
+                              role="tab" aria-controls="pills-date" aria-selected="false">Date Change</button>
+                          </li>
+                        </ul>
+                        <div class="flight_details_tab_content tab-content" id="pills-tabContent">
+
+                          <div class="tab-pane fade show active" [attr.id]="'pills-home'+rootItem" role="tabpanel"
+                            aria-labelledby="pills-home-tab">
+                            <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let selectTrip=index">
+                              <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                            padding: 5px 0 10px 0;">
+                                {{paramModelData.Departure[selectTrip].CityName}}
+                                to {{paramModelData.Arrival[selectTrip].CityName}},
+                                {{shareService.getDay(paramModelData.Departure[selectTrip].Date)}}
+                                {{shareService.getMonthShort(paramModelData.Departure[selectTrip].Date)}}
+                                {{shareService.getYearShort(paramModelData.Departure[selectTrip].Date)}}
+                              </h2>
+                              <div class="flight_details_tab_table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th style="text-align: center;">Type</th>
+                                      <th style="text-align: center;">Passenger Count</th>
+                                      <th style="text-align: center;">Base Fare ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Tax ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Client Fare ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Discount<span
+                                          *ngIf="flightItem.fareData.discountType!=''
+                                                                        && flightItem.fareData.discountType!=undefined">({{flightItem.fareData.discountType}})</span>
+                                        ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">AIT ({{flightHelper.currency}})</th>
+                                      <th style="text-align: center;">Agent Fare ({{flightHelper.currency}})</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngIf="adult!='0'">
+                                      <td>Adult</td>
+                                      <td>{{adult}}</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultBaseClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultTaxClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultTotalClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultDiscount)}}</td>
+                                      <td class="amount">0</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.adultAgentFare)}}
+                                      </td>
+                                    </tr>
+                                    <tr *ngIf="child!='0'">
+                                      <td>Child</td>
+                                      <td>{{child}}</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childBaseClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childTaxClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childTotalClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childDiscount)}}</td>
+                                      <td class="amount">0</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.childAgentFare)}}
+                                      </td>
+                                    </tr>
+                                    <tr *ngIf="infant!='0'">
+                                      <td>Infant</td>
+                                      <td>{{infant}}</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantBaseClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantTaxClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantTotalClient)}}
+                                      </td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantDiscount)}}
+                                      </td>
+                                      <td class="amount">0</td>
+                                      <td class="amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.fareData.infantAgentFare)}}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tl-amount">Total :</td>
+                                      <td style="border: none;"></td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.clientFareTotal)}}</td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount" style="border: none;"></td>
+                                      <td class="tl-amount">
+                                        {{this.shareService.amountShowWithCommas(flightItem.agentFareTotal)}}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="tab-pane fade" [attr.id]="'pills-contact'+rootItem" role="tabpanel"
+                            aria-labelledby="pills-contact-tab">
+                            <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let trip=index">
+                              <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                            padding: 5px 0 10px 0;">{{flightItem.departureCity}} to
+                                {{flightItem.arrivalCity}},
+                                {{shareService.getDay(flightItem.departureDate)}}
+                                {{shareService.getMonthShort(flightItem.departureDate)}}
+                                {{shareService.getYearShort(flightItem.departureDate)}}
+                              </h2>
+                              <div class="flight_details_tab_table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Time Frame <span>(From Schedule flight
+                                          departure)</span></th>
+                                      <th>Airline Fee + MMT Fee <span>(Per
+                                          passenger)</span></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">0 hours to 96 hours*</td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getCancellation(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getCancellation(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getCancellation(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Cancel',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">96 hours to 365 hours*</td>
+                                      <td *ngIf="!getIsLoad('Cancel',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getCancellation(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getCancellation(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getCancellation(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <p class="table_note">*From the Date of Departure</p>
+                              </div>
+                            </div>
+                            <!-- /.flight_details_tab_table table-responsive -->
+                          </div>
+                          <div class="tab-pane fade" [attr.id]="'pills-date'+rootItem" role="tabpanel"
+                            aria-labelledby="pills-date-tab">
+                            <div *ngFor="let flightItem of getSelectedViewFlights1(rootItem,ip);let trip=index">
+                              <h2 style="font-size: 18px;color: #1C616B;text-align: center;border-bottom: 2px solid #F4F4F4;
+                                                            padding: 5px 0 10px 0;">{{flightItem.departureCity}} to
+                                {{flightItem.arrivalCity}},
+                                {{shareService.getDay(flightItem.departureDate)}}
+                                {{shareService.getMonthShort(flightItem.departureDate)}}
+                                {{shareService.getYearShort(flightItem.departureDate)}}
+                              </h2>
+                              <div class="flight_details_tab_table table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Time Frame <span>(From Schedule flight
+                                          departure)</span></th>
+                                      <th>Airline Fee + MMT Fee + Fare Difference
+                                        <span>(Per passenger)</span>
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">0 hours to 96 hours*</td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getDateChanges(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="getIsLoad('Date',trip+1)">
+                                        <div class="skleton_text loading"></div>
+                                      </td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">96 hours to 365 hours*</td>
+                                      <td *ngIf="!getIsLoad('Date',trip+1)">
+                                        <p *ngIf="flightItem.adult!=undefined && flightItem.adult!=0">ADULT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.adult,trip+1)}}</p>
+                                        <p *ngIf="flightItem.child!=undefined && flightItem.child.length>0">CHILD:
+                                          {{getDateChanges(flightItem.refundable,flightItem.child.length,trip+1)}}</p>
+                                        <p *ngIf="flightItem.infant!=undefined && flightItem.infant!=0">INFANT:
+                                          {{getDateChanges(flightItem.refundable,flightItem.infant,trip+1)}}</p>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <p class="table_note">*From the Date of Departure</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="result_pagination_wrapper">
+                <div class="view_more_btn">
+                  <a class="site_cta orange_cta">View More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<app-fare-details-modal [data]="fareDetailsModalData"></app-fare-details-modal>
+<app-flight-details-modal [data]="flightDetailsModalData"></app-flight-details-modal>
+<app-make-proposal></app-make-proposal>

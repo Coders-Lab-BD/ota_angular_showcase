@@ -1,0 +1,45 @@
+<!-- <ng-container *ngFor="let m of sidebarmenu">
+  <li *ngIf="m.child.length == 0" class="nav-item">
+    <a routerLink="{{m.nvPageUrl}}" class="nav-link" routerLinkActive="active" (click)="SetActive($event)">
+      <i class="nav-icon {{m.nvFabIcon}}"> </i>
+      <p>{{m.nvMenuName}}</p>
+    </a>
+  </li>
+  <li *ngIf="m.child.length > 0" class="nav-item has-treeview test">
+    <a href="javascript:void(0)" class="nav-link "> 
+      <i class="nav-icon {{m.nvFabIcon}}"> </i>
+      <p>
+        {{m.nvMenuName}}
+        <i class="fa fa-angle-left right"></i>
+      </p>
+    </a>
+    <ul [sidebarmenu]='m.child' name="childParent" class="nav nav-treeview ml-3">
+
+    </ul>
+  </li>
+</ng-container> -->
+
+<ng-container *ngFor="let m of sidebarmenu" >
+
+  <li *ngIf="m.child.length == 0" >
+    <a routerLink="{{m.nvPageUrl}}" class="nav-link" routerLinkActive="active" (click)="SetActive($event)">
+      <i class="nav-icon {{m.nvFabIcon}}"> </i>
+      <p>{{m.nvMenuName}}</p>
+    </a>
+  </li>
+
+  <li *ngIf="m.child.length > 0" >
+    <a class="btn btn-toggle align-items-center rounded collapsed text-white icon-toggle" (click)="iconToggle(m.vMenuID)" data-bs-toggle="collapse" attr.data-bs-target="#home-collapse{{m.vMenuID}}" id="{{m.vMenuID}}" aria-expanded="false"> 
+      <i class="nav-icon {{m.nvFabIcon}}"> </i> {{m.nvMenuName}}   
+      <!-- <i class="fa fa-angle-left" style="font-size: 20px; margin-left: 8px;"></i> -->
+    </a>
+
+   
+    <div class="collapse" (click)="addShowClass()" id="home-collapse{{m.vMenuID}}">
+    <ul [sidebarmenu]='m.child' name="childParent" class="nav nav-treeview ml-5 childParent" style="font-size: 13px;" >
+
+    </ul>
+    </div>
+  </li>
+
+</ng-container>

@@ -1,0 +1,934 @@
+<div id="flightSearchBody" *ngIf="topFlightSearchSkeleton==false"
+  style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+  <div class="row">
+    <div class="col-sm-1"
+        style="padding-right: 5px;
+          margin-left: 8px;
+          width: 0;
+          padding-top: 10px;
+          cursor: pointer;">
+          <!-- (click)="moveLeftFlight()"  -->
+      <i class="fa fa-angle-left" aria-hidden="true"></i>
+    </div>
+    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+      <drag-scroll #flightItem class="flight-drag" [drag-scroll-y-disabled]="true"
+        [scrollbar-hidden]="true">
+        <div class="flight-item" drag-scroll-item
+          *ngFor="let item of [1,1]; let i=index">
+          <!-- *ngFor="let item of getSelectedTopAirlines(selectedTab); let i=index" -->
+          <div class="popular_flights" style="margin-right:10px;cursor: pointer;">
+            <a >
+              <!-- (click)="filterAirlines(item.code,undefined,true,0)" -->
+              <div class="flights_img">
+                <img style="height:24px;width:24px" src="../../../assets/images/airline_logo/BG.png" alt="...">
+                <!-- <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="..."> -->
+              </div>
+              <div class="flight_info">
+                <span class="flight_shortname">BG</span>
+                <!-- <span title="{{item.name}}" class="flight_shortname">{{item.code}}</span> -->
+              </div>
+            </a>
+          </div>
+        </div>
+      </drag-scroll>
+    </div>
+    <div class="col-sm-1"
+    style="padding-left: 11px;
+            width: 0;
+            padding-top: 10px;
+            cursor: pointer;">
+            <!-- (click)="moveRightFlight()" -->
+      <i class="fa fa-angle-right" aria-hidden="true"></i>
+    </div>
+  </div>
+</div>
+<div class="domestic_multicity_tab_wrapper">
+  <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li *ngFor="let item of multicityTabList; let i = index" class="nav-item" role="presentation" style="width:33.3%">
+      <button
+      (click)="selectFlightAction(i)"
+        data-bs-toggle="pill" [attr.id]="'flight_list_button'+i" [class.active]="i === 0" type="button" role="tab"
+        aria-controls="pills-home" aria-selected="true">
+        <p><b>{{item[0].departureCity}} → {{item[0].arrivalCity}} </b></p>
+        <p>{{this.shareService.getDayNameShort(item[0].departureDate)}},
+          {{this.shareService.getDay(item[0].departureDate)}}
+          {{this.shareService.getMonthShort(item[0].departureDate)}}
+          {{this.shareService.getYearShort(item[0].departureDate)}}
+        </p>
+      </button>
+    </li>
+  </ul>
+
+  <div class="flight_details_tab_content tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" style="display:block"
+       role="tabpanel" aria-labelledby="pills-home-tab">
+      <div class="flight_search_result_wrapper">
+        <div class="result_card_wrapper">
+          <div id="resultBody" >
+            <div class="result_single_box" *ngFor="let item of displayedData[this.dataitem]; let j = index">
+              <div class="result_single_info">
+                <ul>
+                  <li>
+                    <div class="result_single_col_info">
+                      <div class="flights_info_wrapper">
+                        <div class="flights_img">
+                          <img class="airline-logo-size" [src]="'../'+item.flightDetails[0].airlinesLogo" alt="...">
+                        </div>
+                        <div class="flight_info">
+                          <span class="flight_shortname">{{item.flightDetails[0].airlinesName}}</span>
+                          <span class="flight_shortname" style="font-size:11px">{{item.providerName}} ({{item.supplierShortName}})</span>
+                          <span class="flight_code">{{item.carrierWithFlightNumber}}</span>
+                          <span class="flight_code">{{item.equipmentCode}}
+                            <p><b>Avalable Seat: {{item.bookingCode}}{{item.availableSeat}}</b></p>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">{{item.departureTime}}</span>
+                      <p>
+                        {{this.shareService.getDayNameShort(item.departureDate)}}
+                        {{this.shareService.getDay(item.departureDate)}}
+                        {{this.shareService.getMonthShort(item.departureDate)}}
+                        {{this.shareService.getYearShort(item.departureDate)}}
+                      </p>
+                      <p>{{item.departureCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info text-center">
+                      <p>{{item.flyingTime}}</p>
+                      <div class="stopage_wrapper">
+                        <div class="tooltip_bar">
+                          <span class="stopage_bar"></span>
+                          <div *ngIf="item.stopPoint=='3 Stop Point'"
+                            class="stopage_count_wrapper">
+                            <span class="stopage_count"></span>
+                            <span class="stopage_count"></span>
+                            <span class="stopage_count"></span>
+                          </div>
+                          <div *ngIf="item.stopPoint=='2 Stop Point'"
+                            class="stopage_count_wrapper">
+                            <span class="stopage_count"></span>
+                            <span class="stopage_count"></span>
+                          </div>
+                          <div *ngIf="item.stopPoint=='1 Stop Point'"
+                            class="stopage_count_wrapper">
+                            <span class="stopage_count"></span>
+                          </div>
+                        </div>
+                      </div>
+                      <p>{{item.stopPoint}}</p>
+
+                      <p>{{item.transitCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <span class="col_head_value">{{item.arrivalTime}}
+                        <p class="total-day" *ngIf="item.dateAdjustment>0 && item.dateAdjustment<2">+{{item.dateAdjustment}}Day</p>
+                        <p class="total-day" *ngIf="item.dateAdjustment>1">+{{item.dateAdjustment}}Days</p>
+                      </span>
+
+                      <p>{{this.shareService.getDayNameShort(item.arrivalDate)}}
+                        {{this.shareService.getDay(item.arrivalDate)}}
+                        {{this.shareService.getMonthShort(item.arrivalDate)}}
+                        {{this.shareService.getYearShort(item.arrivalDate)}}</p>
+                      <p>{{item.arrivalCity}}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info text-center">
+                      <p class="col_head_value" style="margin-right:30px;">
+                        {{this.shareService.amountShowWithCommas(item.totalFare)}}
+                      </p>
+                      <p *ngIf="isAgentFare == true" style="margin-right:30px;">
+                        Agent Fare: {{this.shareService.amountShowWithCommas(item.totalAgentFare)}}
+                      </p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="result_single_col_info">
+                      <div class="fare_radio_button">
+                        <input type="radio" [attr.id]="'flight_select_button'+this.dataitem+j"
+                        [checked]="getString(this.dataitem,j) == first_leg_index ||
+                                  getString(this.dataitem,j) == second_leg_index ||
+                                  getString(this.dataitem,j) == third_leg_index ||
+                                  getString(this.dataitem,j) == fouth_leg_index ||
+                                  getString(this.dataitem,j) == five_leg_index? first_leg_selectFlightBatch(this.dataitem,j) : false"
+                        (change)="first_leg_selectFlightBatch(this.dataitem,j)"
+                        class="radio-custom">
+                        <label [attr.for]="'flight_select_button'+this.dataitem+j" class="active_radio"
+                        *ngIf="getString(this.dataitem,j) == first_leg_index ||
+                         getString(this.dataitem,j) == second_leg_index ||
+                         getString(this.dataitem,j) == third_leg_index ||
+                         getString(this.dataitem,j) == fouth_leg_index ||
+                         getString(this.dataitem,j) == five_leg_index"></label>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="result_single_options">
+                <ul>
+                  <li >
+                    <b style="margin-left:2px;">{{item.cabinClass}}</b>
+                  </li>
+                  <li class="col-3">$ {{item.refundability}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+          <div class="result_pagination_wrapper" *ngIf="filterData[0].length>10 || filterData[1].length>10 || filterData[2]?.length>10 || filterData[2]?.length>10">
+            <div class="view_more_btn" style="padding-top: 0px; padding-bottom: 20px;">
+              <a class="site_cta orange_cta" (click)="toggleViewMoreLess()">{{ showMoreText }}</a>
+            </div>
+          </div>
+      </div>
+
+    </div>
+  </div>
+  <div id="triggerSummary" class="roundtrip_summarybar">
+    <div class="roundtrip_summarybar_inner">
+
+      <div *ngIf="this.first_leg" class="roundtrip_summarybar_single_col">
+        <p>{{this.first_leg.flightDetails[0].airlinesName}}</p>
+        <div class="selected_flight">
+          <div class="flights_info_wrapper">
+            <div class="flights_img">
+              <img class="airline-logo-size" [src]="'../'+this.first_leg.flightDetails[0].airlinesLogo"
+                alt="...">
+            </div>
+            <div class="flight_info">
+              <span class="flight_schedule">{{this.first_leg.departureTime}} → {{this.first_leg.arrivalTime}}</span>
+            </div>
+          </div>
+          <div>
+            <span class="flight_price"> {{this.first_leg.currency}} {{this.shareService.amountShowWithCommas(this.first_leg.totalFare)}}</span>
+            <p *ngIf="isAgentFare == true" class="flight_price">Agent Fare: {{this.first_leg.currency}} {{this.shareService.amountShowWithCommas(this.first_leg.totalAgentFare)}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="this.second_leg" class="roundtrip_summarybar_single_col">
+        <p>{{this.second_leg.flightDetails[0].airlinesName}}</p>
+        <div class="selected_flight">
+          <div class="flights_info_wrapper">
+            <div class="flights_img">
+              <img class="airline-logo-size" [src]="'../'+this.second_leg.flightDetails[0].airlinesLogo"
+                alt="...">
+            </div>
+            <div class="flight_info">
+              <span class="flight_schedule">{{this.second_leg.departureTime}} → {{this.second_leg.arrivalTime}}</span>
+            </div>
+          </div>
+          <div>
+            <span class="flight_price">{{this.second_leg.currency}} {{this.shareService.amountShowWithCommas(this.second_leg.totalFare)}}</span>
+            <p *ngIf="isAgentFare == true" class="flight_price">Agent Fare: {{this.second_leg.currency}} {{this.shareService.amountShowWithCommas(this.second_leg.totalAgentFare)}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="this.third_leg" class="roundtrip_summarybar_single_col">
+        <p>{{this.third_leg.flightDetails[0].airlinesName}}</p>
+        <div class="selected_flight">
+          <div class="flights_info_wrapper">
+            <div class="flights_img">
+              <img class="airline-logo-size" [src]="'../'+this.third_leg.flightDetails[0].airlinesLogo"
+                alt="...">
+            </div>
+            <div class="flight_info">
+              <span class="flight_schedule">{{this.third_leg.departureTime}} → {{this.third_leg.arrivalTime}}</span>
+            </div>
+          </div>
+          <div>
+            <span class="flight_price">{{this.third_leg.currency}} {{this.shareService.amountShowWithCommas(this.third_leg.totalFare)}}</span>
+            <p *ngIf="isAgentFare == true" class="flight_price">Agent Fare: {{this.third_leg.currency}} {{this.shareService.amountShowWithCommas(this.third_leg.totalAgentFare)}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="this.fourth_leg" class="roundtrip_summarybar_single_col">
+        <p>{{this.fourth_leg.flightDetails[0].airlinesName}}</p>
+        <div class="selected_flight">
+          <div class="flights_info_wrapper">
+            <div class="flights_img">
+              <img class="airline-logo-size" [src]="'../'+this.fourth_leg.flightDetails[0].airlinesLogo"
+                alt="...">
+            </div>
+            <div class="flight_info">
+              <span class="flight_schedule">{{this.fourth_leg.departureTime}} → {{this.fourth_leg.arrivalTime}}</span>
+            </div>
+          </div>
+          <div>
+            <span class="flight_price">{{this.fourth_leg.currency}} {{this.shareService.amountShowWithCommas(this.fourth_leg.totalFare)}}</span>
+            <p *ngIf="isAgentFare == true" class="flight_price">Agent Fare: {{this.fourth_leg.currency}} {{this.shareService.amountShowWithCommas(this.fourth_leg.totalAgentFare)}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="roundtrip_summarybar_single_col">
+        <div class="roundtrip_summary_info">
+          <ul>
+            <li>
+              <span
+                class="summary_price">BDT {{this.shareService.amountShowWithCommas( getTotalAmount(
+                  (this.first_leg && this.first_leg.totalFare) ||'0',
+                  (this.second_leg && this.second_leg.totalFare) || '0',
+                  (this.third_leg && this.third_leg.totalFare) || '0',
+                  (this.fourth_leg && this.fourth_leg.totalFare) || '0'
+                ))}}</span>
+              <span
+                class="text-white">Total Fare: {{this.shareService.amountShowWithCommas( getTotalAmount(
+                  (this.first_leg && this.first_leg.totalAgentFare) ||'0',
+                  (this.second_leg && this.second_leg.totalAgentFare) || '0',
+                  (this.third_leg && this.third_leg.totalAgentFare) || '0',
+                  (this.fourth_leg && this.fourth_leg.totalAgentFare) || '0'
+                ))}}</span>
+                <span class="summary_flight_info_trigger summary_angle_icon_toggle" data-bs-toggle="collapse"
+                  data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne" (click)="bottomFlightAction()"
+                  >Fare & Flight Details</span>
+                  <span class="domestic_roundtrip_proposal" data-bs-toggle="modal" (click)="makeProposalDataSet()">Make Proposal</span>            </li>
+            <li>
+              <div class="booking_btn" style="cursor: pointer;" *ngIf="isShowFilter">
+                <a (click)="bookAndHoldAction()"class="site_cta orange_cta">BOOK & HOLD</a>
+              </div>
+              <div class="booking_btn" style="cursor: pointer;" *ngIf="isShowFilter==false">
+                <a (click)="requestAction()"class="site_cta orange_cta">Request</a>
+              </div>
+            </li>
+            <li>
+              <span class="roundrip_summary_expand summary_angle_icon_toggle" data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne"
+                (click)="bottomFlightAction()" id="iconOne"><i class="fa fa-angle-up" aria-hidden="true"
+                  id="angleUpDown"></i></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="roundtrip_summarybar_content" [attr.id]="'bottomFlightData'">
+
+      <div class="flight_details_wrapper">
+
+        <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="summary_flight_details-tab" data-bs-toggle="pill"
+              data-bs-target="#summary_flight_details" type="button" role="tab"
+              aria-controls="summary_flight_details" aria-selected="true">Flight Details</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="summary_faredetails-tab" data-bs-toggle="pill"
+              data-bs-target="#summary_faredetails" type="button" role="tab"
+              aria-controls="summary_faredetails" aria-selected="true">Fare Summary</button>
+          </li>
+        </ul>
+
+        <div class="flight_details_tab_content tab-content" id="pills-tabContent">
+
+          <div class="tab-pane fade show active" id="summary_flight_details" role="tabpanel"
+            aria-labelledby="summary_flight_details-tab">
+            <div class="">
+              <div *ngIf="this.first_leg" class="">
+                <div class="fare_details_wrapper">
+                  <h2>{{this.first_leg.departureCity}} → {{this.first_leg.arrivalCity}}
+                    {{this.shareService.getDayNameShort(this.first_leg.departureDate)}},
+                    {{this.shareService.getDay(this.first_leg.departureDate)}}
+                    {{this.shareService.getMonthShort(this.first_leg.departureDate)}}
+                    {{this.shareService.getYearShort(this.first_leg.departureDate)}}</h2>
+                  <div class="result_single_info" *ngFor="let fItem of this.first_leg.flightDetails;let i=index">
+                    <div class="break_info" *ngIf="fItem.layoverTime!=''">
+                      <span>Changes of planes | {{fItem.layoverTime}} layover in
+                        {{fItem.layoverCity}}</span>
+                    </div>
+                    <ul>
+                      <li style="min-width: 180px;max-width: 200px;">
+                        <div class="result_single_col_info">
+                          <div class="flights_info_wrapper">
+                            <div class="flights_img">
+                              <img class="airline-logo-size" [src]="'../'+fItem.airlinesLogo" alt="...">
+                            </div>
+                            <div class="flight_info">
+                              <span class="flight_shortname">{{fItem.airlinesName}}</span>
+                              <span class="flight_code">{{fItem.carrierWithFlightNumber}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">{{fItem.departureTime}}</span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.departureDate)}},
+                            {{this.shareService.getDay(fItem.departureDate)}}
+                            {{this.shareService.getMonthShort(fItem.departureDate)}}
+                            {{this.shareService.getYearShort(fItem.departureDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.departureTerminal}}</p>
+                          <p>{{fItem.departureAirport}}</p>
+                        </div>
+                      </li>
+                      <li style="margin-left:30px;">
+                        <div class="result_single_col_info">
+                          <p>{{fItem.flyingTime}}</p>
+                          <div class="stopage_wrapper">
+                            <div class="tooltip_bar">
+                              <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+
+                      <li style="padding-left:30px;">
+                        <div class="result_single_col_info">
+                          <span class="col_head_value"> {{fItem.arrivalTime}}
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>0 && fItem?.dateAdjustment<2">+{{fItem?.dateAdjustment}}Day</span>
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>1">+{{fItem?.dateAdjustment}}Days</span>
+                          </span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.arrivalDate)}},
+                            {{this.shareService.getDay(fItem.arrivalDate)}}
+                            {{this.shareService.getMonthShort(fItem.arrivalDate)}}
+                            {{this.shareService.getYearShort(fItem.arrivalDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.arrivalTerminal}}</p>
+                          <p>{{fItem.arrivalAirport}}</p>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">Baggage:</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggagePassengerType}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-left:20px;">
+                          <span class="col_head_value">Check In</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggageWeight}}{{passbag.baggageUnit}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-right:40px; margin-right:20px;">
+                          <span class="col_head_value">Cabin</span>
+                          <p>7kg</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="this.second_leg" class="">
+                <div class="fare_details_wrapper">
+                  <h2>{{this.second_leg.departureCity}} → {{this.second_leg.arrivalCity}}
+                    {{this.shareService.getDayNameShort(this.second_leg.departureDate)}},
+                    {{this.shareService.getDay(this.second_leg.departureDate)}}
+                    {{this.shareService.getMonthShort(this.second_leg.departureDate)}}
+                    {{this.shareService.getYearShort(this.second_leg.departureDate)}}</h2>
+                  <div class="result_single_info" *ngFor="let fItem of this.second_leg.flightDetails;let i=index">
+                    <div class="break_info" *ngIf="fItem.layoverTime!=''">
+                      <span>Changes of planes | {{fItem.layoverTime}} layover in
+                        {{fItem.layoverCity}}</span>
+                    </div>
+                    <ul>
+                      <li style="min-width: 180px;max-width: 200px;">
+                        <div class="result_single_col_info">
+                          <div class="flights_info_wrapper">
+                            <div class="flights_img">
+                              <img class="airline-logo-size" [src]="'../'+fItem.airlinesLogo" alt="...">
+                            </div>
+                            <div class="flight_info">
+                              <span class="flight_shortname">{{fItem.airlinesName}}</span>
+                              <span class="flight_code">{{fItem.carrierWithFlightNumber}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">{{fItem.departureTime}}</span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.departureDate)}},
+                            {{this.shareService.getDay(fItem.departureDate)}}
+                            {{this.shareService.getMonthShort(fItem.departureDate)}}
+                            {{this.shareService.getYearShort(fItem.departureDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.departureTerminal}}</p>
+                          <p>{{fItem.departureAirport}}</p>
+                        </div>
+                      </li>
+                      <li style="margin-left:30px;">
+                        <div class="result_single_col_info">
+                          <p>{{fItem.flyingTime}}</p>
+                          <div class="stopage_wrapper">
+                            <div class="tooltip_bar">
+                              <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+
+                      <li style="padding-left:30px;">
+                        <div class="result_single_col_info">
+                          <span class="col_head_value"> {{fItem.arrivalTime}}
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>0 && fItem?.dateAdjustment<2">+{{fItem?.dateAdjustment}}Day</span>
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>1">+{{fItem?.dateAdjustment}}Days</span>
+                          </span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.arrivalDate)}},
+                            {{this.shareService.getDay(fItem.arrivalDate)}}
+                            {{this.shareService.getMonthShort(fItem.arrivalDate)}}
+                            {{this.shareService.getYearShort(fItem.arrivalDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.arrivalTerminal}}</p>
+                          <p>{{fItem.arrivalAirport}}</p>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">Baggage:</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggagePassengerType}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-left:20px;">
+                          <span class="col_head_value">Check In</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggageWeight}}{{passbag.baggageUnit}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-right:40px; margin-right:20px;">
+                          <span class="col_head_value">Cabin</span>
+                          <p>7kg</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="this.third_leg" class="">
+                <div class="fare_details_wrapper">
+                  <h2>{{this.third_leg.departureCity}} → {{this.third_leg.arrivalCity}}
+                    {{this.shareService.getDayNameShort(this.third_leg.departureDate)}},
+                    {{this.shareService.getDay(this.third_leg.departureDate)}}
+                    {{this.shareService.getMonthShort(this.third_leg.departureDate)}}
+                    {{this.shareService.getYearShort(this.third_leg.departureDate)}}</h2>
+                  <div class="result_single_info" *ngFor="let fItem of this.third_leg.flightDetails;let i=index">
+                    <div class="break_info" *ngIf="fItem.layoverTime!=''">
+                      <span>Changes of planes | {{fItem.layoverTime}} layover in
+                        {{fItem.layoverCity}}</span>
+                    </div>
+                    <ul>
+                      <li style="min-width: 180px;max-width: 200px;">
+                        <div class="result_single_col_info">
+                          <div class="flights_info_wrapper">
+                            <div class="flights_img">
+                              <img class="airline-logo-size" [src]="'../'+fItem.airlinesLogo" alt="...">
+                            </div>
+                            <div class="flight_info">
+                              <span class="flight_shortname">{{fItem.airlinesName}}</span>
+                              <span class="flight_code">{{fItem.carrierWithFlightNumber}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">{{fItem.departureTime}}</span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.departureDate)}},
+                            {{this.shareService.getDay(fItem.departureDate)}}
+                            {{this.shareService.getMonthShort(fItem.departureDate)}}
+                            {{this.shareService.getYearShort(fItem.departureDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.departureTerminal}}</p>
+                          <p>{{fItem.departureAirport}}</p>
+                        </div>
+                      </li>
+                      <li style="margin-left:30px;">
+                        <div class="result_single_col_info">
+                          <p>{{fItem.flyingTime}}</p>
+                          <div class="stopage_wrapper">
+                            <div class="tooltip_bar">
+                              <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+
+                      <li style="padding-left:30px;">
+                        <div class="result_single_col_info">
+                          <span class="col_head_value"> {{fItem.arrivalTime}}
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>0 && fItem?.dateAdjustment<2">+{{fItem?.dateAdjustment}}Day</span>
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>1">+{{fItem?.dateAdjustment}}Days</span>
+                          </span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.arrivalDate)}},
+                            {{this.shareService.getDay(fItem.arrivalDate)}}
+                            {{this.shareService.getMonthShort(fItem.arrivalDate)}}
+                            {{this.shareService.getYearShort(fItem.arrivalDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.arrivalTerminal}}</p>
+                          <p>{{fItem.arrivalAirport}}</p>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">Baggage:</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggagePassengerType}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-left:20px;">
+                          <span class="col_head_value">Check In</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggageWeight}}{{passbag.baggageUnit}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-right:40px; margin-right:20px;">
+                          <span class="col_head_value">Cabin</span>
+                          <p>7kg</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="this.fourth_leg" class="">
+                <div class="fare_details_wrapper">
+                  <h2>{{this.fourth_leg.departureCity}} → {{this.fourth_leg.arrivalCity}}
+                    {{this.shareService.getDayNameShort(this.fourth_leg.departureDate)}},
+                    {{this.shareService.getDay(this.fourth_leg.departureDate)}}
+                    {{this.shareService.getMonthShort(this.fourth_leg.departureDate)}}
+                    {{this.shareService.getYearShort(this.fourth_leg.departureDate)}}</h2>
+                  <div class="result_single_info" *ngFor="let fItem of this.fourth_leg.flightDetails;let i=index">
+                    <div class="break_info" *ngIf="fItem.layoverTime!=''">
+                      <span>Changes of planes | {{fItem.layoverTime}} layover in
+                        {{fItem.layoverCity}}</span>
+                    </div>
+                    <ul>
+                      <li style="min-width: 180px;max-width: 200px;">
+                        <div class="result_single_col_info">
+                          <div class="flights_info_wrapper">
+                            <div class="flights_img">
+                              <img class="airline-logo-size" [src]="'../'+fItem.airlinesLogo" alt="...">
+                            </div>
+                            <div class="flight_info">
+                              <span class="flight_shortname">{{fItem.airlinesName}}</span>
+                              <span class="flight_code">{{fItem.carrierWithFlightNumber}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">{{fItem.departureTime}}</span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.departureDate)}},
+                            {{this.shareService.getDay(fItem.departureDate)}}
+                            {{this.shareService.getMonthShort(fItem.departureDate)}}
+                            {{this.shareService.getYearShort(fItem.departureDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.departureTerminal}}</p>
+                          <p>{{fItem.departureAirport}}</p>
+                        </div>
+                      </li>
+                      <li style="margin-left:30px;">
+                        <div class="result_single_col_info">
+                          <p>{{fItem.flyingTime}}</p>
+                          <div class="stopage_wrapper">
+                            <div class="tooltip_bar">
+                              <span class="stopage_bar" style="background-color:#257477; width: 40px;"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+
+                      <li style="padding-left:30px;">
+                        <div class="result_single_col_info">
+                          <span class="col_head_value"> {{fItem.arrivalTime}}
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>0 && fItem?.dateAdjustment<2">+{{fItem?.dateAdjustment}}Day</span>
+                            <span class="total-day" *ngIf="fItem?.dateAdjustment>1">+{{fItem?.dateAdjustment}}Days</span>
+                          </span>
+                          <p>
+                            {{this.shareService.getDayNameShort(fItem.arrivalDate)}},
+                            {{this.shareService.getDay(fItem.arrivalDate)}}
+                            {{this.shareService.getMonthShort(fItem.arrivalDate)}}
+                            {{this.shareService.getYearShort(fItem.arrivalDate)}}
+                          </p>
+                          <p>Terminal : {{fItem.arrivalTerminal}}</p>
+                          <p>{{fItem.arrivalAirport}}</p>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info">
+                          <span class="col_head_value">Baggage:</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggagePassengerType}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-left:20px;">
+                          <span class="col_head_value">Check In</span>
+                          <div *ngFor="let passbag of fItem.passangerBaggages">
+                            <p>{{passbag.baggageWeight}}{{passbag.baggageUnit}}</p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="result_single_col_info" style="padding-right:40px; margin-right:20px;">
+                          <span class="col_head_value">Cabin</span>
+                          <p>7kg</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="tab-pane fade" id="summary_faredetails" role="tabpanel" aria-labelledby="summary_faredetails-tab" >
+            <div *ngIf="this.first_leg">
+              <h2>{{this.first_leg.departureCity}} → {{this.first_leg.arrivalCity}}
+                {{this.shareService.getDayNameShort(this.first_leg.departureDate)}},
+                {{this.shareService.getDay(this.first_leg.departureDate)}}
+                {{this.shareService.getMonthShort(this.first_leg.departureDate)}}
+                {{this.shareService.getYearShort(this.first_leg.departureDate)}}</h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Passenger Type</th>
+                      <th>Passenger Count</th>
+                      <th>Base Fare(BDT)</th>
+                      <th>Tax(BDT)</th>
+                      <th>Client Fare(BDT)</th>
+                      <th>Discount(BDT)</th>
+                      <th>AIT(BDT)</th>
+                      <th>Agent Fare(BDT)</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let fareDetail of this.first_leg.fareDetails">
+                      <td>{{fareDetail.passengerType}}</td>
+                      <td>{{fareDetail.passengerNumber}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupBaseFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTaxFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTotalFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">{{fareDetail.discount * fareDetail.passengerNumber}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.totalAgentFare*fareDetail.passengerNumber)}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.first_leg.totalFare)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.first_leg.totalAgentFare)}}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="this.second_leg">
+              <h2>{{this.second_leg.departureCity}} → {{this.second_leg.arrivalCity}}
+                {{this.shareService.getDayNameShort(this.second_leg.departureDate)}},
+                {{this.shareService.getDay(this.second_leg.departureDate)}}
+                {{this.shareService.getMonthShort(this.second_leg.departureDate)}}
+                {{this.shareService.getYearShort(this.second_leg.departureDate)}}</h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Passenger Type</th>
+                      <th>Passenger Count</th>
+                      <th>Base Fare(BDT)</th>
+                      <th>Tax(BDT)</th>
+                      <th>Client Fare(BDT)</th>
+                      <th>Discount(BDT)</th>
+                      <th>AIT(BDT)</th>
+                      <th>Agent Fare(BDT)</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let fareDetail of this.second_leg.fareDetails">
+                      <td>{{fareDetail.passengerType}}</td>
+                      <td>{{fareDetail.passengerNumber}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupBaseFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTaxFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTotalFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">{{fareDetail.discount * fareDetail.passengerNumber}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.totalAgentFare*fareDetail.passengerNumber)}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.second_leg.totalFare)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.second_leg.totalAgentFare)}}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="this.third_leg">
+              <h2>{{this.third_leg.departureCity}} → {{this.third_leg.arrivalCity}}
+                {{this.shareService.getDayNameShort(this.third_leg.departureDate)}},
+                {{this.shareService.getDay(this.third_leg.departureDate)}}
+                {{this.shareService.getMonthShort(this.third_leg.departureDate)}}
+                {{this.shareService.getYearShort(this.third_leg.departureDate)}}</h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Passenger Type</th>
+                      <th>Passenger Count</th>
+                      <th>Base Fare(BDT)</th>
+                      <th>Tax(BDT)</th>
+                      <th>Client Fare(BDT)</th>
+                      <th>Discount(BDT)</th>
+                      <th>AIT(BDT)</th>
+                      <th>Agent Fare(BDT)</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let fareDetail of this.third_leg.fareDetails">
+                      <td>{{fareDetail.passengerType}}</td>
+                      <td>{{fareDetail.passengerNumber}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupBaseFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTaxFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTotalFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">{{fareDetail.discount*fareDetail.passengerNumber}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.totalAgentFare*fareDetail.passengerNumber)}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.third_leg.totalFare)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.third_leg.totalAgentFare)}}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="this.fourth_leg">
+              <h2>{{this.fourth_leg.departureCity}} → {{this.fourth_leg.arrivalCity}}
+                {{this.shareService.getDayNameShort(this.fourth_leg.departureDate)}},
+                {{this.shareService.getDay(this.fourth_leg.departureDate)}}
+                {{this.shareService.getMonthShort(this.fourth_leg.departureDate)}}
+                {{this.shareService.getYearShort(this.fourth_leg.departureDate)}}</h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Passenger Type</th>
+                      <th>Passenger Count</th>
+                      <th>Base Fare(BDT)</th>
+                      <th>Tax(BDT)</th>
+                      <th>Client Fare(BDT)</th>
+                      <th>Discount(BDT)</th>
+                      <th>AIT(BDT)</th>
+                      <th>Agent Fare(BDT)</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let fareDetail of this.fourth_leg.fareDetails">
+                      <td>{{fareDetail.passengerType}}</td>
+                      <td>{{fareDetail.passengerNumber}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupBaseFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTaxFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(fareDetail.markupTotalFare*fareDetail.passengerNumber)}}
+                      </td>
+                      <td class="amount">{{fareDetail.discount*fareDetail.passengerNumber}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.totalAgentFare*fareDetail.passengerNumber)}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.fourth_leg.totalFare)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(this.fourth_leg.totalAgentFare)}}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<app-make-proposal></app-make-proposal>

@@ -1,0 +1,185 @@
+<main>
+  <div class="search_main_wrapper area">
+
+      <div class="container">
+          <div class="main_searchbar_wrapper">
+             <div class="card">
+              <div class="card-header">
+                  <h6 class="card-title">
+                      <i class="fa fa-users"></i>
+                      Charge
+                  </h6>
+
+                </div>
+
+
+              <div class="card-body" >
+
+                  <div class="row" style="padding-bottom: 20px;">
+                    <div class="col-sm-12 col-md-6 ">
+                        <div class="row">
+                          <label style="width: 70px; font-weight: bold;">Show </label>
+                          <select style="width: 70px;" (change)="lengthChange($any($event.target).value)" class="custom-select custom-select-sm form-control form-control-sm">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                          </select>
+                          <label style="width: 80px; padding-left: 10px; font-weight: bold;"> entries </label>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-12 col-md-6" style="text-align: end;">
+                      <label style="width: 70px; text-align: left;">Search:</label>
+                      <input style="width: 160px; display: inline-block;" type="search" class="form-control form-control-sm" (keydown)="EnterSubmit($event)" [(ngModel)]="searchValue" (keyup)="searchClick()">
+                      <button style="width: 30px; margin-bottom: 2px;" type="submit" class="btn btn-sm btn-default" (click)="searchClick()">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row justify-content-center">
+                    <div *ngIf="isProcessing" class="col-12" style="text-align: center;">
+                      <h3>Processing...</h3>
+                    </div>
+                    <div *ngIf="!isProcessing && recordsFiltered == 0" class="col-12" style="text-align: center;">
+                      <h3>No data found</h3>
+                    </div>
+                    <div *ngIf="!isProcessing" class="col-12 row">
+                      <table class="table table-bordered table-striped ">
+                        <thead>
+                          <tr>
+                            <th>Index</th>
+                            <th>Flight Route Type</th>
+                            <th>Flight Type</th>
+                            <th>Date Change Fee</th>
+                            <th>Cancellation Fee</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let record of tableData; let i = index">
+                            <td>{{record.index}}</td>
+                            <td>{{record.nvFlightRouteTypeName}}</td>
+                            <td>{{record.nvFlightName}}</td>
+                            <td>{{record.nDateChangeFee}}</td>
+                            <td>{{record.nCancellationFee}}</td>
+                            <td>
+                              <div>
+                                <div class="text-center fs-18">
+                                  <a title="Edit" class="edit" (click)="edit(record.vChargeId)"><i class="fa fa-edit" style="cursor: pointer; font-weight: bold; color: #389F91;"></i></a> |
+                                  <a title="Delete" (click)="remove(record.vChargeId,record.nvFlightRouteTypeName)"><i class="fa fa-trash" style="cursor: pointer; font-weight: bold; color: red;"></i></a>
+                                </div>
+                              </div>
+                          </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                      <div *ngIf="!filteredRecordsShow">
+                        Showing {{start}} to {{end}} of {{recordsTotal}} entries
+                      </div>
+                      <div *ngIf="filteredRecordsShow">
+                        Showing {{start}} to {{end}} of {{recordsFiltered}} entries (filtered from {{recordsTotal}} total entries)
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6" style="text-align: end;">
+                      <div style="display: inline-block;">
+                        <ul class="pagination">
+                          <li class="page-item"  *ngFor = "let page of pageList" [ngClass]="page.class">
+                            <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link" (click)="pageClick(page.value)">{{page.title}}</a>
+                          </li>
+
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+
+             </div>
+
+
+
+
+
+
+          </div>
+      </div>
+  </div>
+
+
+
+
+  <button style="display: none;" type="button" #btnModalOpen class="btn btn-primary btn-sm float-right" data-bs-toggle="modal" data-bs-target="#createPassengerModal" role="dialog" data-backdrop="static" data-keyboard="false">
+  </button>
+
+  <div class="modal fade" id="createPassengerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createPassengerModal" aria-hidden="true" >
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h6 class="modal-title" style="font-weight: bold; font-size: 1.2rem;">{{header}}</h6>
+                  <!-- <button type="button" class="btn btn-primary" [hidden]="!isBtnCreateShow" (click)="Create()">
+                    Create Charge
+                  </button> -->
+
+                  <button #btnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="reload();"></button>
+
+              </div>
+              <form [formGroup]="chargeForm" (ngSubmit)= "saveCharge()" autocomplete="off">
+                  <div class="modal-body">
+                    <div class="card-body">
+
+
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                            <label for="CityName">Flight Route Type<span style="color: red;">*</span></label>
+                              <select [ngClass]="{ 'is-invalid': chargeForm.get('VFlightRouteTypeId')?.errors && chargeForm.get('VFlightRouteTypeId')?.touched }" class="form-control" formControlName="VFlightRouteTypeId">
+                                <option value="">Select Please ...</option>
+                                <option *ngFor="let item of flightroutetypelists" [value]="item.vFlightRouteTypeId">{{item.nvFlightRouteTypeName}}</option>
+                              </select>
+                          </div>
+                          <div class="col-md-6 form-group">
+                            <label>Flight Type<span style="color: red;">*</span></label>
+                              <select [ngClass]="{ 'is-invalid': chargeForm.get('VFlightTypeId')?.errors && chargeForm.get('VFlightTypeId')?.touched }" class="form-control" formControlName="VFlightTypeId">
+                                <option value="">Select Please ...</option>
+                                <option *ngFor="let item of flighttypelists" [value]="item.vFlightTypeId">{{item.nvFlightName}}</option>
+                              </select>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                            <label for="CityName">Date Change Fee<span style="color: red;">*</span></label>
+                            <input type="text" id="text" style="text-align: right;" maxlength="11" (keypress)="shareService.amountWithComma('text')" [ngClass]="{ 'is-invalid': chargeForm.get('NDateChangeFee')?.errors && chargeForm.get('NDateChangeFee')?.touched }" class="form-control" placeholder="Date Change Fee" formControlName="NDateChangeFee">
+                            <div class="invalid-feedback" *ngIf="chargeForm.get('NDateChangeFee')?.errors && chargeForm.get('NDateChangeFee')?.touched">You can't leave this empty.</div>
+                          </div>
+                          <div class="col-md-6 form-group">
+                            <label for="CityName">Cancellation Fee<span style="color: red;">*</span></label>
+                              <input type="text" id="num" style="text-align: right;" maxlength="11" (keypress)="shareService.amountWithComma('num')" [ngClass]="{ 'is-invalid': chargeForm.get('NCancellationFee')?.errors && chargeForm.get('NCancellationFee')?.touched }" class="form-control" placeholder="Cancellation Fee" formControlName="NCancellationFee">
+                              <div class="invalid-feedback" *ngIf="chargeForm.get('NCancellationFee')?.errors && chargeForm.get('NCancellationFee')?.touched">You can't leave this empty.</div>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer justify-content-between">
+                      <button #btnClose type="button"  data-bs-dismiss="modal" aria-label="Close" class="btn btn-dark" (click)="reload()">
+                        <i class="fa fa-window-close"></i>
+                        Close
+                      </button>
+                      <button type="submit" class="btn btn-primary" [disabled]="!chargeForm?.valid">
+                        <i class="fa fa-save"></i>
+                        Save
+                      </button>
+                  </div>
+              </form>
+          </div>
+      </div>
+    </div>
+
+
+
+</main>

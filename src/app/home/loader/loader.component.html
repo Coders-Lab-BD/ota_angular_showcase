@@ -1,0 +1,77 @@
+<div class="loader_wrapper">
+  <div class="loader_overlay"></div>
+  <div class="loader_content_wrapper">
+      <div class="loader_left_content">
+          <div class="loader_mkt_image">
+              <img [src]="imgUrl" alt="">
+          </div>
+      </div>
+      <div class="loader_right_content">
+          <div class="loader_gif_image">
+              <img src="../../../assets/dist/img/loader.gif" alt="">
+          </div>
+          <div class="loader_search_content">
+              <ul>
+                  <li *ngFor="let one of fromFlight.split(','); let i=index" >
+                      <div class="destination d-flex justify-content-center">
+                          <span>{{fromFlight.split(',')[i]}}</span>
+                          <span><img src="../../../assets/dist/img/compare_icon.png" alt=""></span>
+                          <span>{{toFlight.split(',')[i]}}</span>
+                      </div> 
+                      <p class="mb-0 ps-2">Flight Date: {{departureDate.split(',')[i]}}</p>
+                  </li>
+                  
+                  <!-- <li *ngIf="returnDate!='' && returnDate!=undefined"><p>Return date: {{returnDate}}</p></li> -->
+                  <li><p>
+                    <span *ngIf="adult!=undefined && adult!='0' && adult=='1'">{{adult}} Adult</span>
+                    <span *ngIf="adult!=undefined && adult!='0' && adult > '1'">{{adult}} Adults</span>
+
+                    <span *ngIf="child!=undefined && child!='0' && child == '1'" style="margin: 0px 5px;">{{child}} Child</span>
+                    <span *ngIf="child!=undefined && child!='0' && child > '1'"  style="margin: 0px 5px;">{{child}} Childs</span>
+
+                    <span *ngIf="infant!=undefined && infant!='0' && infant == '1'">{{infant}} Infant</span>
+                    <span *ngIf="infant!=undefined && infant!='0' && infant > '1'">{{infant}} Infants</span>
+
+                </p></li>
+              </ul>
+              <span class="searching_text">Searching for best flights...</span>
+          </div>
+      </div>
+      <div class="loader_content_mobile" style="display: none;">
+        <!-- <div class="loader_mobile_image">
+          <img [src]="imgUrl" alt="">
+        </div> <br> -->
+        <!-- <div class="loader_mobile_left"> -->
+          <div class="loader_gif_image">
+              <img src="../../../assets/dist/img/loader.gif" alt="">
+          </div>
+          <div class="loader_search_content">
+              <ul>
+                  <li>
+                      <div class="destination">
+                          <span>{{fromFlight}}</span>
+                          <span><img src="../../../assets/dist/img/compare_icon.png" alt=""></span>
+                          <span>{{toFlight}}</span>
+                      </div>
+                  </li>
+                  <li><p>Departure date: {{departureDate}}</p></li>
+                  <li *ngIf="returnDate!='' && returnDate!=undefined"><p>Return date: {{returnDate}}</p></li>
+                  <li><p>
+                    <span *ngIf="adult!=undefined && adult!='0' && adult=='1'">{{adult}} Adult</span>
+                    <span *ngIf="adult!=undefined && adult!='0' && adult > '1'">{{adult}} Adults</span>
+
+                    <span *ngIf="child!=undefined && child!='0' && child == '1'" style="margin: 0px 5px;">{{child}} Child</span>
+                    <span *ngIf="child!=undefined && child!='0' && child > '1'"  style="margin: 0px 5px;">{{child}} Childs</span>
+
+                    <span *ngIf="infant!=undefined && infant!='0' && infant == '1'">{{infant}} Infant</span>
+                    <span *ngIf="infant!=undefined && infant!='0' && infant > '1'">{{infant}} Infants</span>
+
+                </p></li>
+              </ul>
+              <span class="searching_text">Searching for best flights...</span>
+          </div>
+        <!-- </div> -->
+    </div>
+  </div>
+  <!-- /.loader_content_wrapper -->
+</div>

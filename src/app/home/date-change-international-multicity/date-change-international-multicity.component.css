@@ -1,0 +1,174 @@
+
+  @media only screen and (min-width: 1199px) {
+    .ng-autocomplete {
+      display: table;
+      margin: 0 auto;
+      width: 275px;
+      margin-top: -13px !important;
+      position: absolute;
+    }
+  }
+  @media only screen and (max-width: 1198px) {
+    .ng-autocomplete {
+      width: 100%;
+      }
+
+    .ng-autocomplete ::ng-deep .autocomplete-container {
+    box-shadow: none;
+    }
+    .ng-autocomplete ::ng-deep .autocomplete-container ::ng-deep .not-found {
+    border: 0;
+    }
+    .ng-autocomplete ::ng-deep .autocomplete-container ::ng-deep .input-container ::ng-deep input {
+      /* font-size: 0.875rem; */
+      display: block;
+      /* height: 2.1875rem; */
+      /* padding: 0.375rem 1rem; */
+      font-weight: 400;
+      /* line-height: 1.52857143; */
+
+      /* color: #ffffff;
+      border: 1px solid #2a807e;
+      background-color: #2a807e; */
+
+
+      /* border-radius: 0.25rem; */
+      }
+  }
+  .int_roundtrip_flight_info_header .fare_info span.main_fare_content {
+    font-size: 11px !important;
+    font-weight: normal !important;
+    color: #111528;
+    margin-bottom: 5px;
+  }
+  .int_roundtrip_flight_info_header .fare_info span a.main_fare {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111528;
+    margin-bottom: 3px;
+  }
+.traveller-class-font{
+    font-weight: bold;
+  }
+  .traveller-class-child-select{
+    border: 1px solid #000;
+    padding: 2 px;
+    text-align: center;
+    padding-left: 8px;
+    font-size: 16px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-weight: normal;
+    width: 42px;
+    padding-right: 10px;
+  }
+  .traveller-class-child-list{
+    /* border: 1px solid #eee; */
+    justify-content: start;
+    border-bottom: 0px;
+    /* box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); */
+    /* border-radius: 50px; */
+  }
+  .traveller-class-child-label{
+    font-size: 13px;
+  }
+  .traveller-class-child-div{
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+  .traveller-class-label{
+    font-size: 14px;
+    color: #000;
+    font-weight: 600;
+    display: flex;
+    justify-content: left;
+    /* padding-left: 15px; */
+    padding-right: 15px;
+  }
+  .traveller-label{
+    font-size: 20px;
+    display: flex;
+    justify-content: left;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .traveller-economy-label{
+    display: flex;
+    justify-content: left;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .inp_group_traveller{
+    position: absolute;
+    top: 10%;
+  }
+  .traveller-class-optiongp{
+    font-weight: 600;
+    padding-left: 5px;
+  }
+  .air-search{
+    max-width: 100%;overflow-x: hidden;margin-left: 0;
+  }
+  .air-search-icon{
+    padding-left: 9px;padding-right: 10px;padding-top: 5px;
+  }
+  .air-search-code{
+    padding-right: 0px;padding-left: 0px;padding-top: 8px;font-size: 14px;font-weight: 700;text-align: right;
+  }
+  .air-search-name{
+    font-size: 12px;
+  }
+  .air-search-country{
+    color: #000;font-size: 14px;
+
+  }
+  .btn-apply{
+    background-color: #e97017;
+    border-color: #eee;
+    border-radius: 25px;
+  }
+  .btn-apply-section{
+    float: right;
+    padding-right: 10px;
+  }
+  .margin-left-right{
+    margin-left: 10px;
+    margin-right: 10px;
+    min-width: 42px;
+  }
+  .result-group-item{
+    background: #e5eef4;
+    padding: 10px;
+    padding-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+  }
+  .result-single-item{
+    background: #fff;
+  }
+  .result-single-item-code{
+    font-size: 15px;
+    line-height: 2.0;
+    display: inline-block;
+  }
+  .airline-logo-size-group{
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+  }
+  .flight-drag{
+    height: 50px;
+  }
+  .flight-drag .flight-item{
+    min-width: 150px;
+    height: 50px;
+  }
+  .col-sm-1 .flight-drag-move-left{
+    padding-right: 5px;
+    margin-left: 8px;
+    width: 0;
+    padding-top: 10px;
+    cursor: pointer;
+  }

@@ -1,0 +1,489 @@
+<main>
+  <div class="search_main_wrapper area">
+      <div class="container">
+          <div class="main_searchbar_wrapper">
+              <div class="card">
+              <!-- <app-header></app-header> -->
+              <div class="content-wrapper">
+                <!-- Main content -->
+                <section class="content" style="padding: 15px 10px;">
+                  <div class="container-fluid">
+                      <div class="row">
+                          <div class="col-md-3">
+                              <!-- Profile Image -->
+                              <div class="card card-primary card-outline">
+                                  <div class="card-body box-profile" style="padding-bottom:0px;">
+                                      <div class="text-center">
+                                          <img *ngIf="profileImgURL == null" src="../../../assets/dist/img/avatar5.png" class="profile-user-img img-fluid" style="height: 112px; width: 112px;" alt="User profile picture">
+                                          <img *ngIf="profileImgURL != null" [src]="profileImgURL" class="profile-user-img img-fluid" style="height: 112px; width: 112px;" alt="User profile picture">
+                                      </div>
+
+                                      <h6 class="text-center" style="font-weight: bold; font-size: 1.2rem;">{{User.fullName}}</h6>
+
+                                      <p class="text-muted text-center">{{User.roleName}}</p>
+
+                                      <ul class="list-group list-group-unbordered mb-3">
+                                        <li class="list-group-item" style="padding-bottom:0px;">
+                                          <b>Agency ID</b> <p >{{User.agencyManualId}}</p>
+                                        </li>
+                                          <li class="list-group-item" style="padding-bottom:0px;">
+                                              <b>Country</b> <p class="text-uppercase">{{User.agencyCountryName}}</p>
+                                          </li>
+                                          <li class="list-group-item" style="padding-bottom:0px;">
+                                              <b>City</b> <p >{{User.agencyCity}}</p>
+                                          </li>
+                                          <li class="list-group-item" style="padding-bottom:0px;">
+                                              <b>Phone</b> <p >{{User.agencyPhone}}</p>
+                                          </li>
+                                      </ul>
+                                  </div>
+                                  <!-- /.card-body -->
+                              </div>
+                              <!-- /.card -->
+                              <!-- About Me Box -->
+                              <div class="card card-primary">
+                                  <div class="card-header">
+                                      <h6 class="card-title" style="font-weight: bold;">Summary</h6>
+                                  </div>
+                                  <!-- /.card-header -->
+                                  <div class="card-body" style="padding-bottom:0px;">
+                                      <strong><i class="fa fa-book mr-1"></i> Last Login</strong>
+
+                                      <p class="text-dark">{{User.lastLogin | date : 'medium'}}</p>
+
+                                      <hr>
+
+                                  </div>
+                                  <!-- /.card-body -->
+                              </div>
+                              <!-- /.card -->
+                          </div>
+                          <!-- /.col -->
+
+
+
+                          <div class="col-md-9">
+                              <div class="card card-primary card-outline">
+                                  <div class="card-header p-2">
+                                      <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                          <li class="nav-item" role="presentation"><button class="nav-link active"  id="editProfile-tab" data-bs-toggle="tab" data-bs-target="#editProfile" type="button" role="editProfile" aria-controls="editProfile" aria-selected="true">Edit Agency Profile</button></li>
+
+                                          <!-- <li class="nav-item">
+                                              <button class="nav-link" id="pageVisit-tab" data-bs-toggle="tab" data-bs-target="#pageVisit" type="button" role="pageVisit" aria-controls="pageVisit" aria-selected="true">Page Visit</button>
+                                            </li> -->
+                                          <li class="nav-item">
+                                              <button class="nav-link" id="changePassword-tab" data-bs-toggle="tab" data-bs-target="#changePassword" type="button" role="changePassword" aria-controls="changePassword" aria-selected="true">{{passText}}</button>
+                                          </li>
+                                          <li class="nav-item">
+                                            <button class="nav-link" id="twoFactorAuth-tab" data-bs-toggle="tab" data-bs-target="#twoFactorAuth" type="button" role="twoFactorAuth" aria-controls="twoFactorAuth" aria-selected="true">Two-Factor Authentication</button>
+                                        </li>
+                                      </ul>
+                                  </div><!-- /.card-header -->
+                                  <div class="card-body">
+                                      <div class="tab-content" id="myTabContent">
+                                          <div class="tab-pane fade show active" role="tabpanel" id="editProfile" aria-labelledby="editProfile-tab">
+                                              <form [formGroup]="agencyProfileForm" (ngSubmit)="updateProfile()">
+                                                  <div class="modal-body">
+                                                      <div class="card-body row">
+                                                          <div class="col-12 row form-group">
+                                                              <div class="col-lg-3">
+                                                                  <div style="height:102px; width:102px; border:1px solid gray">
+
+                                                                      <img style="height:100px; width:100px;" [src]="profileImgURL" alt="No image" *ngIf="profileImgURL != null">
+
+                                                                  </div>
+                                                              </div>
+                                                              <div class="col-lg-6" style="padding-top:30px;">
+                                                                  <input class="form-control" type="file" id="profileFile" (change)="fileProgress($event)" accept="image/*">
+                                                              </div>
+
+                                                              <div class="col-lg-3" style="padding-top:30px;">
+                                                                  <button class="form-control" (click)="DeletePicture($event)">Delete Picture</button>
+                                                              </div>
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="NvAgencyName">Agency Name <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <input type="text"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '').toUpperCase();"
+                                                              [ngClass]="{ 'is-invalid': agencyProfileForm.get('NvAgencyName')!!.errors && agencyProfileForm.get('NvAgencyName')!.touched }"
+                                                                class="form-control" placeholder="Agency Name" formControlName="NvAgencyName">
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('NvAgencyName')!!.errors && agencyProfileForm.get('NvAgencyName')!.touched">You can't leave this empty.</div>
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="email">Agency Email <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <input type="email" id="email"  [ngClass]="{ 'is-invalid': agencyProfileForm.get('NvAgencyEmail')!!.errors && agencyProfileForm.get('NvAgencyEmail')!.touched }"  class="form-control" formControlName="NvAgencyEmail" placeholder="Email" >
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('NvAgencyEmail')!.hasError('required') && agencyProfileForm.get('NvAgencyEmail')!.touched">
+                                                                  Please choose a NvAgencyEmail
+                                                              </div>
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('NvAgencyEmail')!.hasError('NvAgencyEmail') && agencyProfileForm.get('NvAgencyEmail')!.touched">
+                                                                  Please provide valid NvAgencyEmail
+                                                              </div>
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="NvAgencyPhoneNumber">Phone <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <input type="text" oninput="this.value=this.value.replace(/\D/g,'')" maxlength="11"
+                                                              [ngClass]="{ 'is-invalid': agencyProfileForm.get('NvAgencyPhoneNumber')!!.errors && agencyProfileForm.get('NvAgencyPhoneNumber')!.touched }" class="form-control" placeholder="Phone" formControlName="NvAgencyPhoneNumber">
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('NvAgencyPhoneNumber')!!.errors && agencyProfileForm.get('NvAgencyPhoneNumber')!.touched">You can't leave this empty.</div>
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="VCountryId">Country <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <!-- <input type="text" [ngClass]="{ 'is-invalid': agencyProfileForm.get('VCountryId')!!.errors && agencyProfileForm.get('VCountryId')!.touched }" class="form-control" placeholder="Country" formControlName="VCountryId">
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('VCountryId')!!.errors && agencyProfileForm.get('VCountryId')!.touched">You can't leave this empty.</div> -->
+                                                              <select id="country" name="country"  class="form-control text-uppercase"  formControlName="VCountryId" >
+                                                                <option value="0">Please Select One...</option>
+                                                                <option *ngFor="let opt of countryList" [value]="opt.id">{{opt.text}}</option>
+                                                              </select>
+
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="NvAgencyCityName">City Name <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <input type="text"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '').toUpperCase();"
+                                                              [ngClass]="{ 'is-invalid': agencyProfileForm.get('NvAgencyCityName')!!.errors && agencyProfileForm.get('NvAgencyCityName')!.touched }"
+                                                              class="form-control" placeholder="City Name" formControlName="NvAgencyCityName">
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('NvAgencyCityName')!!.errors && agencyProfileForm.get('NvAgencyCityName')!.touched">You can't leave this empty.</div>
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="VAgencyPostalCode">Postal Code <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <input type="text" oninput="this.value=this.value.replace(/\D/g,'')"
+                                                              [ngClass]="{ 'is-invalid': agencyProfileForm.get('VAgencyPostalCode')!.errors && agencyProfileForm.get('VAgencyPostalCode')!.touched }" class="form-control" placeholder="Postal Code" formControlName="VAgencyPostalCode">
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('VAgencyPostalCode')!.errors && agencyProfileForm.get('VAgencyPostalCode')!.touched">You can't leave this empty.</div>
+                                                          </div>
+                                                          <!-- <div class="col-lg-6 form-group mt-2">
+                                                              <label for="VAgencyPostalCode">Phone Number <span style="color: red; margin-left: 4px;">*</span></label>
+                                                              <input type="text" [ngClass]="{ 'is-invalid': agencyProfileForm.get('VAgencyPostalCode')!.errors && agencyProfileForm.get('VAgencyPostalCode')!.touched }" class="form-control" placeholder="Phone Number" formControlName="VAgencyPostalCode">
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('VAgencyPostalCode')!.errors && agencyProfileForm.get('VAgencyPostalCode')!.touched">You can't leave this empty.</div>
+                                                          </div>
+                                                          <div class="col-lg-6 form-group mt-2">
+                                                              <label for="Role">Role</label>
+                                                              <select id="role" [ngClass]="{ 'is-invalid': agencyProfileForm.get('RoleId')!.errors && agencyProfileForm.get('RoleId')!.touched }" class="form-control" formControlName="RoleId" >
+                                                                  <option value="">Select Please ...</option>
+                                                                  <option *ngFor="let rl of roles" [value]="rl.id">{{rl.name}}</option>
+                                                              </select>
+                                                              <div class="invalid-feedback" *ngIf="agencyProfileForm.get('RoleId')!.errors && agencyProfileForm.get('RoleId')!.touched">You can't leave this empty.</div>
+                                                          </div> -->
+
+                                                          <div class="col-lg-12 form-group mt-2">
+                                                            <label for="NvAgencyAddress">Address <span style="color: red; margin-left: 4px;">*</span></label>
+                                                            <textarea
+                                                            
+                                                            [ngClass]="{ 'is-invalid': agencyProfileForm.get('NvAgencyAddress')!.errors && agencyProfileForm.get('NvAgencyAddress')!.touched }" class="form-control"
+                                                            placeholder="Address" formControlName="NvAgencyAddress" cols="30" rows="2" style="resize: none;"></textarea>
+
+                                                            <div class="invalid-feedback" *ngIf="agencyProfileForm.get('NvAgencyAddress')!.errors && agencyProfileForm.get('NvAgencyAddress')!.touched">You can't leave this empty.</div>
+                                                        </div>
+
+                                                      </div>
+                                                  </div>
+                                                  <div class="modal-footer justify-content-between">
+                                                      <button type="submit" class="btn btn-primary">
+                                                          <i class="fa fa-save"></i>
+                                                          Save
+                                                      </button>
+                                                  </div>
+                                              </form>
+                                          </div>
+                                          <!-- /.tab-pane -->
+
+                                          <div class="tab-pane fade" role="tabpanel" id="pageVisit" aria-labelledby="pageVisit-tab">
+                                              <div class="row">
+                                                  <div class="col-12">
+                                                    <!-- <table #dataTablePageVisit class="table table-bordered table-striped" style="width: 100%;">
+                                                    </table> -->
+
+                                                    <div class="card-body" >
+
+                                                        <div class="row" style="padding-bottom: 20px;">
+                                                          <div class="col-sm-12 col-md-6">
+                                                              <div class="row">
+                                                                <label style="width: 70px; font-weight: bold;">Show </label>
+                                                                <select style="width: 70px;" (change)="lengthChangePageVisited($any($event.target).value)" class="custom-select custom-select-sm form-control form-control-sm">
+                                                                  <option value="10">10</option>
+                                                                  <option value="25">25</option>
+                                                                  <option value="50">50</option>
+                                                                  <option value="100">100</option>
+                                                                </select>
+                                                                <label style="width: 80px; padding-left: 10px; font-weight: bold;"> entries </label>
+                                                              </div>
+
+                                                          </div>
+                                                          <div class="col-sm-12 col-md-6" style="text-align: end;">
+                                                            <label style="width: 70px; text-align: left;">Search:</label>
+                                                            <input style="width: 160px; display: inline-block;" type="search" class="form-control form-control-sm" (keydown)="EnterSubmitPageVisited($event)" [(ngModel)]="searchValuePageVisited" (keyup)="searchClickPageVisited()">
+                                                            <button style="width: 30px; margin-bottom: 2px;" type="submit" class="btn btn-sm btn-default" (click)="searchClickPageVisited()">
+                                                              <i class="fa fa-search"></i>
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                        <div class="row">
+                                                          <div *ngIf="isProcessingPageVisited" class="col-12" style="text-align: center;">
+                                                            <h3>Processing...</h3>
+                                                          </div>
+                                                          <div *ngIf="!isProcessingPageVisited && recordsFilteredPageVisited == 0" class="col-12" style="text-align: center;">
+                                                            <h3>No data found</h3>
+                                                          </div>
+                                                          <div *ngIf="!isProcessingPageVisited" class="col-12 row">
+                                                            <table class="table table-bordered table-striped ">
+                                                              <thead>
+                                                                <tr>
+                                                                  <th>Index</th>
+                                                                  <th>Page Name</th>
+                                                                  <th>Visited Date</th>
+                                                                  <th>IP</th>
+
+
+
+
+                                                                </tr>
+                                                              </thead>
+                                                              <tbody>
+                                                                <tr *ngFor="let record of tableDataPageVisited; let i = index">
+                                                                  <td>{{i+1}}</td>
+                                                                  <td>{{record.pageName}}</td>
+                                                                  <td>{{record.visitedDate}}</td>
+                                                                  <td>{{record.ip}}</td>
+
+                                                                </tr>
+                                                              </tbody>
+                                                            </table>
+
+
+                                                          </div>
+                                                        </div>
+                                                        <div class="row">
+                                                          <div class="col-sm-12 col-md-6">
+                                                            <div *ngIf="!filteredRecordsShowPageVisited">
+                                                              Showing {{startPageVisited}} to {{endPageVisited}} of {{recordsTotalPageVisited}} entries
+                                                            </div>
+                                                            <div *ngIf="filteredRecordsShowPageVisited">
+                                                              Showing {{startPageVisited}} to {{endPageVisited}} of {{recordsFilteredPageVisited}} entries (filtered from {{recordsTotalPageVisited}} total entries)
+                                                            </div>
+                                                          </div>
+                                                          <div class="col-sm-12 col-md-6" style="text-align: end;">
+                                                            <div style="display: inline-block;">
+                                                              <ul class="pagination">
+                                                                <li class="page-item"  *ngFor = "let page of pageListPageVisited" [ngClass]="page.class">
+                                                                  <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link" (click)="pageClickPageVisited(page.value)">{{page.title}}</a>
+                                                                </li>
+
+                                                              </ul>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+
+
+                                                      </div>
+
+                                                  </div>
+                                                  <!-- /.col -->
+                                              </div>
+                                          </div>
+                                          <!-- /.tab-pane -->
+
+
+                                          <div class="tab-pane fade" role="tabpanel" id="changePassword" aria-labelledby="changePassword-tab">
+                                              <form [formGroup]="changePasswordForm" (ngSubmit)= "changePassword()">
+                                                  <div class="box-body row">
+                                                      <div class="input-group mb-3 col-lg-7" *ngIf="!setPass">
+                                                          <input type="password" [ngClass]="{ 'is-invalid': changePasswordForm.get('OldPassword')!.errors && changePasswordForm.get('OldPassword')!.touched }" class="form-control" formControlName="OldPassword" placeholder="Old Password">
+                                                          <div class="input-group-append">
+                                                              <div class="input-group-text">
+                                                              <span class="fa fa-lock" style="padding:5px;"></span>
+                                                              </div>
+                                                          </div><br />
+                                                          <div class="invalid-feedback" *ngIf="changePasswordForm.get('OldPassword')!.hasError('required') && changePasswordForm.get('OldPassword')!.touched">
+                                                              Password is required
+                                                          </div>
+                                                      </div>
+                                                      <div class="input-group mb-3 col-lg-7">
+                                                          <input type="password" [ngClass]="{ 'is-invalid': changePasswordForm.get('NewPassword')!.errors && changePasswordForm.get('NewPassword')!.touched }" class="form-control" formControlName="NewPassword" placeholder="New Password">
+                                                          <div class="input-group-append">
+                                                              <div class="input-group-text">
+                                                              <span class="fa fa-lock" style="padding:5px;"></span>
+                                                              </div>
+                                                          </div><br />
+                                                          <div class="invalid-feedback" *ngIf="changePasswordForm.get('NewPassword')!.hasError('required') && changePasswordForm.get('NewPassword')!.touched">
+                                                              Password is required
+                                                          </div>
+                                                          <div class="invalid-feedback" *ngIf="changePasswordForm.get('NewPassword')!.hasError('minlength') && changePasswordForm.get('NewPassword')!.touched">
+                                                              Password must be at least 6 characters
+                                                          </div>
+                                                          <div class="invalid-feedback" *ngIf="changePasswordForm.get('NewPassword')!.hasError('maxlength') && changePasswordForm.get('NewPassword')!.touched">
+                                                              Password cannot exceed 8 characters
+                                                          </div>
+                                                      </div>
+                                                      <div class="input-group mb-3 col-lg-7">
+                                                          <input type="password" [ngClass]="{ 'is-invalid': changePasswordForm.get('ConfirmPassword')!.errors && changePasswordForm.get('ConfirmPassword')!.touched || changePasswordForm.get('ConfirmPassword')!.touched && changePasswordForm!.hasError('mismatch') }" class="form-control" formControlName="ConfirmPassword" placeholder="Retype Password">
+                                                          <div class="input-group-append">
+                                                              <div class="input-group-text">
+                                                              <span class="fa fa-lock" style="padding:5px;"></span>
+                                                              </div>
+                                                          </div>
+                                                          <div class="invalid-feedback" *ngIf="changePasswordForm.get('ConfirmPassword')!.hasError('required') && changePasswordForm.get('ConfirmPassword')!.touched">
+                                                              Password is required
+                                                          </div>
+                                                          <div class="invalid-feedback" *ngIf="changePasswordForm.get('ConfirmPassword')!.touched && changePasswordForm!.hasError('mismatch')">
+                                                              Password must match
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                                  <!-- /.box-body -->
+                                                  <div class="box-footer">
+                                                      <button type="submit" class="btn btn-primary">
+                                                          <i class="fa fa-save"></i>
+                                                          Save
+                                                      </button>
+                                                  </div>
+                                              </form>
+                                          </div>
+
+                                          <div class="tab-pane fade" role="twoFactorAuth" id="twoFactorAuth" aria-labelledby="twoFactorAuth-tab">
+                                              <button class="btn" [class.btn-primary]="!is2faEnabled"
+                                              [class.btn-danger]="is2faEnabled" (click)="enableTwoFactorAuth()" >{{txt2FactorEnable}}</button>
+                                              <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <button type="button" class="btn btn-outline-secondary mt-3" >
+                                                            Phone Verified <i *ngIf="!isPhoneVerified" class="fas fa-times-circle text-danger"></i> <i *ngIf="isPhoneVerified" class="fas fa-check-circle text-success"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <button type="button" *ngIf="false" class="site_cta mt-3" (click)="changePhoneAndEmail('phone')">
+                                                            Change Phone Number <i class="fas fa-edit"></i>
+                                                          </button>
+                                                    </div>
+                                                </div>
+                                              </div>
+                                              <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <button type="button" class="btn btn-outline-secondary mt-3" >
+                                                            Email Verified <i *ngIf="!isEmailVerified" class="fas fa-times-circle text-danger"></i> <i *ngIf="isEmailVerified" class="fas fa-check-circle text-success"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <button type="button" *ngIf="false"  class="site_cta mt-3" style="width: 223px;" (click)="changePhoneAndEmail('email')">
+                                                            Change Email <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                              </div>
+                                          </div>
+
+                                          <!-- /.tab-pane -->
+
+                                      </div>
+                                      <!-- /.tab-content -->
+                                  </div><!-- /.card-body -->
+                              </div>
+                              <!-- /.nav-tabs-custom -->
+                          </div>
+                          <!-- /.col -->
+                      </div>
+                      <!-- /.row -->
+                  </div><!-- /.container-fluid -->
+                </section>
+                <!-- /.content -->
+              </div>
+              <!-- <app-footer></app-footer> -->
+              </div>
+          </div>
+      </div>
+  </div>
+   <!-- Modal  -->
+   <button style="display: none;" type="button" #btnModalOpen class="btn btn-primary btn-sm float-right"
+   data-bs-toggle="modal" data-bs-target="#changePhoneAndEmailModal" role="dialog" data-backdrop="static"
+   data-keyboard="false">
+ </button>
+
+ <div class="modal fade" id="changePhoneAndEmailModal" data-bs-backdrop="static" data-bs-keyboard="false"
+   aria-labelledby="changePhoneAndEmailModal" aria-hidden="true">
+   <div class="modal-dialog modal-lg modal-dialog-scrollable d-flex align-items-center justify-content-center">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h6 class="modal-title" style="font-weight: bold; font-size: 1.2rem;">Change your {{changeType}} </h6>
+         <button #btnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+           ></button>
+       </div>
+       <form>
+         <div class="modal-body">
+           <div class="card-body">
+             <div class="row form-group">
+               <form [formGroup]="changePhoneAndNumberForm" (ngSubmit)="sendRequest()" class="site_form login_form">
+                 <div class="row">
+                  <div class="col-md-9 form-group" *ngIf="changeType != 'email'">
+                    <label for="PhoneNumber" class="mb-2">Phone Number <span
+                        class="text-danger align-self-center ml-1">*</span></label>
+                    <input name="PhoneNumber" type="text" id="PhoneNumber"
+                      [ngClass]="{ 'is-invalid': changePhoneAndNumberForm?.get('PhoneNumber')?.errors && changePhoneAndNumberForm?.get('PhoneNumber')?.touched }"
+                      class="form-control" placeholder="PhoneNumber" formControlName="PhoneNumber">
+                    <div class="invalid-feedback"
+                      *ngIf="changePhoneAndNumberForm?.get('PhoneNumber')?.errors && changePhoneAndNumberForm?.get('PhoneNumber')?.touched">
+                      You can't leave this empty.</div>
+                  </div>
+                  <div class="col-md-3 form-group align-items-end d-flex" *ngIf="changeType != 'email'">
+                    <button type="button" class="btn btn-outline-secondary mb-2" (click)="phoneOTPRequest()">
+                      Send OTP
+                    </button>
+                  </div>
+                  <div class="col-md-9 form-group" *ngIf="changeType == 'email'">
+                    <label for="NewEmail" class="mb-2">New Email <span
+                        class="text-danger align-self-center ml-1">*</span></label>
+                    <input name="NewEmail" type="text" id="NewEmail"
+                      [ngClass]="{ 'is-invalid': changePhoneAndNumberForm?.get('NewEmail')?.errors && changePhoneAndNumberForm?.get('NewEmail')?.touched }"
+                      class="form-control" placeholder="NewEmail" formControlName="NewEmail">
+                    <div class="invalid-feedback"
+                      *ngIf="changePhoneAndNumberForm.get('NewEmail')?.hasError('required') && changePhoneAndNumberForm.get('NewEmail')?.touched">
+                      Please provide a Email
+                    </div>
+                    <div class="invalid-feedback"
+                      *ngIf="changePhoneAndNumberForm.get('NewEmail')?.hasError('NewEmail') && changePhoneAndNumberForm.get('NewEmail')?.touched">
+                      Please provide valid Email
+                    </div>
+                  </div>
+                  <div class="col-md-3 form-group align-items-end d-flex" *ngIf="changeType == 'email'">
+                    <button type="button" class="btn btn-outline-secondary mb-2" (click)="emailOTPRequest()">
+                      Send OTP
+                    </button>
+                  </div>
+                  <h6 class="pt-2" style="font-size: 25px;" *ngIf="changeType != 'email'">Type OTP</h6>
+                  <div class="col-md-12 pb-3 pt-2 d-flex justify-content-center align-items-center" *ngIf="changeType != 'email'">
+                    <div class="position-relative">
+                        <div class="cards text-center">
+                            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
+                                <input class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="second" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="third" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="fifth" maxlength="1" />
+                                <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" />
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 form-group mb-3" *ngIf="changeType == 'email'">
+                    <label for="TFACode" class="mb-2">Token <span
+                        class="text-danger align-self-center ml-1">*</span></label>
+                    <input name="TFACode" type="text" id="TFACode"
+                      [ngClass]="{ 'is-invalid': changePhoneAndNumberForm?.get('TFACode')?.errors && changePhoneAndNumberForm?.get('TFACode')?.touched }"
+                      class="form-control" placeholder="TFACode" formControlName="TFACode">
+                    <div class="invalid-feedback"
+                      *ngIf="changePhoneAndNumberForm?.get('TFACode')?.errors && changePhoneAndNumberForm?.get('TFACode')?.touched">
+                      You can't leave this empty.</div>
+                  </div>
+                   <div class="col-md-12">
+                     <div class="btn_group">
+                       <button class="site_cta" type="submit">Submit</button>
+                     </div>
+                   </div>
+                 </div>
+               </form>
+             </div>
+           </div>
+         </div>
+       </form>
+     </div>
+   </div>
+ </div>
+   <!-- / Modal -->
+</main>

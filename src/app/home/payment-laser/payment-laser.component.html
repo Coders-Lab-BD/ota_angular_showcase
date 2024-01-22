@@ -1,0 +1,109 @@
+<main>
+  <div class="search_main_wrapper area">
+    <div class="container">
+      <div class="main_searchbar_wrapper">
+        <div class="card table-responsive p-0">
+          <div class="card-header">
+            <h6 class="card-title">
+              <i class="fa fa-balance-scale"></i>
+              Ledger Information
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="row" style="padding-bottom: 20px;">
+              <div class="col-sm-12 col-md-6 ">
+                <div class="row">
+                  <label style="width: 70px; font-weight: bold;">Show </label>
+                  <select style="width: 70px;" (change)="lengthChange($any($event.target).value)"
+                    class="custom-select custom-select-sm form-control form-control-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  <label style="width: 80px; padding-left: 10px; font-weight: bold;"> entries </label>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="padding-bottom: 10px">
+              <div class="col-sm-3">
+                <label style="width: 50px; text-align: left;">From</label>
+                <input style="width: 160px; display: inline-block;" type="date" class="form-control form-control-sm fromdate"
+                  [(ngModel)]="fromDate">
+              </div>
+              <div class="col-sm-3">
+                <label style="width: 30px; text-align: left;">To</label>
+                <input style="width: 160px; display: inline-block;"  type="date" class="form-control form-control-sm todate"
+                  [(ngModel)]="toDate">
+              </div>
+              <div class="col-md-4">
+                <button style="margin-bottom: 2px;" type="submit" class="btn btn-md btn-primary"
+                  (click)="searchClick()">
+                  search <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div *ngIf="isProcessing" class="col-12" style="text-align: center;">
+                <h3>Processing...</h3>
+              </div>
+              <div *ngIf="!isProcessing && recordsFiltered == 0" class="col-12" style="text-align: center;">
+                <h3>No data found</h3>
+              </div>
+              <div *ngIf="!isProcessing" class="col-12 row">
+                <table class="table table-bordered table-striped ">
+                  <thead>
+                    <tr>
+                      <th class="text-center">SL</th>
+                      <th class="text-center">Transaction Reference</th>
+                      <th class="text-center">Deposit Date</th>
+                      <th class="text-center">Particular</th>
+                      <th class="text-center">Debit</th>
+                      <th class="text-center">Credit</th>
+                      <th class="text-center">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let record of tableData; let i = index">
+                      <td>{{start + i}}</td>
+                      <td class="text-center">
+                        <a style="color: blue; cursor: pointer;" 
+                        (click)="PreviewDetails(record.BookAndHoldId, record.PaymentId)">{{record.TransactionNumber}}</a>
+                      </td>
+                      <td class="text-center">{{record.TransactionDate | date : "dd-MMM-yyyy"}}</td>
+                      <td class="text-center">{{record.Particulars}}</td>
+                      <td style="text-align: right;">{{shareService.getTwoDecimalPoint(record.DR)}}</td>
+                      <td style="text-align: right;">{{shareService.getTwoDecimalPoint(record.CR)}}</td>
+                      <td style="text-align: right;">{{shareService.getTwoDecimalPoint(record.Balance)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div *ngIf="!filteredRecordsShow">
+                  Showing {{start}} to {{end}} of {{recordsTotal}} entries
+                </div>
+                <div *ngIf="filteredRecordsShow">
+                  Showing {{start}} to {{end}} of {{recordsFiltered}} entries (filtered from {{recordsTotal}} total
+                  entries)
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6" style="text-align: end;">
+                <div style="display: inline-block;">
+                  <ul class="pagination">
+                    <li class="page-item" *ngFor="let page of pageList" [ngClass]="page.class">
+                      <a href="javascript:void(0)" aria-controls="example1" tabindex="0" class="page-link"
+                        (click)="pageClick(page.value)">{{page.title}}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

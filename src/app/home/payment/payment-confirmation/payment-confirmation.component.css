@@ -1,0 +1,10 @@
+.select2-container .select2-selection--single {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: block;
+  height: 55px;
+  padding-left: 6px !important;
+  padding-top: 10px !important;
+  user-select: none;
+  -webkit-user-select: none;
+}

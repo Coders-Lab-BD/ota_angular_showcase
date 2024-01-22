@@ -1,0 +1,7 @@
+.scroll{
+  height: 290px;
+  overflow: scroll;
+}
+.history_widget {
+  padding: 1px !important;
+}

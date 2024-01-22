@@ -1,0 +1,868 @@
+<app-loader *ngIf="isLoad" fromFlight="{{departureCityCode}}" toFlight="{{arrivalCityCode}}" departureDate="{{departureDate}}"
+  returnDate="{{arrivalDate}}" adult="{{adult}}" child="{{child}}" infant="{{infant}}">
+</app-loader>
+<main>
+  <div class="inner_hero_section area">
+    <div class="container">
+      <app-top-search-bar *ngIf="isShowFilter"></app-top-search-bar>
+
+      <div class="result_card_wrapper">
+        <div class="notfound-flight" id="notFoundFlight" *ngIf="isNotFound===true">
+          <div class="">
+            <h1 style="color:#fff">Ooops! No flights found in this route</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="flightResult" class="flight_search_result_section area">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-3 col-lg-12" *ngIf="isShowFilter && !isNotFound" >
+          <div class="flight_search_filter_wrapper sidebar_wrapper">
+            <div class="sidebar_widget sidebar_sticky shadow-sm" *ngIf="isActiveAirlinesName == true || isActiveProviderName== true ||
+             isActiveRefundable ==true || isActiveBaggageName==true|| isActiveDepartureName==true">
+              <div class="filter_widget_wrapper applied_filters_widget">
+                <h2 class="widget_title">Applied Filters</h2>
+                <div class="widget_contents">
+                  <ul class="filters_list" *ngIf="isActiveProviderName == true">
+                    <li *ngFor="let provider of activeProviderNames;let i=index">
+                      {{provider.providerName}}
+                      <a (click)="uncheckProviderName(provider.providerName)"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
+                    </li>
+                  </ul>
+                  <ul class="filters_list" *ngIf="isActiveRefundable == true">
+                    <li *ngFor="let refundable of activeRefundableNames;let i=index">
+                      {{refundable.refundName}}
+                      <a (click)="uncheckRefundablity(refundable.refundName)"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
+                    </li>
+                  </ul>
+                  <ul class="filters_list" *ngIf="isActiveBaggageName == true">
+                    <li *ngFor="let baggage of activebaggageNames;let i=index">
+                      {{baggage.bagWeight}} {{baggage.unit}}
+                      <a (click)="uncheckBaggage(baggage.bagWeight,baggage.unit)"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
+                    </li>
+                  </ul>
+                  <ul class="filters_list" *ngIf="isActiveDepartureName == true">
+                    <li *ngFor="let dep of activeDepartureNames;let i=index">
+                      {{dep.cityCode}} : {{dep.title}}
+                      {{dep.i}}
+                      <a (click)="uncheckDepartureDate(dep.index,dep.depIndex)"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
+                    </li>
+                  </ul>
+                  <ul class="filters_list" *ngIf="isActiveAirlinesName == true">
+                    <li *ngFor="let airlines of activeAirlinesNames;let i=index">
+                      {{airlines.airlinesName}}
+                      <a (click)="removeAppliedFilterItem(0,airlines.carrier)"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
+                    </li>
+                  </ul>
+                  <span class="clear_filters"><a (click)="removeAllAppliedFilterItem()">Clear All</a></span>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="sidebar_widget">
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Service name</h2>
+                <div class="widget_contents">
+                    <div class="filter_grp">
+                        <div class="inp_grp">
+                            <input type="checkbox" class="cursor-pointer"
+                            id="chkSabre" [(ngModel)]="sabreChecked"
+                            (click)="filterProviderName('Sabre',$event)" >
+                            <label for="chkSabre" class="cursor-pointer">Sabre</label>
+                        </div>
+                    </div>
+                    <div class="filter_grp">
+                        <div class="inp_grp">
+                            <input type="checkbox" class="cursor-pointer"
+                             id="chkGalileo" [(ngModel)]="galileoChecked"
+                             (click)="filterProviderName('Galileo',$event)">
+                            <label for="chkGalileo" class="cursor-pointer">Galileo</label>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="sidebar_widget">
+              <div class="filter_widget_wrapper">
+                <h2 class="widget_title">Refundablity</h2>
+                <div class="widget_contents">
+                    <div class="filter_grp">
+                        <div class="inp_grp">
+                            <input type="checkbox" class="cursor-pointer"
+                            id="chkRefundYesLeft" [(ngModel)]="activeRerfundable"
+                            (click)="FilterRefundablity('Refundable',$event)" >
+                            <label for="chkRefundYesLeft" class="cursor-pointer">$ Refundable</label>
+                        </div>
+                    </div>
+                    <div class="filter_grp">
+                        <div class="inp_grp">
+                            <input type="checkbox" class="cursor-pointer"
+                             id="chkRefundNoLeft" [(ngModel)]="activeNonRerfundable"
+                             (click)="FilterRefundablity('Non Refundable',$event)">
+                            <label for="chkRefundNoLeft" class="cursor-pointer">$ Non Refundable</label>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="sidebar_widget">
+              <div class="filter_widget_wrapper" *ngFor="let departureTime of departureTimeList; let j = index">
+                <h2 class="widget_title">Departure From {{departureTime.CityName}}</h2>
+                <div class="widget_contents">
+                  <div class="schedule_widget">
+                    <div class="schedule_box cursor-pointer" *ngFor="let item of departureTimes; let i = index"
+                    (click)="departureTimeClicked(i, item.details, item.title, departureTime.CityCode, 'scheduleDept'+i+''+j, $event,j)"
+                    [attr.id]="'deptScheduleBox' + i+''+j" [attr.for]="'scheduleDept'+i+''+j">
+                    <input type="checkbox" name="chkScheduleWidget" style="display: none;" [attr.id]="'scheduleDept'+i+''+j" />
+                    <label [attr.for]="'scheduleDept'+i+''+j">
+                      <div [attr.id]="'deptWidget'">
+                        <img [attr.src]="item.logo" alt="...">
+                        <p [attr.id]="'deptTitleId'+i+''+j">{{item.title}}</p>
+                      </div>
+                    </label>
+                  </div>
+                  </div>
+                </div>
+            </div>
+            </div>
+            <div class="sidebar_widget">
+              <div class="filter_widget_wrapper">
+                  <h2 class="widget_title">Baggages</h2>
+                  <div class="widget_contents" id="airlineList">
+                      <div *ngFor="let item of baggages;let i=index">
+                          <div class="filter_grp" *ngIf="item.len!=0">
+                              <div class="inp_grp">
+                                   <input type="checkbox" class="cursor-pointer" [value]="item.bagWeight"
+                                    (click)="Filterbaggage(item.bagWeight, item.unit,$event)"
+                                    class="filter" name="filter" id="filterId{{item.bagWeight}}" [(ngModel)]="item.checked">
+                                  <label class="cursor-pointer" for="filterId{{item.bagWeight}}">{{item.bagWeight}} {{item.unit}}</label>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="sidebar_widget">
+              <div class="filter_widget_wrapper">
+                  <h2 class="widget_title">Airlines</h2>
+                  <div class="widget_contents" id="airlineList">
+                      <div *ngFor="let item of topFlights;let i=index">
+                          <div class="filter_grp" *ngIf="item.len!=0">
+                              <div class="inp_grp">
+                                   <input type="checkbox" class="cursor-pointer" [value]="item.carrier"
+                                    (click)="filterAirlinesName($event, item.carrier, item.providerName, item.airlinesName)"
+                                    class="filter" name="filter" id="filterId{{item.carrier}}" [(ngModel)]="item.checked">
+
+                                  <label class="cursor-pointer" for="filterId{{item.carrier}}">{{item.airlinesName}}</label>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class={{className}}>
+          <div *ngIf="domOneWay">
+            <div class="search_results_wrapper">
+              <div class="search_result_heading">
+                <h2 class="search_result_title">Flights from {{paramModelData.Departure[0].CityName}} to {{paramModelData.Arrival[0].CityName}}</h2>
+                <div class="all_fare_toggle">
+                    <p>Show All Fare</p>
+                    <label class="switch">
+                      <input type="checkbox" id="chkFare" [checked]="isAgentFare" (click)="fareTypeChange($event)">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+              </div>
+              <div *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+                <div class="row">
+                    <div class="col-sm-1" (click)="moveLeftFlight()"
+                        style="padding-right: 5px;
+                        margin-left: 8px;
+                        width: 0;
+                        padding-top: 10px;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #flightItem class="flight-drag"
+                        [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true"
+                        >
+                          <div class="flight-item" drag-scroll-item
+                            *ngFor="let item of topFlights; let i=index" >
+                              <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                                  <a (click)="filterAirlines(item.carrier, item.providerName, item.airlinesName,0)">
+                                    <div class="flights_img">
+                                        <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                        <span class="flight_shortname">{{item.carrier}}</span>
+                                    </div>
+                                  </a>
+                              </div>
+                          </div>
+                        </drag-scroll>
+                    </div>
+                    <div class="col-sm-1" (click)="moveRightFlight()"
+                        style="padding-left: 11px;
+                        width: 0;
+                        padding-top: 10px;
+                        z-index: 999;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+              </div>
+              <br/>
+              <div *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                <div class="row">
+                  <div class="col-sm-1"  style="padding-right: 5px;
+                                        margin-left: 8px;
+                                        width: 0;
+                                        padding-top: 10px;
+                                        cursor: pointer;">
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                  </div>
+                  <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                    <drag-scroll #fareItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                      [scrollbar-hidden]="true">
+                      <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                      [ngClass]="{'active_flight_drag': i === selectedSavenDaysIndex}"
+                      (click)="setDate(departureDate,'',i)"
+                       drag-scroll-item *ngFor="let departureDate of sevenDays; let i=index">
+                        <div>
+                          <a>
+                            <p *ngIf="departureDate !== null" class="date">
+                              {{_groupedDayMonthYear(departureDate)}}</p>
+                              <p *ngIf="departureDate !== null"> BDT {{getFare(departureDate)}}</p>                          
+                          </a>
+                        </div>
+                      </div>
+                    </drag-scroll>
+                  </div>
+                  <div class="col-sm-1" style="padding-left: 11px;
+                                        width: 0;
+                                        padding-top: 10px;
+                                        cursor: pointer;">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div class="flight_search_result_wrapper">
+                <div class="result_card_wrapper">
+                  <div id="resultBody"></div>
+                  <div *ngFor="let item of displayedData;let i=index">
+                    <app-dom-one-way-flight-result (childEvent)="getPenalties($event)" [isShowFilter]="isShowFilter" [item]="item" [i]="i" [isAgentFare]="isAgentFare"></app-dom-one-way-flight-result>
+                  </div>
+                </div>
+                <div class="result_pagination_wrapper" *ngIf="filterData.length>10">
+                  <div class="view_more_btn">
+                    <a class="site_cta orange_cta" (click)="toggleViewMoreLess()">{{ showMoreText }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="domRoundTrip">
+            <div class="search_results_wrapper">
+              <div class="search_result_heading">
+                <h2 class="search_result_title">Flights from {{paramModelData.Departure[0].CityName}} to
+                  {{paramModelData.Arrival[0].CityName}}</h2>
+                <div class="all_fare_toggle">
+                  <p>Show All Fare</p>
+                  <label class="switch">
+                    <input type="checkbox" id="chkFare" [checked]="isAgentFare" (click)="fareTypeChange($event)">
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+              <div id="flightSearchBody" *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+                <div class="row">
+                    <div class="col-sm-1" (click)="moveLeftFlight()"
+                        style="padding-right: 5px;
+                        margin-left: 8px;
+                        width: 0;
+                        padding-top: 10px;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #flightItem class="flight-drag"
+                        [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true"
+                        >
+                          <div class="flight-item" drag-scroll-item
+                            *ngFor="let item of topFlights; let i=index" >
+                              <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                                  <a (click)="filterAirlines(item.carrier, item.providerName, item.airlinesName,0)">
+                                    <div class="flights_img">
+                                        <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                        <span class="flight_shortname">{{item.carrier}}</span>
+                                    </div>
+                                  </a>
+                              </div>
+                          </div>
+                        </drag-scroll>
+                    </div>
+                    <div class="col-sm-1" (click)="moveRightFlight()"
+                        style="padding-left: 11px;
+                        width: 0;
+                        padding-top: 10px;
+                        z-index: 999;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+              </div>
+              <br/>
+              <div class="row" *ngIf="isShowFilter">
+                <div class="col-md-6 col-sm-6 col-6">
+                  <div id="flightSearchBodyLeft"
+                    style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                    <div class="row">
+                      <div class="col-sm-1" (click)="moveLeftFlightItemLeft()" style="padding-right: 5px;
+                                              margin-left: 8px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10 domFlightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #leftFlightItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                          [scrollbar-hidden]="true">
+                          <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                          [ngClass]="{'active_flight_drag': i === selectedThreeDaysIndex}"
+                          (click)="setDate(departureDate,'',i)" drag-scroll-item *ngFor="let departureDate of departureThreeDays; let i=index">
+                            <div>
+                              <a>
+                                <p *ngIf="departureDate !== null" class="date">
+                                  {{_groupedDayMonthYear(departureDate)}}</p>
+                              </a>
+                            </div>
+                          </div>
+                        </drag-scroll>
+                      </div>
+                      <div class="col-sm-1" (click)="moveLeftFlightItemRight()" style="padding-left: 11px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-6">
+                  <div id="flightSearchBodyRight"
+                    style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                    <div class="row">
+                      <div class="col-sm-1" (click)="moveRightFlightItemLeft()" style="padding-right: 5px;
+                                              margin-left: 8px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10 domFlightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #leftFlightItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                          [scrollbar-hidden]="true">
+                          <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                          [ngClass]="{'active_flight_drag': i === selectedThreeDaysIndex}" drag-scroll-item
+                          (click)="setDate('',returnDate,i)" *ngFor="let returnDate of returnThreeDays; let i=index">
+                            <div>
+                              <a>
+                                <p *ngIf="returnDate !== null" class="date">
+                                  {{_groupedDayMonthYear(returnDate)}}</p>
+                              </a>
+                            </div>
+                          </div>
+                        </drag-scroll>
+                      </div>
+                      <div class="col-sm-1" (click)="moveRightFlightItemRight()" style="padding-left: 11px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div class="flight_search_result_wrapper" style="padding-bottom: 70px;" >
+                <app-dom-round-trip-flight-result [isShowFilter]="isShowFilter" [data]="displayedData" [isAgentFare]="isAgentFare"></app-dom-round-trip-flight-result>
+                <div class="result_pagination_wrapper" *ngIf="filterData[0].length>10 || filterData[1].length>10">
+                  <div class="view_more_btn">
+                    <a class="site_cta orange_cta" (click)="toggleViewMoreLess()">{{ showMoreText }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="domMultiCity">
+            <div class="search_results_wrapper" style="padding-bottom: 130px;">
+              <div class="search_result_heading">
+                <h2 class="search_result_title">Flights from {{paramModelData.Departure[0].CityName}} to {{paramModelData.Arrival[0].CityName}}</h2>
+                <div class="all_fare_toggle">
+                    <p>Show All Fare</p>
+                    <label class="switch">
+                      <input type="checkbox" id="chkFare" [checked]="isAgentFare" (click)="fareTypeChange($event)">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+              </div>
+              <div id="flightSearchBody" *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+                <div class="row">
+                    <div class="col-sm-1" (click)="moveLeftFlight()"
+                        style="padding-right: 5px;
+                        margin-left: 8px;
+                        width: 0;
+                        padding-top: 10px;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #flightItem class="flight-drag"
+                        [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true"
+                        >
+                          <div class="flight-item" drag-scroll-item
+                            *ngFor="let item of topFlights; let i=index" >
+                              <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                                  <a (click)="filterAirlines(item.carrier, item.providerName, item.airlinesName,0)">
+                                    <div class="flights_img">
+                                        <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                        <span class="flight_shortname">{{item.carrier}}</span>
+                                    </div>
+                                  </a>
+                              </div>
+                          </div>
+                        </drag-scroll>
+                    </div>
+                    <div class="col-sm-1" (click)="moveRightFlight()"
+                        style="padding-left: 11px;
+                        width: 0;
+                        padding-top: 10px;
+                        z-index: 999;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+              </div>
+              <br/>
+              <div *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                <div class="row">
+                  <div class="col-sm-1"  style="padding-right: 5px;
+                                        margin-left: 8px;
+                                        width: 0;
+                                        padding-top: 10px;
+                                        cursor: pointer;">
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                  </div>
+                  <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                    <drag-scroll #fareItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                      [scrollbar-hidden]="true">
+                      <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                      [ngClass]="{'active_flight_drag': i === selectedSavenDaysIndex}"
+                      (click)="setDate(departureDate,'',i)"
+                       drag-scroll-item *ngFor="let departureDate of sevenDays; let i=index">
+                        <div >
+                          <a >
+                            <p *ngIf="departureDate !== null" class="date">
+                              {{_groupedDayMonthYear(departureDate)}}</p>
+                          </a>
+                        </div>
+                      </div>
+                    </drag-scroll>
+                  </div>
+                  <div class="col-sm-1" style="padding-left: 11px;
+                                        width: 0;
+                                        padding-top: 10px;
+                                        cursor: pointer;">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <app-dom-multi-city-flight-result [isShowFilter]="isShowFilter" [multicityTabList]="multicityTabList" [filterData]="filterData" [isAgentFare]="isAgentFare"
+              (childEvent)="getSevenDays($event)" (viewMoreAndLessChildEvent)="toggleViewMoreLess()" [displayedData]="displayedData"></app-dom-multi-city-flight-result>
+            </div>
+          </div>
+          <div *ngIf="intOneWay">
+            <div class="search_results_wrapper">
+              <div class="search_result_heading">
+                <h2 class="search_result_title">Flights from {{paramModelData.Departure[0].CityName}} to {{paramModelData.Arrival[0].CityName}}</h2>
+                <div class="all_fare_toggle">
+                    <p>Show All Fare</p>
+                    <label class="switch">
+                      <input type="checkbox" id="chkFare" [checked]="isAgentFare" (click)="fareTypeChange($event)">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+              </div>
+              <div id="flightSearchBody" *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+                <!-- *ngIf="topFlightSearchSkeleton==false" -->
+                <div class="row">
+                    <div class="col-sm-1" (click)="moveLeftFlight()"
+                        style="padding-right: 5px;
+                        margin-left: 8px;
+                        width: 0;
+                        padding-top: 10px;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #flightItem class="flight-drag"
+                        [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true"
+                        >
+                          <div class="flight-item" drag-scroll-item
+                            *ngFor="let item of topFlights; let i=index" >
+                              <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                                  <a (click)="filterAirlines(item.carrier, item.providerName, item.airlinesName,0)">
+                                    <div class="flights_img">
+                                        <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                        <span class="flight_shortname">{{item.carrier}}</span>
+                                    </div>
+                                  </a>
+                              </div>
+                          </div>
+                        </drag-scroll>
+                    </div>
+                    <div class="col-sm-1" (click)="moveRightFlight()"
+                        style="padding-left: 11px;
+                        width: 0;
+                        padding-top: 10px;
+                        z-index: 999;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+              </div>
+              <br />
+              <div id="fareSearchBody" *ngIf="isShowFilter">
+                <div style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                  <div class="row">
+                    <!-- (click)="moveLeftFare()" -->
+                    <div class="col-sm-1"  style="padding-right: 5px;
+                                          margin-left: 8px;
+                                          width: 0;
+                                          padding-top: 10px;
+                                          cursor: pointer;">
+                      <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                      <drag-scroll #fareItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true">
+                        <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                        [ngClass]="{'active_flight_drag': i === selectedSavenDaysIndex}"
+                        (click)="setDate(departureDate,'',i)"
+                         drag-scroll-item *ngFor="let departureDate of sevenDays; let i=index">
+                          <div >
+                            <a >
+                              <p *ngIf="departureDate !== null" class="date">
+                                {{_groupedDayMonthYear(departureDate)}}</p>
+                                <p *ngIf="departureDate !== null"> BDT {{getFare(departureDate)}}</p>
+                            </a>
+                          </div>
+                        </div>
+                      </drag-scroll>
+                    </div>
+                    <!-- (click)="moveRightFare()" -->
+                    <div class="col-sm-1" style="padding-left: 11px;
+                                          width: 0;
+                                          padding-top: 10px;
+                                          cursor: pointer;">
+                      <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div class="flight_search_result_wrapper">
+                <div *ngFor="let item of displayedData;let i=index">
+                  <div id="resultBody">
+                    <div class="result_card_wrapper result-group-item">
+                      <div>
+                        <app-int-one-way-flight-result (childEvent)="getPenalties($event)" [isShowFilter]="isShowFilter" [item]="item" [i]="i" [isAgentFare]="isAgentFare"></app-int-one-way-flight-result>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="result_pagination_wrapper" *ngIf="filterData.length>10">
+                  <div class="view_more_btn">
+                    <a class="site_cta orange_cta" (click)="toggleViewMoreLess()">{{ showMoreText }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="intRoundTrip">
+            <div class="search_results_wrapper">
+              <div class="search_result_heading">
+                <h2 class="search_result_title">Flights from {{paramModelData.Departure[0].CityName}} to {{paramModelData.Arrival[0].CityName}}</h2>
+                <div class="all_fare_toggle">
+                    <p>Show All Fare</p>
+                    <label class="switch">
+                      <input type="checkbox" id="chkFare" [checked]="isAgentFare" (click)="fareTypeChange($event)">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+              </div>
+              <div id="flightSearchBody" *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+                <div class="row">
+                    <div class="col-sm-1" (click)="moveLeftFlight()"
+                        style="padding-right: 5px;
+                        margin-left: 8px;
+                        width: 0;
+                        padding-top: 10px;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #flightItem class="flight-drag"
+                        [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true"
+                        >
+                          <div class="flight-item" drag-scroll-item
+                            *ngFor="let item of topFlights; let i=index" >
+                              <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                                  <a (click)="filterAirlines(item.carrier, item.providerName, item.airlinesName,0)">
+                                    <div class="flights_img">
+                                        <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                        <span class="flight_shortname">{{item.carrier}}</span>
+                                    </div>
+                                  </a>
+                              </div>
+                          </div>
+                        </drag-scroll>
+                    </div>
+                    <div class="col-sm-1" (click)="moveRightFlight()"
+                        style="padding-left: 11px;
+                        width: 0;
+                        padding-top: 10px;
+                        z-index: 999;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+              </div>
+              <br/>
+              <div class="row" *ngIf="isShowFilter">
+                <div class="col-md-6 col-sm-6 col-6">
+                  <div id="flightSearchBodyLeft"
+                    style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                    <div class="row">
+                      <div class="col-sm-1" (click)="moveLeftFlightItemLeft()" style="padding-right: 5px;
+                                              margin-left: 8px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10 domFlightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #leftFlightItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                          [scrollbar-hidden]="true">
+                          <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                          [ngClass]="{'active_flight_drag': i === selectedThreeDaysIndex}"
+                          (click)="setDate(departureDate,'',i)" drag-scroll-item *ngFor="let departureDate of departureThreeDays; let i=index">
+                            <div >
+                              <a >
+                                <p *ngIf="departureDate !== null" class="date">
+                                  {{_groupedDayMonthYear(departureDate)}}</p>
+                              </a>
+                            </div>
+                          </div>
+                        </drag-scroll>
+                      </div>
+                      <div class="col-sm-1" (click)="moveLeftFlightItemRight()" style="padding-left: 11px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-6">
+                  <div id="flightSearchBodyRight"
+                    style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 10px;">
+                    <div class="row">
+                      <div class="col-sm-1" (click)="moveRightFlightItemLeft()" style="padding-right: 5px;
+                                              margin-left: 8px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10 domFlightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #leftFlightItem class="flight-drag" [drag-scroll-y-disabled]="true"
+                          [scrollbar-hidden]="true">
+                          <div class="flight-item date_slides" style="margin-right:5px;cursor: pointer;"
+                          [ngClass]="{'active_flight_drag': i === selectedThreeDaysIndex}" drag-scroll-item
+                          (click)="setDate('',returnDate,i)" *ngFor="let returnDate of returnThreeDays; let i=index">
+                            <div>
+                              <a>
+                                <p *ngIf="returnDate !== null" class="date">
+                                  {{_groupedDayMonthYear(returnDate)}}</p>
+                              </a>
+                            </div>
+                          </div>
+                        </drag-scroll>
+                      </div>
+                      <div class="col-sm-1" (click)="moveRightFlightItemRight()" style="padding-left: 11px;
+                                              width: 0;
+                                              padding-top: 10px;
+                                              cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div class="flight_search_result_wrapper">
+                <div class="result_card_wrapper">
+                  <div *ngFor="let item of displayedData;let i=index">
+                    <div id="resultBody">
+                      <div class="result_card_wrapper result-group-item">
+                        <app-round-trip-flight-result [isShowFilter]="isShowFilter" [item]="item" [isAgentFare]="isAgentFare" [data] = "data" [i]="i"></app-round-trip-flight-result>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="result_pagination_wrapper" *ngIf="filterData.length>10">
+                  <div class="view_more_btn">
+                    <a class="site_cta orange_cta" (click)="toggleViewMoreLess()">{{ showMoreText }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="intMultiCity">
+            <div class="search_results_wrapper">
+              <div class="search_result_heading">
+                <h2 class="search_result_title">Flights from {{paramModelData.Departure[0].CityName}} to {{paramModelData.Arrival[0].CityName}}</h2>
+                <div class="all_fare_toggle">
+                    <p>Show All Fare</p>
+                    <label class="switch">
+                      <input type="checkbox" id="chkFare" [checked]="isAgentFare" (click)="fareTypeChange($event)">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+              </div>
+              <div id="flightSearchBody" *ngIf="isShowFilter" style="background: #fff;border-radius: 5px;padding-top: 10px;padding-bottom: 5px;">
+                <div class="row">
+                    <div class="col-sm-1" (click)="moveLeftFlight()"
+                        style="padding-right: 5px;
+                        margin-left: 8px;
+                        width: 0;
+                        padding-top: 10px;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-11 flightFareMobile" style="padding-right: 0;">
+                        <drag-scroll #flightItem class="flight-drag"
+                        [drag-scroll-y-disabled]="true"
+                        [scrollbar-hidden]="true"
+                        >
+                          <div class="flight-item" drag-scroll-item
+                            *ngFor="let item of topFlights; let i=index" >
+                              <div class="popular_flights" title="{{item.name}}" style="margin-right:10px;cursor: pointer;">
+                                  <a (click)="filterAirlines(item.carrier, item.providerName, item.airlinesName,0)">
+                                    <div class="flights_img">
+                                        <img style="height:24px;width:24px" [attr.src]="'../'+item.logo" alt="...">
+                                    </div>
+                                    <div class="flight_info">
+                                        <span class="flight_shortname">{{item.carrier}}</span>
+                                    </div>
+                                  </a>
+                              </div>
+                          </div>
+                        </drag-scroll>
+                    </div>
+                    <div class="col-sm-1" (click)="moveRightFlight()"
+                        style="padding-left: 11px;
+                        width: 0;
+                        padding-top: 10px;
+                        z-index: 999;
+                        cursor: pointer;">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </div>
+              </div>
+              <br/>
+              <br/>
+              <div class="flight_search_result_wrapper int_roundtrip_search_wrapper int_multicity_search_wrapper">
+                <div *ngFor="let item of displayedData;let i=index">
+                  <app-int-multi-city [isShowFilter]="isShowFilter" [item]="item" [data] = "data1" [i]="i" [isAgentFare]="isAgentFare"></app-int-multi-city>
+                </div>
+                <div class="result_pagination_wrapper" *ngIf="filterData.length>10">
+                  <div class="view_more_btn">
+                    <a class="site_cta orange_cta" (click)="toggleViewMoreLess()">{{ showMoreText }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button style="display: none;" type="button" #btnModalOpen class="btn btn-primary btn-sm float-right"
+  data-bs-toggle="modal" data-bs-target="#createPassengerModal" role="dialog" data-backdrop="static"
+  data-keyboard="false"></button>
+  <div class="modal fade" id="createPassengerModal"  data-bs-keyboard="false" aria-labelledby="createPassengerModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" style="font-weight: bold; font-size: 1.2rem;">Details</h6>
+        <button #btnClose type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form>
+        <div class="modal-body">
+          <div class="card-body">
+            <div class="row">
+              <p>{{this.penalties}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button #btnClose type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-dark">
+            <i class="fa fa-window-close"></i>
+            Close
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</main>
+<script>
+const sidebarWrapper = document.querySelector('.sidebar_wrapper');
+const sidebarWidget = document.querySelector('.sidebar_sticky');
+const scrollThreshold = 200; // Adjust this value to your desired scroll position
+
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY || window.pageYOffset;
+
+  if (scrollY >= scrollThreshold) {
+    sidebarWidget.classList.add('sticky');
+  } else {
+    sidebarWidget.classList.remove('sticky');
+  }
+});
+</script>

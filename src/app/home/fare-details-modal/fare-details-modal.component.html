@@ -1,0 +1,2183 @@
+<div class="modal fade fareDetails_modal_wrapper" [attr.id]="'fareDetailsModal'" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Fare Details</h4>
+        <button type="button" class="close" data-bs-dismiss="modal"><i class="fa fa-times"
+            aria-hidden="true"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="flight_details_wrapper">
+
+          <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-home_mobile" type="button" role="tab" aria-controls="pills-home"
+                aria-selected="true">Fare Summary</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button (click)="dateChangeApi(false,data)" class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-contact_mobile" type="button" role="tab" aria-controls="pills-contact"
+                aria-selected="false">Cancellation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button (click)="dateChangeApi(true,data)" class="nav-link" id="pills-date-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-date_mobile" type="button" role="tab" aria-controls="pills-date"
+                aria-selected="false">Date Change</button>
+            </li>
+          </ul>
+
+          <div *ngIf="data.arrivalCity!='' && data.arrivalCity!=undefined" class="flight_details_tab_content tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data.departureCity}} to {{data.arrivalCity}}, {{shareService.getDay(data.departureDate)}}
+                {{shareService.getMonthShort(data.departureDate)}}
+                {{shareService.getYearShort(data.departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data.fareData!=undefined">({{data.fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data.adult>0">
+                      <td>Adult</td>
+                      <td>{{data.adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.adultBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.adultTaxClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.adultDiscount)}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.adultAgentFare)}}</td>
+                    </tr>
+                    <tr *ngIf="data.child>0">
+                      <td>Child</td>
+                      <td>{{data.child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.childBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.childTaxClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.childDiscount)}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.childAgentFare)}}</td>
+                    </tr>
+                    <tr *ngIf="data.infant>0">
+                      <td>Infant</td>
+                      <td>{{data.infant}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.infantTaxClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.infantTotalClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.infantDiscount)}}</td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data.fareData.infantAgentFare)}}</td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data.clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data.agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data.departureCity}} to {{data.arrivalCity}}, {{shareService.getDay(data.departureDate)}}
+                {{shareService.getMonthShort(data.departureDate)}}
+                {{shareService.getYearShort(data.departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data.adult!=undefined && data.adult!=0">ADULT:
+                          {{getCancellation(data.refundable,data.adult)}}</p>
+                        <p *ngIf="data.child!=undefined && data.child.length>0">CHILD:
+                          {{getCancellation(data.refundable,data.child.length)}}</p>
+                        <p *ngIf="data.infant!=undefined && data.infant!=0">INFANT:
+                          {{getCancellation(data.refundable,data.infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data.adult!=undefined && data.adult!=0">ADULT:
+                          {{getCancellation(data.refundable,data.adult)}}</p>
+                        <p *ngIf="data.child!=undefined && data.child.length>0">CHILD:
+                          {{getCancellation(data.refundable,data.child.length)}}</p>
+                        <p *ngIf="data.infant!=undefined && data.infant!=0">INFANT:
+                          {{getCancellation(data.refundable,data.infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data.departureCity}} to {{data.arrivalCity}}, {{shareService.getDay(data.departureDate)}}
+                {{shareService.getMonthShort(data.departureDate)}}
+                {{shareService.getYearShort(data.departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data.adult!=undefined && data.adult!=0">ADULT:
+                          {{getDateChanges(data.refundable,data.adult)}}</p>
+                        <p *ngIf="data.child!=undefined && data.child.length>0">CHILD:
+                          {{getDateChanges(data.refundable,data.child.length)}}</p>
+                        <p *ngIf="data.infant!=undefined && data.infant!=0">INFANT:
+                          {{getDateChanges(data.refundable,data.infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data.adult!=undefined && data.adult!=0">ADULT:
+                          {{getDateChanges(data.refundable,data.adult)}}</p>
+                        <p *ngIf="data.child!=undefined && data.child.length>0">CHILD:
+                          {{getDateChanges(data.refundable,data.child.length)}}</p>
+                        <p *ngIf="data.infant!=undefined && data.infant!=0">INFANT:
+                          {{getDateChanges(data.refundable,data.infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="data.length==1" class="flight_details_tab_content tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[0].fareData!=undefined">({{data[0].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[0].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[0].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].child>0">
+                      <td>Child</td>
+                      <td>{{data[0].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[0].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="data.length==2" class="flight_details_tab_content tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[0].fareData!=undefined">({{data[0].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[0].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[0].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].child>0">
+                      <td>Child</td>
+                      <td>{{data[0].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[0].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[1].fareData!=undefined">({{data[1].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[1].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[1].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[1].child>0">
+                      <td>Child</td>
+                      <td>{{data[1].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[1].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[1].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[1].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[1].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getCancellation(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getCancellation(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getCancellation(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getCancellation(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getCancellation(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getCancellation(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getDateChanges(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getDateChanges(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getDateChanges(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getDateChanges(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getDateChanges(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getDateChanges(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+          </div>
+          <div *ngIf="data.length==3" class="flight_details_tab_content tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[0].fareData!=undefined">({{data[0].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[0].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[0].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].child>0">
+                      <td>Child</td>
+                      <td>{{data[0].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[0].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[1].fareData!=undefined">({{data[1].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[1].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[1].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[1].child>0">
+                      <td>Child</td>
+                      <td>{{data[1].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[1].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[1].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[1].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[1].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getCancellation(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getCancellation(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getCancellation(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getCancellation(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getCancellation(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getCancellation(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getDateChanges(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getDateChanges(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getDateChanges(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getDateChanges(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getDateChanges(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getDateChanges(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[2].departureCity}} to {{data[2].arrivalCity}}, {{shareService.getDay(data[2].departureDate)}}
+                {{shareService.getMonthShort(data[2].departureDate)}}
+                {{shareService.getYearShort(data[2].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[2].fareData!=undefined">({{data[2].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[2].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[2].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[2].child>0">
+                      <td>Child</td>
+                      <td>{{data[2].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[2].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[2].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[2].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[2].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[2].departureCity}} to {{data[2].arrivalCity}}, {{shareService.getDay(data[2].departureDate)}}
+                {{shareService.getMonthShort(data[2].departureDate)}}
+                {{shareService.getYearShort(data[2].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getCancellation(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getCancellation(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getCancellation(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getCancellation(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getCancellation(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getCancellation(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[2].departureCity}} to {{data[2].arrivalCity}}, {{shareService.getDay(data[2].departureDate)}}
+                {{shareService.getMonthShort(data[2].departureDate)}}
+                {{shareService.getYearShort(data[2].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getDateChanges(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getDateChanges(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getDateChanges(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getDateChanges(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getDateChanges(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getDateChanges(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+          </div>
+          <div *ngIf="data.length==4" class="flight_details_tab_content tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[0].fareData!=undefined">({{data[0].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[0].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[0].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].child>0">
+                      <td>Child</td>
+                      <td>{{data[0].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[0].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[0].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[0].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[0].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[0].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getCancellation(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getCancellation(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getCancellation(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[0].departureCity}} to {{data[0].arrivalCity}}, {{shareService.getDay(data[0].departureDate)}}
+                {{shareService.getMonthShort(data[0].departureDate)}}
+                {{shareService.getYearShort(data[0].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[0].adult!=undefined && data[0].adult!=0">ADULT:
+                          {{getDateChanges(data[0].refundable,data[0].adult)}}</p>
+                        <p *ngIf="data[0].child!=undefined && data[0].child.length>0">CHILD:
+                          {{getDateChanges(data[0].refundable,data[0].child.length)}}</p>
+                        <p *ngIf="data[0].infant!=undefined && data[0].infant!=0">INFANT:
+                          {{getDateChanges(data[0].refundable,data[0].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[1].fareData!=undefined">({{data[1].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[1].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[1].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[1].child>0">
+                      <td>Child</td>
+                      <td>{{data[1].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[1].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[1].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[1].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[1].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[1].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[1].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getCancellation(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getCancellation(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getCancellation(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getCancellation(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getCancellation(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getCancellation(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[1].departureCity}} to {{data[1].arrivalCity}}, {{shareService.getDay(data[1].departureDate)}}
+                {{shareService.getMonthShort(data[1].departureDate)}}
+                {{shareService.getYearShort(data[1].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getDateChanges(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getDateChanges(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getDateChanges(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[1].adult!=undefined && data[1].adult!=0">ADULT:
+                          {{getDateChanges(data[1].refundable,data[1].adult)}}</p>
+                        <p *ngIf="data[1].child!=undefined && data[1].child.length>0">CHILD:
+                          {{getDateChanges(data[1].refundable,data[1].child.length)}}</p>
+                        <p *ngIf="data[1].infant!=undefined && data[1].infant!=0">INFANT:
+                          {{getDateChanges(data[1].refundable,data[1].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[2].departureCity}} to {{data[2].arrivalCity}}, {{shareService.getDay(data[2].departureDate)}}
+                {{shareService.getMonthShort(data[2].departureDate)}}
+                {{shareService.getYearShort(data[2].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[2].fareData!=undefined">({{data[2].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[2].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[2].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[2].child>0">
+                      <td>Child</td>
+                      <td>{{data[2].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[2].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[2].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[2].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[2].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[2].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[2].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[2].departureCity}} to {{data[2].arrivalCity}}, {{shareService.getDay(data[2].departureDate)}}
+                {{shareService.getMonthShort(data[2].departureDate)}}
+                {{shareService.getYearShort(data[2].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getCancellation(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getCancellation(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getCancellation(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getCancellation(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getCancellation(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getCancellation(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[2].departureCity}} to {{data[2].arrivalCity}}, {{shareService.getDay(data[2].departureDate)}}
+                {{shareService.getMonthShort(data[2].departureDate)}}
+                {{shareService.getYearShort(data[2].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getDateChanges(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getDateChanges(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getDateChanges(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[2].adult!=undefined && data[2].adult!=0">ADULT:
+                          {{getDateChanges(data[2].refundable,data[2].adult)}}</p>
+                        <p *ngIf="data[2].child!=undefined && data[2].child.length>0">CHILD:
+                          {{getDateChanges(data[2].refundable,data[2].child.length)}}</p>
+                        <p *ngIf="data[2].infant!=undefined && data[2].infant!=0">INFANT:
+                          {{getDateChanges(data[2].refundable,data[2].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade show active" id="pills-home_mobile" role="tabpanel"
+              aria-labelledby="pills-home-tab">
+              <h2>{{data[3].departureCity}} to {{data[3].arrivalCity}}, {{shareService.getDay(data[3].departureDate)}}
+                {{shareService.getMonthShort(data[3].departureDate)}}
+                {{shareService.getYearShort(data[3].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Type</th>
+                      <th style="text-align: center;">Passenger Count</th>
+                      <th style="text-align: center;">Base Fare</th>
+                      <th style="text-align: center;">Tax</th>
+                      <th style="text-align: center;">Client Fare</th>
+                      <th style="text-align: center;">Discount<span
+                          *ngIf="data[3].fareData!=undefined">({{data[3].fareData.discountType}})</span></th>
+                      <th style="text-align: center;">AIT</th>
+                      <th style="text-align: center;">Agent Fare</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="data!=undefined && data!=''">
+                    <tr *ngIf="data[3].adult>0">
+                      <td>Adult</td>
+                      <td>{{data[3].adult}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.adultBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.adultTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[3].fareData.adultTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.adultDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.adultAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[3].child>0">
+                      <td>Child</td>
+                      <td>{{data[3].child}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.childBaseClient)}}
+                      </td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.childTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[3].fareData.childTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.childDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.childAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr *ngIf="data[3].infant>0">
+                      <td>Infant</td>
+                      <td>{{data[3].infant}}</td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[3].fareData.infantBaseClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.infantTaxClient)}}
+                      </td>
+                      <td class="amount">
+                        {{this.shareService.amountShowWithCommas(data[3].fareData.infantTotalClient)}}</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.infantDiscount)}}
+                      </td>
+                      <td class="amount">0</td>
+                      <td class="amount">{{this.shareService.amountShowWithCommas(data[3].fareData.infantAgentFare)}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="tl-amount">Total :</td>
+                      <td style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[3].clientFareTotal)}}</td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount" style="border: none;"></td>
+                      <td class="tl-amount">{{this.shareService.amountShowWithCommas(data[3].agentFareTotal)}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+
+            </div>
+            <div class="tab-pane fade" id="pills-contact_mobile" role="tabpanel" aria-labelledby="pills-contact-tab">
+              <h2>{{data[3].departureCity}} to {{data[3].arrivalCity}}, {{shareService.getDay(data[3].departureDate)}}
+                {{shareService.getMonthShort(data[3].departureDate)}}
+                {{shareService.getYearShort(data[3].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee <span>(Per
+                          passenger)</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[3].adult!=undefined && data[3].adult!=0">ADULT:
+                          {{getCancellation(data[3].refundable,data[3].adult)}}</p>
+                        <p *ngIf="data[3].child!=undefined && data[3].child.length>0">CHILD:
+                          {{getCancellation(data[3].refundable,data[3].child.length)}}</p>
+                        <p *ngIf="data[3].infant!=undefined && data[3].infant!=0">INFANT:
+                          {{getCancellation(data[3].refundable,data[3].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[3].adult!=undefined && data[3].adult!=0">ADULT:
+                          {{getCancellation(data[3].refundable,data[3].adult)}}</p>
+                        <p *ngIf="data[3].child!=undefined && data[3].child.length>0">CHILD:
+                          {{getCancellation(data[3].refundable,data[3].child.length)}}</p>
+                        <p *ngIf="data[3].infant!=undefined && data[3].infant!=0">INFANT:
+                          {{getCancellation(data[3].refundable,data[3].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+            <div class="tab-pane fade" id="pills-date_mobile" role="tabpanel" aria-labelledby="pills-date-tab">
+              <h2>{{data[3].departureCity}} to {{data[3].arrivalCity}}, {{shareService.getDay(data[3].departureDate)}}
+                {{shareService.getMonthShort(data[3].departureDate)}}
+                {{shareService.getYearShort(data[3].departureDate)}}
+              </h2>
+              <div class="flight_details_tab_table table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time Frame <span>(From Schedule flight
+                          departure)</span></th>
+                      <th>Airline Fee + MMT Fee + Fare Difference
+                        <span>(Per passenger)</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">0 hours to 96 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[3].adult!=undefined && data[3].adult!=0">ADULT:
+                          {{getDateChanges(data[3].refundable,data[3].adult)}}</p>
+                        <p *ngIf="data[3].child!=undefined && data[3].child.length>0">CHILD:
+                          {{getDateChanges(data[3].refundable,data[3].child.length)}}</p>
+                        <p *ngIf="data[3].infant!=undefined && data[3].infant!=0">INFANT:
+                          {{getDateChanges(data[3].refundable,data[3].infant)}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="isCancellationShow">
+                        <div class="skleton_text loading"></div>
+                      </td>
+                      <td *ngIf="!isCancellationShow">96 hours to 365 hours*</td>
+                      <td *ngIf="!isCancellationShow">
+                        <p *ngIf="data[3].adult!=undefined && data[3].adult!=0">ADULT:
+                          {{getDateChanges(data[3].refundable,data[3].adult)}}</p>
+                        <p *ngIf="data[3].child!=undefined && data[3].child.length>0">CHILD:
+                          {{getDateChanges(data[3].refundable,data[3].child.length)}}</p>
+                        <p *ngIf="data[3].infant!=undefined && data[3].infant!=0">INFANT:
+                          {{getDateChanges(data[3].refundable,data[3].infant)}}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="table_note">*From the Date of Departure</p>
+              </div>
+              <!-- /.flight_details_tab_table table-responsive -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

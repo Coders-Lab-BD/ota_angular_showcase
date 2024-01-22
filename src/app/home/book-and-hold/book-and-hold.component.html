@@ -1,0 +1,974 @@
+<body class="main_page flight_search_details add_passenger_main_wrapper">
+    <main>
+        <div class="passenger_details_info_wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 col-lg-12">
+                    <div class="flight_booking_summary_wrapper">
+                      <div id="resultBoxId" class="result_single_box" style="margin-bottom: 15px;">
+                        <div style="padding: 10px;" class="result_single_info">
+                            <ul *ngFor="let item of commonFlightDetails;let f=index;">
+                                <li>
+                                  <div class="result_single_col_info">
+                                      <div class="flights_info_wrapper">
+                                          <div class="flights_img">
+                                              <img class="airline-logo-size" [src]="'../'+item.flightDetails[0].airlinesLogo" alt="...">
+                                          </div>
+                                          <div class="flight_info">
+                                              <span class="flight_shortname">{{item.flightDetails[0].airlinesName}}</span>
+                                              <span class="flight_code">{{item.carrierWithFlightNumber}}</span>
+                                              <span class="flight_code">{{item.equipmentCode}}</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                                </li>
+                                <li>
+                                    <div class="result_single_col_info">
+                                        <span class="col_head_value">{{item.departureTime}}</span>
+                                        <p>
+                                        {{this.shareService.getDayNameShort(item.departureDate)}}
+                                        {{this.shareService.getDay(item.departureDate)}}
+                                        {{this.shareService.getMonthShort(item.departureDate)}}
+                                        {{this.shareService.getYearShort(item.departureDate)}}
+                                        </p>
+                                        <p>{{item.departureCity}}</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="result_single_col_info">
+                                        <p>{{item.flyingTime}}</p>
+                                        <div class="stopage_wrapper">
+                                            <div class="tooltip_bar">
+                                                <span class="stopage_bar"></span>
+                                                <div *ngIf="item.stopPoint=='3 Stop Point'"
+                                                class="stopage_count_wrapper">
+                                                <span class="stopage_count"></span>
+                                                <span class="stopage_count"></span>
+                                                <span class="stopage_count"></span>
+                                                </div>
+                                                <div *ngIf="item.stopPoint=='2 Stop Point'"
+                                                class="stopage_count_wrapper">
+                                                <span class="stopage_count"></span>
+                                                <span class="stopage_count"></span>
+                                                </div>
+                                                <div *ngIf="item.stopPoint=='1 Stop Point'"
+                                                class="stopage_count_wrapper">
+                                                <span class="stopage_count"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p >{{item.stopPoint}}</p>
+                                        <p>{{item.transitCity}}</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="result_single_col_info text-center">
+                                        <span class="col_head_value"> {{item.arrivalTime}}
+                                          <p class="total-day" *ngIf="item.dateAdjustment>0 && item.dateAdjustment<2">+{{item.dateAdjustment}}Day</p>
+                                          <p class="total-day" *ngIf="item.dateAdjustment>1">+{{item.dateAdjustment}}Days</p>
+                                        </span>
+                                        <p>
+                                          {{this.shareService.getDayNameShort(item.arrivalDate)}}
+                                          {{this.shareService.getDay(item.arrivalDate)}}
+                                          {{this.shareService.getMonthShort(item.arrivalDate)}}
+                                          {{this.shareService.getYearShort(item.arrivalDate)}}
+                                        </p>
+                                        <p>{{item.arrivalCity}}</p>
+                                      </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="result_single_options">
+                            <ul>
+                                <li>{{commonFlightDetails[0].cabinClass}}</li>
+                                <li>$ {{commonFlightDetails[0].refundability}}</li>
+                                <li class="fare_details_trigger" (click)="fareShowHideAction('#fareDetailsWrap', '#flightDetailsWrap')">
+                                  <p [attr.id]="'fareDetailsShowHide'">View Fare Details
+                                  </p>
+                                </li>
+                                <li class="fare_details_trigger" (click)="flightShowHideAction('#fareDetailsWrap', '#flightDetailsWrap')">
+                                  <p [attr.id]="'flightDetailsShowHide'">View Flight Details
+                                  </p>
+                                </li>
+                            </ul>
+
+                            <div class="fare_details_wrapper" [attr.id]="'flightDetailsWrap'" style="display: none;">
+                               <div *ngFor="let item of commonFlightDetails;let i=index;">
+                                  <h2 class="flight-details-header">{{item.departureCity}} to
+                                      {{item.arrivalCity}}, {{shareService.getDay(item.departureDate)}}
+                                     {{shareService.getMonthShort(item.departureDate)}}
+                                     {{shareService.getYearShort(item.departureDate)}}</h2>
+
+                                   <div >
+                                     <div class="result_single_info" *ngFor="let fItem of item.flightDetails;let i=index">
+                                         <ul>
+                                             <li>
+                                                 <div class="result_single_col_info">
+                                                     <div class="flights_info_wrapper">
+                                                         <div class="flights_img">
+                                                             <img class="airline-logo-size" [src]="'../'+fItem.airlinesLogo" alt="...">
+                                                         </div>
+                                                         <div class="flight_info">
+                                                             <span class="flight_shortname">{{fItem.airlinesName}}</span>
+                                                             <span class="flight_code">{{fItem.carrierWithFlightNumber}}</span>
+                                                             <p><b>Avalable Seat: {{fItem.bookingCode}}{{fItem.availableSeat}}</b></p>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </li>
+                                             <li>
+                                                 <div class="result_single_col_info">
+                                                     <span class="col_head_value">{{fItem.departureTime}}</span>
+                                                        <p>
+                                                        {{this.shareService.getDayNameShort(fItem.departureDate)}}
+                                                        {{this.shareService.getDay(fItem.departureDate)}}
+                                                        {{this.shareService.getMonthShort(fItem.departureDate)}}
+                                                        {{this.shareService.getYearShort(fItem.departureDate)}}
+                                                        </p>
+                                                        <p>{{fItem.departureCity}}</p>
+                                                 </div>
+                                             </li>
+                                             <li class="margin-left-right">
+                                                 <div class="result_single_col_info">
+                                                    <p>{{fItem.flyingTime}}</p>
+                                                    <div class="stopage_wrapper">
+                                                        <div class="tooltip_bar">
+                                                            <span class="stopage_bar"></span>
+                                                            <div *ngIf="fItem.stopPoint=='3 Stop Point'"
+                                                            class="stopage_count_wrapper">
+                                                            <span class="stopage_count"></span>
+                                                            <span class="stopage_count"></span>
+                                                            <span class="stopage_count"></span>
+                                                            </div>
+                                                            <div *ngIf="fItem.stopPoint=='2 Stop Point'"
+                                                            class="stopage_count_wrapper">
+                                                            <span class="stopage_count"></span>
+                                                            <span class="stopage_count"></span>
+                                                            </div>
+                                                            <div *ngIf="fItem.stopPoint=='1 Stop Point'"
+                                                            class="stopage_count_wrapper">
+                                                            <span class="stopage_count"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p>{{fItem.stopPoint}}</p>
+                                                    <p>{{fItem.transitCity}}</p>
+                                                 </div>
+                                             </li>
+                                             <li class="margin-left-right">
+                                                 <div class="result_single_col_info">
+
+                                                    <span class="col_head_value">{{fItem.arrivalTime}}</span>
+                                                    <p>
+                                                    {{this.shareService.getDayNameShort(fItem.arrivalDate)}}
+                                                    {{this.shareService.getDay(fItem.arrivalDate)}}
+                                                    {{this.shareService.getMonthShort(fItem.arrivalDate)}}
+                                                    {{this.shareService.getYearShort(fItem.arrivalDate)}}
+                                                    </p>
+                                                    <p>{{fItem.arrivalCity}}</p>
+                                                 </div>
+                                             </li>
+                                             <li class="margin-left-right">
+                                                <div class="result_single_col_info">
+                                                    <span class="col_head_value">Baggage:</span>
+                                                    <div *ngFor="let passbag of fItem.passangerBaggages">
+                                                      <p>{{passbag.baggagePassengerType}}</p>
+                                                    </div>
+                                                  </div>
+                                             </li>
+                                             <li style="margin-left: 20px;">
+                                                <div class="result_single_col_info">
+                                                    <span class="col_head_value">Check In</span>
+                                                    <div *ngFor="let passbag of fItem.passangerBaggages">
+                                                      <p>{{passbag.baggageWeight}}{{passbag.baggageUnit}}</p>
+                                                    </div>
+                                                  </div>
+                                             </li>
+                                             <li style="margin-left: 20px;">
+                                                <div class="result_single_col_info">
+                                                    <span class="col_head_value">Cabin</span>
+                                                    <div *ngFor="let passbag of fItem.passangerBaggages">
+                                                      <p>7Kg</p>
+                                                    </div>
+                                                  </div>
+                                             </li>
+                                         </ul>
+                                     </div>
+                                   </div>
+                               </div>
+                            </div>
+
+                            <div class="flight_details_wrapper" [attr.id]="'fareDetailsWrap'" style="display: none;">
+
+                                <ul class="flight_details_tab nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="pills-home-tab"
+                                            data-bs-toggle="pill" [attr.data-bs-target]="'#pills-home'"
+                                            type="button" role="tab" aria-controls="pills-home"
+                                            aria-selected="true">Fare Summary</button>
+                                    </li>
+                                </ul>
+
+                              <div *ngIf="this.TripType=='International'" class="flight_details_tab_content tab-content" id="pills-tabContent">
+                                <div class="tab-pane fade show active" [attr.id]="'pills-home'" role="tabpanel" aria-labelledby="pills-home-tab">
+                                    <div>
+                                        <div>
+                                            <h2 *ngFor="let item of commonFlightDetails">
+                                                {{item.departureCity}} to {{item.arrivalCity}},
+                                                {{this.shareService.getDayNameShort(item.departureDate)}}
+                                                {{this.shareService.getDay(item.departureDate)}}
+                                                {{this.shareService.getMonthShort(item.departureDate)}}
+                                                {{this.shareService.getYearShort(item.departureDate)}}
+                                            </h2>
+                                        </div>
+
+                                        <div class="flight_details_tab_table table-responsive">
+                                            <table class="table table-bordered" *ngIf="commonFlightDetails[0].fareDetails">
+                                                <thead>
+                                                <tr>
+                                                    <th style="text-align: center;">Type</th>
+                                                    <th style="text-align: center;">Passenger Count</th>
+                                                    <th style="text-align: center;">Base Fare (BDT)</th>
+                                                    <th style="text-align: center;">Tax (BDT)</th>
+                                                    <th style="text-align: center;">Client Fare (BDT)</th>
+                                                    <th style="text-align: center;">Discount</th>
+                                                    <th style="text-align: center;">AIT</th>
+                                                    <th style="text-align: center;">Agent Fare</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let fareDetail of commonFlightDetails[0].fareDetails">
+                                                    <td>{{fareDetail.passengerType}}</td>
+                                                    <td>{{fareDetail.passengerNumber}}</td>
+                                                    <td class="amount">
+                                                    {{this.shareService.amountShowWithCommas(fareDetail.markupBaseFare*fareDetail.passengerNumber)}}
+                                                    </td>
+                                                    <td class="amount">
+                                                    {{this.shareService.amountShowWithCommas(fareDetail.markupTaxFare*fareDetail.passengerNumber)}}
+                                                    </td>
+                                                    <td class="amount">
+                                                    {{this.shareService.amountShowWithCommas(fareDetail.markupTotalFare*fareDetail.passengerNumber)}}
+                                                    </td>
+                                                    <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.discount*fareDetail.passengerNumber)}}</td>
+                                                    <td class="amount">0</td>
+                                                    <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.totalAgentFare*fareDetail.passengerNumber)}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="tl-amount">Total :</td>
+                                                    <td style="border: none;"></td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount">{{this.shareService.amountShowWithCommas(adultClientFare+childClientFare+infantClientFare)}}</td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount">{{this.shareService.amountShowWithCommas(adultAgentFare+childAgentFare+infantAgentFare)}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                              <div *ngIf="this.TripType=='Domestic'" class="flight_details_tab_content tab-content" id="pills-tabContent">
+                                <div class="tab-pane fade show active" [attr.id]="'pills-home'" role="tabpanel" aria-labelledby="pills-home-tab">
+                                    <div *ngFor="let item of commonFlightDetails">
+                                        <div>
+                                            <h2>
+                                                {{item.departureCity}} to {{item.arrivalCity}},
+                                                {{this.shareService.getDayNameShort(item.departureDate)}}
+                                                {{this.shareService.getDay(item.departureDate)}}
+                                                {{this.shareService.getMonthShort(item.departureDate)}}
+                                                {{this.shareService.getYearShort(item.departureDate)}}
+                                            </h2>
+                                        </div>
+
+                                        <div class="flight_details_tab_table table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th style="text-align: center;">Type</th>
+                                                    <th style="text-align: center;">Passenger Count</th>
+                                                    <th style="text-align: center;">Base Fare (BDT)</th>
+                                                    <th style="text-align: center;">Tax (BDT)</th>
+                                                    <th style="text-align: center;">Client Fare (BDT)</th>
+                                                    <th style="text-align: center;">Discount</th>
+                                                    <th style="text-align: center;">AIT</th>
+                                                    <th style="text-align: center;">Agent Fare</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let fareDetail of item.fareDetails">
+                                                    <td>{{fareDetail.passengerType}}</td>
+                                                    <td>{{fareDetail.passengerNumber}}</td>
+                                                    <td class="amount">
+                                                    {{this.shareService.amountShowWithCommas(fareDetail.markupBaseFare*fareDetail.passengerNumber)}}
+                                                    </td>
+                                                    <td class="amount">
+                                                    {{this.shareService.amountShowWithCommas(fareDetail.markupTaxFare*fareDetail.passengerNumber)}}
+                                                    </td>
+                                                    <td class="amount">
+                                                    {{this.shareService.amountShowWithCommas(fareDetail.markupTotalFare*fareDetail.passengerNumber)}}
+                                                    </td>
+                                                    <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.discount*fareDetail.passengerNumber)}}</td>
+                                                    <td class="amount">0</td>
+                                                    <td class="amount">{{this.shareService.amountShowWithCommas(fareDetail.totalAgentFare*fareDetail.passengerNumber)}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="tl-amount">Total :</td>
+                                                    <td style="border: none;"></td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount">{{this.shareService.amountShowWithCommas(item.totalFare)}}</td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount" style="border: none;"></td>
+                                                    <td class="tl-amount">{{this.shareService.amountShowWithCommas(item.totalAgentFare)}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+
+                      <div class="add_passenger_details_wrapper">
+                          <h2>Add Passenger Details</h2>
+                              <div class="accordion add_passenger_details_accordion" id="accordionExample">
+                                  <div class="accordion-item" *ngFor="let index of getRange(totalAdult); let i = index">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                [attr.data-bs-target]="'#collapseAdult'+i" aria-expanded="true"
+                                                [attr.aria-controls]="'collapseAdult'+i">
+                                                <img src="../../../assets/images/adult1.png" alt="">
+                                                <p [attr.id]="'adultTitle'+i"></p>
+                                                <p class="">-Adult {{i+1}}</p>
+                                            </button>
+                                        </h2>
+                                        <div [attr.id]="'collapseAdult'+i" class="accordion-collapse collapse {{getFirstShow(i)}}"
+                                            aria-labelledby="headingOne">
+                                            <div class="accordion-body">
+                                                <div class="site_form">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="save_passenger">
+                                                                <div class="inp_group">
+                                                                    <label for="">Search Passenger</label>
+                                                                    <select name="" (change)="passengerInfoChange('passengerAdult'+i,'adult','adultGenderTitleId'+i,'adultFirstName'+i,
+                                                                    'adultLastName'+i,'adultDOB'+i, 'adultPassportNo'+i, 'adultPassportExpiry'+i,'valTitleAdult'+i,'valFirstNameAdult'+i,
+                                                                    'valLastNameAdult'+i,'valDOBAdult'+i,'valPassportAdult'+i,'valPassportExpiryAdult'+i)" [attr.id]="'passengerAdult'+i" class="inp_field">
+
+                                                                    <option [attr.value]="0">Choose</option>
+                                                                        <option *ngFor="let pas of passengerInfoListAdult" [attr.value]="pas.InfoID">{{pas.FirstName}} {{pas.LastName}}</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="inp_group checkbox">
+                                                                    <input class="inp_field" [attr.id]="'adultSave'+i" type="checkbox">
+                                                                    <label [attr.for]="'adultSave'+i"> Save Passenger Information</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xl-2 col-lg-12">
+                                                            <div class="inp_group">
+                                                                <label for="">Title<span class="asterisk">*</span></label>
+                                                                <select name="" [attr.id]="'adultGenderTitleId'+i" class="inp_field"
+                                                                    (change)="flightHelper.setTitle('adultTitle'+i,'adultGenderTitleId'+i,'adultFirstName'+i,'adultLastName'+i);
+                                                                    flightHelper._removeValidText('adultGenderTitleId'+i,'valTitleAdult'+i)">
+                                                                    <option value=""></option>
+                                                                    <option *ngFor="let item of genderTitleListAdult" value="{{item.Name}}">{{item.Name}}</option>
+                                                                </select>
+                                                                <div class="invalid-feedback" [attr.id]="'valTitleAdult'+i">
+                                                                    Please provide title
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.col-xl-3 col-lg-12 -->
+                                                        <div class="col-xl-4 col-lg-12">
+                                                            <div class="inp_group">
+                                                                <label for="">First Name / Given Name<span class="asterisk">*</span></label>
+                                                                <input type="text"
+                                                                    oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '');"
+                                                                    [attr.id]="'adultFirstName'+i" (keyup)="flightHelper._setToUpper('adultFirstName'+i);
+                                                                    flightHelper.setTitle('adultTitle'+i,'adultGenderTitleId'+i,'adultFirstName'+i,'adultLastName'+i);
+                                                                    flightHelper._removeValidText('adultFirstName'+i,'valFirstNameAdult'+i)"
+                                                                     class="inp_field">
+                                                                <div class="invalid-feedback" [attr.id]="'valFirstNameAdult'+i">
+                                                                    Please provide first name
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.col-xl-3 col-lg-12 -->
+                                                        <div class="col-xl-3 col-lg-12">
+                                                            <div class="inp_group">
+                                                                <label for="">Last Name / Sur Name<span class="asterisk">*</span></label>
+                                                                <input type="text" [attr.id]="'adultLastName'+i"
+                                                                oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '');" (keyup)="flightHelper._setToUpper('adultLastName'+i);
+                                                                    flightHelper.setTitle('adultTitle'+i,'adultGenderTitleId'+i,'adultFirstName'+i,'adultLastName'+i);
+                                                                    flightHelper._removeValidText('adultLastName'+i,'valLastNameAdult'+i)" class="inp_field">
+                                                                <div class="invalid-feedback" [attr.id]="'valLastNameAdult'+i">
+                                                                    Please provide last name
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.col-xl-3 col-lg-12 -->
+                                                        <div class="col-xl-3 col-lg-12">
+                                                            <div class="inp_group">
+                                                              <label for="">Date of Birth<i data-toggle="tooltip" data-placement="top"
+                                                                  [attr.title]="'Adult age should be 12 years from booking date'"
+                                                                  class="fa fa-question-circle" aria-hidden="true"></i>
+                                                                  <span class="asterisk">*</span></label>
+                                                              <input autocomplete="off" class="form-control adult-bdate{{i}}"
+                                                              oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                                                              placeholder="DD-MM-YYYY" [attr.id]="'adultDOB'+i"
+                                                              (change)="flightHelper._removeValidText('adultDOB'+i,'valDOBAdult'+i)">
+                                                              <div class="invalid-feedback" [attr.id]="'valDOBAdult'+i">
+                                                                  Please provide date of birth
+                                                              </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xl-4 col-lg-12">
+                                                            <div class="inp_group">
+                                                                <label for="">Passport Nationality<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                                <select class="inp_field" [attr.id]="'nationalityAdult'+i"
+                                                                (change)="flightHelper._removeValidText('nationalityAdult'+i,'valNationalityAdult'+i)" [(ngModel)]="selectedCountry">
+                                                                    <option value="">Select Please ...</option>
+                                                                    <option *ngFor="let item of countrylists" [value]="item.nvCountryCode">{{item.nvCountryName}}</option>
+                                                                </select>
+                                                                <div class="invalid-feedback" [attr.id]="'valNationalityAdult'+i">
+                                                                    Please provide nationality
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-4 col-lg-12" >
+                                                            <div class="inp_group">
+                                                                <label for="">Passport No<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                                <input type="text"
+                                                                oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');"
+                                                                 (keyup)="flightHelper._setToUpper('adultPassportNo'+i)" [attr.id]="'adultPassportNo'+i"
+                                                                (change)="flightHelper._removeValidText('adultPassportNo'+i,'valPassportAdult'+i)" class="inp_field">
+                                                                <div class="invalid-feedback" [attr.id]="'valPassportAdult'+i">
+                                                                    Please provide passport
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-4 col-lg-12"
+                                                        (change)="flightHelper._removeValidText('adultPassportExpiry'+i,'valPassportExpiryAdult'+i)">
+                                                            <div class="inp_group">
+                                                            <label for="">Passport Expiry Date<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                            <input autocomplete="off" [attr.id]="'adultPassportExpiry'+i"
+                                                            oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                                                             class="form-control adultexpire-date{{i}}" >
+                                                            <div class="invalid-feedback" [attr.id]="'valPassportExpiryAdult'+i">
+                                                                Please provide passport expiry
+                                                                </div>
+                                                                <div class="suggestion-group">
+                                                                <div class="suggestion-label">
+                                                                Please check the passport expiry
+                                                                </div>
+                                                                <div class="suggestion-message">
+                                                                It should be more than 6 months from the travel date.
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-6 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Passport Attachment</label>
+                                                              <input type="file" accept=".jpg,.pdf" (change)="adultPassOnChangeFile($event)"   #fileUpload>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-6 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Visa Attachment</label>
+                                                              <input type="file" accept=".jpg,.pdf" (change)="adultVisaOnChangeFile($event)"   #fileUpload>
+                                                            </div>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="accordion-item" *ngFor="let chdItem of getRange(totalChild);let i=index">
+                                      <h2 class="accordion-header" id="headingTwo">
+                                          <button class="accordion-button collapsed" type="button"
+                                              data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseChild'+i"
+                                              aria-expanded="false" [attr.aria-controls]="'collapseChild'+i">
+                                              <img src="../../../assets/images/adult2.png" alt="">
+                                              <p [attr.id]="'childTitle'+i"></p>
+                                              <p class="">-Child {{i+1}}</p>
+                                          </button>
+                                      </h2>
+                                      <div [attr.id]="'collapseChild'+i" class="accordion-collapse collapse"
+                                          aria-labelledby="headingTwo" >
+                                          <div class="accordion-body">
+
+                                              <div class="site_form">
+
+                                                  <div class="row">
+                                                      <div class="col-md-12">
+                                                          <div class="save_passenger">
+                                                              <div class="inp_group">
+                                                                <label for="">Search Passenger</label>
+                                                                <select (change)="passengerInfoChange('passengerChild'+i,'child','childGenderTitleId'+i,'childFirstName'+i,
+                                                                'childLastName'+i,'childDOB'+i, 'childPassport'+i, 'childExpiryDate'+i,'valTitleChild'+i,'valFirstNameChild'+i,
+                                                                'valLastNameChild'+i,'valDOBChild'+i,'valPassportChild'+i,'valPassportExpiryChild'+i)" [attr.id]="'passengerChild'+i" class="inp_field">
+                                                                    <option [attr.value]="0">Choose</option>
+                                                                    <option *ngFor="let pas of passengerInfoListChild" [attr.value]="pas.InfoID">{{pas.FirstName}} {{pas.LastName}}</option>
+                                                                </select>
+                                                              </div>
+                                                              <div class="inp_group checkbox">
+                                                                  <input class="inp_field" [attr.id]="'childSave'+i" type="checkbox">
+                                                                  <label [attr.for]="'childSave'+i"> Save Passenger Information</label>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+
+                                                  <div class="row">
+                                                      <div class="col-xl-2 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Title<span class="asterisk">*</span></label>
+                                                              <select name="" [attr.id]="'childGenderTitleId'+i" class="inp_field"
+                                                                  (change)="flightHelper.setTitle('childTitle'+i,'childGenderTitleId'+i,'childFirstName'+i,'childLastName'+i);
+                                                                  flightHelper._removeValidText('childGenderTitleId'+i,'valTitleChild'+i)">
+                                                                <option value=""></option>
+                                                                <option *ngFor="let item of genderTitleListChild;" value="{{item.Name}}">{{item.Name}}</option>
+                                                              </select>
+                                                              <div class="invalid-feedback" [attr.id]="'valTitleChild'+i">
+                                                                  Please provide title
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                      <div class="col-xl-4 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">First Name / Given Name<span class="asterisk">*</span></label>
+                                                              <input type="text" [attr.id]="'childFirstName'+i"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '');"
+                                                               (keyup)="flightHelper._setToUpper('childFirstName'+i);
+                                                                  flightHelper.setTitle('childTitle'+i,'childGenderTitleId'+i,'childFirstName'+i,'childLastName'+i);
+                                                                  flightHelper._removeValidText('childFirstName'+i,'valFirstNameChild'+i)" class="inp_field">
+                                                              <div class="invalid-feedback" [attr.id]="'valFirstNameChild'+i">
+                                                                  Please provide first name
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                      <div class="col-xl-3 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Last Name / Sur Name<span class="asterisk">*</span></label>
+                                                              <input type="text" [attr.id]="'childLastName'+i"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '');"
+                                                              (keyup)="flightHelper._setToUpper('childLastName'+i);
+                                                                  flightHelper.setTitle('childTitle'+i,'childGenderTitleId'+i,'childFirstName'+i,'childLastName'+i);
+                                                                  flightHelper._removeValidText('childLastName'+i,'valLastNameChild'+i)" class="inp_field">
+                                                              <div class="invalid-feedback" [attr.id]="'valLastNameChild'+i">
+                                                                  Please provide last name
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                      <div class="col-xl-3 col-lg-12">
+                                                          <div class="inp_group">
+                                                            <label for="">Date of Birth<i data-toggle="tooltip" data-placement="top"
+                                                                [attr.title]="'Child age should be between 12> years and booking date'"
+                                                                class="fa fa-question-circle" aria-hidden="true"></i><span class="asterisk">*</span></label>
+                                                            <input autocomplete="off" class="form-control child-bdate{{i}}"
+                                                            oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                                                             (change)=" flightHelper._removeValidText('childDOB'+i,'valDOBChild'+i)"
+                                                            [attr.id]="'childDOB'+i" placeholder="DD-MM-YYYY">
+                                                            <p id="demo" style="width: 100%; margin-top: 0.25rem; font-size: 0.875em; color: #dc3545;"></p>
+                                                            <div class="invalid-feedback" [attr.id]="'valDOBChild'+i">
+                                                                Please provide date of birth
+                                                            </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                  </div>
+
+                                                  <div class="row">
+
+                                                      <div class="col-xl-4 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Passport Nationality<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                              <select class="inp_field" [attr.id]="'childNationality'+i"
+                                                              (change)="flightHelper._removeValidText('childNationality'+i,'valNationalityChild'+i)" [(ngModel)]="selectedCountry">
+                                                                <option value="">Select Please ...</option>
+                                                                <option *ngFor="let item of countrylists" [value]="item.nvCountryCode">{{item.nvCountryName}}</option>
+                                                              </select>
+                                                                <div class="invalid-feedback" [attr.id]="'valNationalityChild'+i">
+                                                                Please provide nationality
+                                                                </div>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Passport No<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                              <input type="text" [attr.id]="'childPassport'+i"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');"
+                                                              (keyup)="flightHelper._setToUpper('childPassport'+i)" [attr.id]="'childPassport'+i"
+                                                               (change)="flightHelper._removeValidText('childPassport'+i,'valPassportChild'+i)" class="inp_field">
+                                                              <div class="invalid-feedback" [attr.id]="'valPassportChild'+i">
+                                                                Please provide passport
+                                                                </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-4 col-lg-12 -->
+                                                      <div class="col-xl-4 col-lg-12"
+                                                      (change)="flightHelper._removeValidText('childExpiryDate'+i,'valPassportExpiryChild'+i)">
+                                                          <div class="inp_group">
+                                                              <label for="">Passport Expiry Date<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                              <input autocomplete="off"  [attr.id]="'childExpiryDate'+i"
+                                                              oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                                                              class="form-control childexpire-date{{i}}">
+                                                              <div class="invalid-feedback" [attr.id]="'valPassportExpiryChild'+i">
+                                                                Please provide passport expiry
+                                                                </div>
+                                                                <div class="suggestion-group">
+                                                                    <div class="suggestion-label">
+                                                                    Please check the passport expiry
+                                                                    </div>
+                                                                    <div class="suggestion-message">
+                                                                    It should be more than 6 months from the travel date.
+                                                                    </div>
+                                                                </div>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-6 col-lg-12">
+                                                        <div class="inp_group">
+                                                            <label for="">Passport Attachment</label>
+                                                            <input type="file" accept=".jpg,.pdf"  style="margin-top:10px" (change)="childPassOnChangeFile($event)"   #fileUpload>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.col-xl-4 col-lg-12 -->
+                                                    <div class="col-xl-6 col-lg-12">
+                                                        <div class="inp_group">
+                                                            <label for="">Visa Attachment</label>
+                                                            <input type="file" accept=".jpg,.pdf"  style="margin-top:10px" (change)="childVisaOnChangeFile($event)"   #fileUpload>
+                                                          </div>
+                                                    </div>
+                                                  </div>
+
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="accordion-item" *ngFor="let index of getRange(totalInfant);let i=index">
+                                      <h2 class="accordion-header" id="headingThree">
+                                          <button class="accordion-button collapsed" type="button"
+                                              data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseInfant'+i"
+                                              aria-expanded="false" [attr.aria-controls]="'collapseInfant'+i">
+                                              <img src="../../../assets/images/child1.png" alt="">
+                                              <p [attr.id]="'infantTitle'+i"></p>
+                                              <p class="">-Infant {{i+1}}</p>
+                                          </button>
+                                      </h2>
+                                      <div [attr.id]="'collapseInfant'+i" class="accordion-collapse collapse"
+                                          aria-labelledby="headingThree">
+                                          <div class="accordion-body">
+                                              <div class="site_form">
+                                                  <div class="row">
+                                                      <div class="col-md-12">
+                                                          <div class="save_passenger">
+                                                              <div class="inp_group">
+                                                                  <label for="">Search Passenger</label>
+                                                                  <select name="" (change)="passengerInfoChange('passengerInfant'+i,'infant','infantGenderTitleId'+i,'infantFirstName'+i,
+                                                                  'infantLastName'+i,'infantDOB'+i, 'infantPassport'+i, 'infantExpiryDate'+i,'valTitleInfant'+i,'valFirstNameInfant'+i,
+                                                                  'valLastNameInfant'+i,'valDOBInfant'+i,'valPassportInfant'+i,'valPassportExpiryInfant'+i)"
+                                                                   [attr.id]="'passengerInfant'+i" class="inp_field">
+                                                                      <option [attr.value]="0">Choose</option>
+                                                                      <option *ngFor="let pas of passengerInfoListInfant" [attr.value]="pas.InfoID">{{pas.FirstName}} {{pas.LastName}}</option>
+                                                                  </select>
+                                                              </div>
+                                                              <div class="inp_group checkbox">
+                                                                  <input class="inp_field" [attr.id]="'infantSave'+i" type="checkbox">
+                                                                  <label [attr.for]="'infantSave'+i"> Save Passenger Information</label>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+
+                                                  <div class="row">
+                                                      <div class="col-xl-3 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Title<span class="asterisk">*</span></label>
+                                                              <select name="" [attr.id]="'infantGenderTitleId'+i" class="inp_field"
+                                                                  (change)="flightHelper.setTitle('infantTitle'+i,'infantGenderTitleId'+i,'infantFirstName'+i,'infantLastName'+i);
+                                                                  flightHelper._removeValidText('infantGenderTitleId'+i,'valTitleInfant'+i)">
+                                                                <option value=""></option>
+                                                                <option *ngFor="let item of genderTitleListChild" value="{{item.Name}}">{{item.Name}}</option>
+                                                              </select>
+                                                              <div class="invalid-feedback" [attr.id]="'valTitleInfant'+i">
+                                                                  Please provide title
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                      <div class="col-xl-3 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">First Name / Given Name<span class="asterisk">*</span></label>
+                                                              <input type="text" [attr.id]="'infantFirstName'+i"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '');"
+                                                               (keyup)="flightHelper._setToUpper('infantFirstName'+i);
+                                                                  flightHelper.setTitle('infantTitle'+i,'infantGenderTitleId'+i,'infantFirstName'+i,'infantLastName'+i);
+                                                                  flightHelper._removeValidText('infantFirstName'+i,'valFirstNameInfant'+i)" class="inp_field">
+                                                              <div class="invalid-feedback" [attr.id]="'valFirstNameInfant'+i">
+                                                                  Please provide first name
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                      <div class="col-xl-3 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Last Name / Sur Name<span class="asterisk">*</span></label>
+                                                              <input type="text" [attr.id]="'infantLastName'+i"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '');"
+                                                              (keyup)="flightHelper._setToUpper('infantLastName'+i);
+                                                                  flightHelper.setTitle('infantTitle'+i,'infantGenderTitleId'+i,'infantFirstName'+i,'infantLastName'+i);
+                                                                  flightHelper._removeValidText('infantLastName'+i,'valLastNameInfant'+i)" class="inp_field">
+                                                              <div class="invalid-feedback" [attr.id]="'valLastNameInfant'+i">
+                                                                  Please provide last name
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-3 col-lg-12 -->
+                                                      <div class="col-xl-3 col-lg-12">
+                                                          <div class="inp_group">
+                                                            <label for="">Date of Birth<i data-toggle="tooltip" data-placement="top"
+                                                              oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                                                                [attr.title]="'Infant age should be between 2> years and booking date'"
+                                                                class="fa fa-question-circle" aria-hidden="true"></i><span class="asterisk">*</span></label>
+                                                            <input autocomplete="off" class="form-control infant-bdate{{i}}" [attr.id]="'infantDOB'+i"
+                                                            (change)="flightHelper._removeValidText('infantDOB'+i,'valDOBInfant'+i)" placeholder="DD-MM-YYYY">
+                                                            <div class="invalid-feedback"  [attr.id]="'valDOBInfant'+i">
+                                                                Please provide date of birth
+                                                            </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+
+                                                  <div class="row">
+
+                                                      <div class="col-xl-4 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Passport Nationality<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                              <select class="inp_field" [attr.id]="'infantNationality'+i"
+                                                              (change)="flightHelper._removeValidText('infantNationality'+i,'valNationalityInfant'+i)" [(ngModel)]="selectedCountry">
+                                                                <option value="">Select Please ...</option>
+                                                                <option *ngFor="let item of countrylists" [value]="item.nvCountryCode">{{item.nvCountryName}}</option>
+                                                              </select>
+                                                              <div class="invalid-feedback" [attr.id]="'valNationalityInfant'+i">
+                                                                Please provide nationality
+                                                                </div>
+                                                              <!-- <input type="text" class="inp_field"> -->
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-4 col-lg-12 -->
+                                                      <div class="col-xl-4 col-lg-12">
+                                                          <div class="inp_group">
+                                                              <label for="">Passport No<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                              <input type="text" [attr.id]="'infantPassport'+i"
+                                                              oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');"
+                                                              (keyup)="flightHelper._setToUpper('infantPassport'+i)"
+                                                              (change)="flightHelper._removeValidText('infantPassport'+i,'valPassportInfant'+i)" class="inp_field">
+                                                              <div class="invalid-feedback" [attr.id]="'valPassportInfant'+i">
+                                                                Please provide passport
+                                                                </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /.col-xl-4 col-lg-12 -->
+                                                      <div class="col-xl-4 col-lg-12" [attr.id]="'infantPassportExpiry'+i">
+                                                          <div class="inp_group">
+                                                            <label for="">Passport Expiry Date<span *ngIf="this.showPassportDiv" class="asterisk">*</span></label>
+                                                            <input autocomplete="off"
+                                                            class="form-control infantexpire-date{{i}}"
+                                                            oninput="this.value = /^\d{2}-\d{2}-\d{4}$/.test(this.value) ? this.value : '';"
+                                                            (onchange)="flightHelper._removeValidText('infantExpiryDate'+i,'valPassportExpiryInfant'+i)"
+                                                            [attr.id]="'infantExpiryDate'+i">
+                                                            <div class="invalid-feedback" [attr.id]="'valPassportExpiryInfant'+i">
+                                                            Please provide passport expiry
+                                                            </div>
+                                                            <div class="suggestion-group">
+                                                                <div class="suggestion-label">
+                                                                Please check the passport expiry
+                                                                </div>
+                                                                <div class="suggestion-message">
+                                                                It should be more than 6 months from the travel date.
+                                                                </div>
+                                                            </div>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-6 col-lg-12">
+                                                        <div class="inp_group">
+                                                          <label for="">Passport Attachment</label>
+                                                          <input type="file" accept=".jpg,.pdf"  style="margin-top:10px" (change)="infantPassOnChangeFile($event)"   #fileUpload>
+                                                        </div>
+                                                  </div>
+                                                  <!-- /.col-xl-4 col-lg-12 -->
+                                                  <div class="col-xl-6 col-lg-12">
+                                                      <div class="inp_group">
+                                                          <label for="">Visa Attachment</label>
+                                                          <input type="file" accept=".jpg,.pdf"  style="margin-top:10px" (change)="infantVisaOnChangeFile($event)"   #fileUpload>
+                                                        </div>
+                                                  </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+
+
+                          <h2>Passenger Details Will Be Sent To</h2>
+                          <div class="passenger_details_summary_sent">
+                              <form action="" class="site_form">
+                                  <div class="row">
+                                      <div class="col-xl-6 col-lg-12">
+                                          <div class="inp_group">
+                                              <label for="">Phone No<span class="asterisk">*</span></label>
+                                              <input type="tel" maxlength="30" [attr.id]="'agencyPhoneNumber'"
+                                              oninput="this.value=this.value.replace(/\D/g,'')"
+                                              [value]="agenyInfo?.nvAgencyPhoneNumber"
+                                              placeholder="Ex: 08801971111111" id="phoneNo" class="inp_field" required>
+                                              <div class="invalid-feedback" id="reqPhone">
+                                                  Please choose a Phone No.
+                                                  </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-xl-6 col-lg-12">
+                                          <div class="inp_group">
+                                              <label for="">Email<span class="asterisk">*</span></label>
+                                              <input type="email" [attr.id]="'agencyEmail'" class="inp_field" [value]="agenyInfo?.nvAgencyEmail" required>
+                                              <div class="invalid-feedback" id="reqEmail">
+                                                  Please choose a Email
+                                                  </div>
+                                                  <div class="invalid-feedback" id="valEmail">
+                                                  Please provide valid Email
+                                                  </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </form>
+                          </div>
+
+                          <div *ngIf="!hideBooking" style="text-align: center;" >
+                            <button class="btn btn-primary site_cta orange_cta" *ngIf="isBookClicked" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" style="color: #fff;" role="status" aria-hidden="true"></span>
+                                <span style="color: #fff;">Booking...</span>
+                            </button>
+                            <a *ngIf="!isBookClicked" style="cursor: pointer;" (click)="bookHoldWork()" class="site_cta orange_cta">BOOK & HOLD</a>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-12">
+                  <div class="invoice_summary_sidebar_wrapper">
+
+                      <div class="sidebar_widget">
+                          <div class="filter_widget_wrapper">
+                              <h2 class="widget_title">Invoice Summary</h2>
+                              <div class="widget_contents">
+                                  <ul class="invoice_summary" *ngIf="this.totalAdult>0">
+                                      <li class="orange_col">
+                                          <span>Adult</span>
+                                          <span>Fare</span>
+                                      </li>
+                                      <li>
+                                          <span>Base</span>
+                                          <span>{{this.shareService.amountShowWithCommas(adultBase)}}</span>
+                                      </li>
+                                      <li>
+                                          <span>Taxes</span>
+                                          <span>{{this.shareService.amountShowWithCommas(adultTax)}}</span>
+                                      </li>
+                                      <li>
+                                          <span>Discount</span>
+                                          <span>{{this.shareService.amountShowWithCommas(adultDisount)}}</span>
+                                      </li>
+                                      <li>
+                                          <span>Count</span>
+                                          <span>{{this.totalAdult}}</span>
+                                      </li>
+                                  </ul>
+                                  <ul class="invoice_summary" *ngIf="this.totalChild>0">
+                                      <li class="orange_col">
+                                          <span>Child</span>
+                                          <span>Fare</span>
+                                      </li>
+                                      <li>
+                                        <span>Base</span>
+                                        <span>{{this.shareService.amountShowWithCommas(childBase)}}</span>
+                                    </li>
+                                    <li>
+                                        <span>Taxes</span>
+                                        <span>{{this.shareService.amountShowWithCommas(childTax)}}</span>
+                                    </li>
+                                    <li>
+                                        <span>Discount</span>
+                                        <span>{{this.shareService.amountShowWithCommas(childDisount)}}</span>
+                                    </li>
+                                      <li>
+                                          <span>Count</span>
+                                          <span>{{this.totalChild}}</span>
+                                      </li>
+                                  </ul>
+                                  <ul class="invoice_summary" *ngIf="this.totalInfant>0">
+                                      <li class="orange_col">
+                                          <span>Infant</span>
+                                          <span>Fare</span>
+                                      </li>
+                                      <li>
+                                        <span>Base</span>
+                                        <span>{{this.shareService.amountShowWithCommas(infantBase)}}</span>
+                                    </li>
+                                    <li>
+                                        <span>Taxes</span>
+                                        <span>{{this.shareService.amountShowWithCommas(infantTax)}}</span>
+                                    </li>
+                                    <li>
+                                        <span>Discount</span>
+                                        <span>{{this.shareService.amountShowWithCommas(infantDisount)}}</span>
+                                    </li>
+                                      <li>
+                                          <span>Count</span>
+                                          <span>{{this.totalInfant}}</span>
+                                      </li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="sidebar_widget">
+                          <div class="filter_widget_wrapper">
+                              <h2 class="widget_title">Customer Summary</h2>
+                              <div class="widget_contents">
+                                  <ul class="invoice_summary">
+                                      <li>
+                                          <span>Total discount</span>
+                                          <span>{{this.shareService.amountShowWithCommas(adultDisount+childDisount+infantDisount)}}</span>
+                                      </li>
+                                      <li class="orange_col">
+                                          <span>Grand total</span>
+                                          <span>BDT {{this.shareService.amountShowWithCommas(adultAgentFare+childAgentFare+infantAgentFare)}}</span>
+                                      </li>
+
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+
+                  </div>
+              </div>
+            </div>
+        </div>
+        </div>
+    </main>
+</body>

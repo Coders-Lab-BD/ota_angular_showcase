@@ -1,0 +1,28 @@
+.roundtrip_summarybar.domestic_roundtrip_summarybar {
+  max-width: 1296px !important;
+}
+.search_results_wrapper {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+.roundtrip_summary_info ul li span.summary_price {
+  font-size: 11px !important;
+  font-weight: normal !important;
+  color: #fff;
+}
+.roundtrip_summary_info ul li span a.summary_price_value {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #fff;
+}
+.result_single_col_info .col_head_value_Fare {
+  text-align: right;
+  font-size: 12px !important;
+  font-weight: normal;
+  color: #111528;
+}
+.result_single_col_info a.col_head_Fare {
+  font-size: 18px !important;
+  font-weight: 700;
+  color: #111528;
+}

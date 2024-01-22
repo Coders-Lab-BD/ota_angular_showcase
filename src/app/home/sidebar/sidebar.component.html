@@ -1,0 +1,73 @@
+<span class="scroll-to-top">
+  <i class="fa fa-angle-up"></i>
+</span>
+
+<span class="scroll-to-bottom">
+  <i class="fa fa-angle-down"></i>
+</span>
+
+<!-- top: 0;
+    bottom:0;
+    position:fixed;
+    overflow-y:scroll;
+    overflow-x:hidden; -->
+
+<div class="sidebar_float_menu">
+  <!-- <div class="sidebar_logo">
+      <a href="">
+          <img src="../../../assets/dist/img/logo-white.png" alt="...">
+      </a>
+  </div> -->
+  <!-- /.sidebar_logo -->
+  <div class="pnr_search_box" style="padding-top: 10px;">
+    <!-- <i class="fa fa-search" aria-hidden="true"></i> -->
+
+    <a routerLink="/home/index" class="logo-img">
+      <img src="../../../assets/dist/img/favicon.png" alt="Company Logo"
+           >
+    </a>
+
+
+    <form action="" class="site_form">
+      <div class="inp_group">
+        <img src="../../../assets/dist/img/index-logo.png" alt="" class="mb-2">
+        <!-- <input class="form-control" type="text" name="" id="" placeholder="Name/PNR/Ticket no/Booking ref"> -->
+        <button type="submit">
+          <!-- <img src="../../../assets/dist/img/icons/search_icon.svg"
+            alt="..."> -->
+        </button>
+      </div>
+    </form>
+  </div>
+  <!-- /.pnr_search_box -->
+  <ul class="sidebar_useroption">
+    <li class="user_profile"><a routerLink="profile" class=""><span class="profile_img"><img
+      src="../../../assets/dist/img/profile image.png" alt=""></span>
+      {{agencyName}}</a></li>
+    <li class="user_balance"><a routerLink="payment" class=""><img src="../../../assets/dist/img/icons/wallet-icon.svg"
+      alt=""> BDT {{amount}}</a></li>
+  </ul>
+  <ul>
+      <!-- <ul [sidebarmenu]="menu" name="mainParent" class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      </ul> -->
+      <!-- <div class="sidebar">
+        <nav class="mt-2">
+            <ul [sidebarmenu]="menu" name="mainParent" class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+            </ul>
+        </nav>
+    </div> -->
+
+    <div class="flex-shrink-0" style="width: 280px; color:white; ">
+      <nav class="mt-2">
+        <ul [sidebarmenu]="menu" name="mainParent" class="list-unstyled ps-0" data-widget="treeview" role="menu" data-accordion="false"></ul>
+      </nav>
+    </div>
+
+  </ul>
+</div>
+<!-- /.sidebar_float_menu -->
+<div class="sidebar_contact_btn">
+  <a class="site_cta orange_cta">Contact Us</a>
+</div>
+<!-- /.sidebar_contact_btn -->

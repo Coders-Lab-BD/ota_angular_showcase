@@ -1,0 +1,698 @@
+<div class="inner_searchbar" *ngIf="!isMulticity">
+  <form action="" class="site_form">
+      <div class="searchbar_options cursor-pointer searchbar_triptype">
+          <div class="inp_group cursor-pointer">
+              <label for="">TRIP TYPE</label>
+              <select class="cursor-pointer" name="" id="tripType" [formControl]="selectTripType" (change)="tripChange($event)">
+                  <option [value]="1">Oneway</option>
+                  <option [value]="2">Round Trip</option>
+                  <option [value]="3">Multi City</option>
+              </select>
+          </div>
+      </div>
+      <div class="searchbar_options searchbar_dest">
+          <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(0)">
+              <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(0)" (click)="flightFrom(0)">
+              <label for="">FROM</label>
+              <p>{{getSelectedData(0,"departure")}}<i class="fa fa-chevron-down"></i></p>
+              <div class="ng-autocomplete" *ngIf="isSuggDeparture1" >
+                  <ng-autocomplete
+                    [data]="tempAirportsDeparture1"
+                    [searchKeyword]="keywords"
+                    placeholder="From"
+                    (selected)="selectEvent($event,'from',0)"
+                    (inputChanged)="onChangeSearch($event,'from',0)"
+                    (inputFocused)='onFocused($event)'
+                    [itemTemplate]="departureTemplate"
+                    [notFoundTemplate]="departureNotFound"
+                    #suggDeparture1
+                    >
+                  </ng-autocomplete>
+
+                  <ng-template #departureTemplate let-item>
+                    <div class="row air-search" >
+                      <div class="col-md-2 air-search-icon">
+                        <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                      </div>
+                      <div class="col-md-8">
+                        <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                        </div>
+                        <div class="row air-search-name" [innerHTML]="item.text">
+                        </div>
+                      </div>
+                      <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <ng-template #departureNotFound let-notFound>
+                  <div [innerHTML]="notFound"></div>
+                  </ng-template>
+              </div>
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(0)" (click)="flightTo(0)">
+              <label for="">TO</label>
+              <p>{{getSelectedData(0,"return")}}<i class="fa fa-chevron-down"></i></p>
+              <div class="ng-autocomplete" *ngIf="isSuggReturn1">
+                  <ng-autocomplete
+                    [data]="tempAirportsArrival1"
+                    [searchKeyword]="keywords"
+                    placeholder="To"
+                    (selected)="selectEvent($event,'to',0)"
+                    (inputChanged)="onChangeSearch($event,'to',0)"
+                    (inputFocused)='onFocused($event)'
+                    [itemTemplate]="arrivalTemplate"
+                    [notFoundTemplate]="arrivalNotFoundTemplate"
+                    #suggReturn1
+                    >
+                  </ng-autocomplete>
+
+                  <ng-template #arrivalTemplate let-item>
+                    <div class="row air-search">
+                      <div class="col-md-2 air-search-icon">
+                        <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                      </div>
+                      <div class="col-md-8">
+                        <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                        </div>
+                        <div class="row air-search-name" [innerHTML]="item.text">
+                        </div>
+                      </div>
+                      <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <ng-template #arrivalNotFoundTemplate let-notFound>
+                  <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+          </div>
+      </div>
+      <div class="searchbar_options searchbar_sched cursor-pointer">
+          <div class="inp_group flat-datepick-from0 cursor-pointer" (change)="changeDepartureReturnDate($event,'departure',0)" id="departureDate">
+              <label for="">DEPARTURE</label>
+              <p>{{getSelectedDate(0,'departure')}}<i class="fa fa-chevron-down"></i></p>
+          </div>
+          <div  class="inp_group flat-datepick-to cursor-pointer" (change)="changeDepartureReturnDate($event,'return',0)" id="returnDate">
+              <label for="">RETURN <i  *ngIf="!shareService.isNullOrEmpty(getSelectedDate(0,'return'))"
+                  class="fa fa-times" (click)="returnCrossClick()"></i></label>
+              <p>{{getSelectedDate(0,'return')}}<i class="fa fa-chevron-down"></i></p>
+          </div>
+      </div>
+      <div class="search_travellers flight-travel cursor-pointer"  id="travellersDiv">
+          <div class="inp_group cursor-pointer" (click)="travellerFrom()" (clickOutside)="travellerInfoOutside()" style="background: rgb(72 141 141);">
+              <div class="traveller-class-label">
+              <label for="">TRAVELLERS & CLASS</label>
+              </div>
+              <p>{{_getTotalTravellers()}}Travellers<i class="fa fa-chevron-down"></i></p>
+          </div>
+          <div class="traveller_select_box" id="travellersBox" style="display: none;" >
+              <ul>
+                <li>
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Adults</p>
+                    <span>12 years+</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('adult')">-</span>
+                    <span>{{num1}}</span>
+                    <span class="counter_btn" (click)="plus('adult')">+</span>
+                  </div>
+                </li>
+                <li style="border-bottom: 0px;">
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Children</p>
+                    <span>2-12 years</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('child')">-</span>
+                    <span>{{num2}}</span>
+                    <span class="counter_btn" (click)="plus('child');">+</span>
+                  </div>
+                </li>
+                <!-- <li class="traveller-class-child-list" style="padding-top: 0;padding-bottom: 0;">
+                  <div *ngFor="let listItem of childList; index as i" class="traveller-class-child-div" id="childList1">
+                    <div *ngIf="listItem!=0 && listItem!=undefined">
+                      <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                      <select (change)="childSelect($any($event.target).value,i)" class="form-control traveller-class-child-select d-none" id="child1{{i+1}}" >
+                        <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+                <li class="traveller-class-child-list" style="padding-top: 0;padding-bottom: 0;" >
+                  <div *ngFor="let listItem of childList2; index as i" class="traveller-class-child-div" id="childList2">
+                    <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                    <select (change)="childSelect($any($event.target).value,i)" class="form-control traveller-class-child-select d-none" id="child2{{i+1}}" >
+                      <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                    </select>
+                  </div>
+                </li> -->
+                <li>
+                  <div class="traveller_type">
+                    <p class="traveller-class-font">Infant</p>
+                    <span>Below 2 years</span>
+                  </div>
+                  <div class="traveller_count">
+                    <span class="counter_btn" (click)="minus('infant')">-</span>
+                    <span>{{num3}}</span>
+                    <span class="counter_btn" (click)="plus('infant')">+</span>
+                  </div>
+                </li>
+              </ul>
+              <div class="flight_class" *ngFor="let item of this.classType; let i=index">
+                <p class="traveller-class-font">Class</p>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('C')" [name]="'Travellers_Class'+i" [attr.id]="'business'+i" value="C" [checked]="item ==='C'">
+                  <label for="business{{i}}" class="traveller-class-optiongp">Business</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('Y')" [name]="'Travellers_Class'+i" [attr.id]="'economy'+i" value="Y" [checked]="item ==='Y'">
+                  <label for="economy{{i}}" class="traveller-class-optiongp">Economy</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('J')" [name]="'Travellers_Class'+i" [attr.id]="'premiumEconomy'+i" value="J" [checked]="item ==='J'">
+                  <label for="premiumEconomy{{i}}" class="traveller-class-optiongp">Premium economy</label>
+                </div>
+                <div class="inp_grp cursor-pointer">
+                  <input type="radio" (change)="changeClassLabel('F')" [name]="'Travellers_Class'+i" [attr.id]="'firstClass'+i" value="F" [checked]="item ==='F'">
+                  <label for="firstClass{{i}}" class="traveller-class-optiongp">First Class</label>
+                </div>
+              </div>
+              <div style="float: right;padding-right: 10px;">
+                  <button class="btn btn-raised shadow my-button w-small btn_orange" (click)="save()">Apply</button>
+                </div>
+          </div>
+      </div>
+      <div class="searchbar_options searchbar_faretype">
+          <div class="inp_group">
+              <label for="">Fare Type</label>
+              <select class="form-control cursor-pointer" name="" id="fareType">
+                <option value="34BC9B43-75E7-49BF-B1B5-9D65441BAF31" [selected]="isAgentFare">Show All</option>
+                <option value="AAF637CB-ACDA-43DF-ABAE-88B0FCDFB8B7" [selected]="!isAgentFare">Show Less</option>
+              </select>
+          </div>
+      </div>
+      <div class="searchbar_options form_submit_btn">
+          <button class="site_cta orange_cta" (click)="flightSearchWork()">SEARCH</button>
+      </div>
+  </form>
+</div>
+<div class="inner_searchbar int_multicity" *ngIf="isMulticity">
+  <form action="" class="site_form">
+    <div class="searchbar_options cursor-pointer">
+      <div class="inp_group cursor-pointer">
+        <label for="">TRIP TYPE</label>
+        <select class="cursor-pointer" name="" id="tripType" [formControl]="selectTripType"
+          (change)="tripChange($event)">
+          <option [value]="1">One Way</option>
+          <option [value]="2">Round Trip</option>
+          <option [value]="3">Multicity</option>
+        </select>
+      </div>
+    </div>
+    <div class="searchbar_options int_multicity_dest cursor-pointer" (click)="topMulticitySection()">
+      <div class="inp_group cursor-pointer">
+        <label for="">FROM</label>
+        <p>{{getMultiRoutes()}}<i class="fa fa-chevron-down"></i></p>
+      </div>
+    </div>
+    <div class="search_travellers flight-travel" id="travellersDiv">
+      <div class="inp_group cursor-pointer" (click)="travellerFrom()" (clickOutside)="travellerInfoOutside()"
+        style="background: rgb(72 141 141);">
+        <div class="traveller-class-label">
+          <label class="flight-travel-label" for="">TRAVELLERS & CLASS</label>
+        </div>
+        <p>{{_getTotalTravellers()}}Travellers<i class="fa fa-chevron-down"></i></p>
+      </div>
+      <div class="traveller_select_box" id="travellersBox" style="min-width: 314px; display: none;">
+        <ul>
+          <li>
+            <div class="traveller_type">
+              <p class="traveller-class-font">Adults</p>
+              <span>12 years+</span>
+            </div>
+            <div class="traveller_count">
+              <span class="counter_btn" (click)="minus('adult')">-</span>
+              <span>{{num1}}</span>
+              <span class="counter_btn" (click)="plus('adult')">+</span>
+            </div>
+          </li>
+          <li style="border-bottom: 0px;">
+            <div class="traveller_type">
+              <p class="traveller-class-font">Children</p>
+              <span>2-12 years</span>
+            </div>
+            <div class="traveller_count">
+              <span class="counter_btn" (click)="minus('child')">-</span>
+              <span>{{num2}}</span>
+              <span class="counter_btn" (click)="plus('child');">+</span>
+            </div>
+          </li>
+          <!-- <li class="traveller-class-child-list cursor-pointer" style="padding-top: 0;padding-bottom: 0;">
+            <div *ngFor="let listItem of childList; index as i" class="traveller-class-child-div" id="childList1">
+              <div *ngIf="listItem!=0 && listItem!=undefined">
+                <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+                <select (change)="childSelect($any($event.target).value,i)"
+                  class="form-control traveller-class-child-select" id="child1{{i+1}}">
+                  <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+                </select>
+              </div>
+            </div>
+          </li> -->
+          <!-- <li class="traveller-class-child-list cursor-pointer" style="padding-top: 0;padding-bottom: 0;">
+            <div *ngFor="let listItem of childList2; index as i" class="traveller-class-child-div"
+              id="childList2">
+              <label for="" class="traveller-class-child-label">Child {{listItem}}</label>
+              <select (change)="childSelect($any($event.target).value,i)"
+                class="form-control traveller-class-child-select" id="child2{{i+1}}">
+                <option *ngFor="let item of childSelectList" [value]="item">{{ item }}</option>
+              </select>
+            </div>
+          </li> -->
+          <li>
+            <div class="traveller_type">
+              <p class="traveller-class-font">Infant</p>
+              <span>Below 2 years</span>
+            </div>
+            <div class="traveller_count">
+              <span class="counter_btn" (click)="minus('infant')">-</span>
+              <span>{{num3}}</span>
+              <span class="counter_btn" (click)="plus('infant')">+</span>
+            </div>
+          </li>
+        </ul>
+        <div class="flight_class" *ngFor="let item of this.classType; let i=index">
+          <p class="traveller-class-font">Class</p>
+          <div class="inp_grp cursor-pointer">
+            <input type="radio" (change)="changeClassLabel('C')" [name]="'Travellers_Class'+i" [attr.id]="'business'+i" value="C" [checked]="item ==='C'">
+            <label for="business{{i}}" class="traveller-class-optiongp">Business</label>
+          </div>
+          <div class="inp_grp cursor-pointer">
+            <input type="radio" (change)="changeClassLabel('Y')" [name]="'Travellers_Class'+i" [attr.id]="'economy'+i" value="Y" [checked]="item ==='Y'">
+            <label for="economy{{i}}" class="traveller-class-optiongp">Economy</label>
+          </div>
+          <div class="inp_grp cursor-pointer">
+            <input type="radio" (change)="changeClassLabel('J')" [name]="'Travellers_Class'+i" [attr.id]="'premiumEconomy'+i" value="J" [checked]="item ==='J'">
+            <label for="premiumEconomy{{i}}" class="traveller-class-optiongp">Premium economy</label>
+          </div>
+          <div class="inp_grp cursor-pointer">
+            <input type="radio" (change)="changeClassLabel('F')" [name]="'Travellers_Class'+i" [attr.id]="'firstClass'+i" value="F" [checked]="item ==='F'">
+            <label for="firstClass{{i}}" class="traveller-class-optiongp">First Class</label>
+          </div>
+        </div>
+        <div style="float: right;padding-right: 10px;">
+          <button class="btn btn-raised shadow my-button w-small btn_orange cursor-pointer"
+            (click)="save()">Apply</button>
+        </div>
+      </div>
+    </div>
+    <div class="searchbar_options searchbar_faretype">
+      <div class="inp_group cursor-pointer">
+        <label for="">Fare Type</label>
+        <select class="form-control cursor-pointer" name="" id="fareType">
+          <option value="34BC9B43-75E7-49BF-B1B5-9D65441BAF31" [selected]="isAgentFare">Show All</option>
+          <option value="AAF637CB-ACDA-43DF-ABAE-88B0FCDFB8B7" [selected]="!isAgentFare">Show Less</option>
+        </select>
+      </div>
+    </div>
+    <div class="searchbar_options form_submit_btn">
+      <button class="site_cta orange_cta cursor-pointer" (click)="flightSearchWork()">SEARCH</button>
+    </div>
+  </form>
+  <div *ngIf="isMulticityTopSection">
+    <div class="int_multicity_inner_dest" [attr.id]="'trip0'">
+      <form action="" class="site_form int_multicity_form_one cursor-pointer" style="justify-content:flex-start">
+        <div class="searchbar_options trip_no">
+          <label for="">TRIP 1</label>
+        </div>
+        <div class="searchbar_options searchbar_dest">
+          <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(0)">
+            <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(0)" (click)="flightFrom(0)">
+            <label for="">FROM</label>
+            <p>{{getSelectedData(0,"departure")}}<i class="fa fa-chevron-down"></i></p>
+            <div class="ng-autocomplete" *ngIf="isSuggDeparture1">
+              <ng-autocomplete [data]="tempAirportsDeparture1" [searchKeyword]="keywords" placeholder="From"
+                (selected)="selectEvent($event,'from',0)" (inputChanged)="onChangeSearch($event,'from',0)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate1"
+                [notFoundTemplate]="departureNotFound1" #suggDeparture1>
+              </ng-autocomplete>
+
+              <ng-template #departureTemplate1 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #departureNotFound1 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(0)" (click)="flightTo(0)">
+            <label for="">TO</label>
+            <p>{{getSelectedData(0,"return")}}<i class="fa fa-chevron-down"></i></p>
+            <div class="ng-autocomplete" *ngIf="isSuggReturn1">
+              <ng-autocomplete [data]="tempAirportsArrival1" [searchKeyword]="keywords" placeholder="To"
+                (selected)="selectEvent($event,'to',0)" (inputChanged)="onChangeSearch($event,'to',0)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate1"
+                [notFoundTemplate]="arrivalNotFoundTemplate1" #suggReturn1>
+              </ng-autocomplete>
+
+              <ng-template #arrivalTemplate1 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #arrivalNotFoundTemplate1 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="searchbar_options searchbar_sched" style="width:50%">
+          <div class="inp_group flat-datepick-from0 cursor-pointer"
+            (change)="changeDepartureReturnDate($event,'departure',0)" id="departureDate">
+            <label for="">DEPARTURE</label>
+            <p>{{getSelectedDate(0,'departure')}}<i class="fa fa-chevron-down"></i></p>
+          </div>
+        </div>
+      </form>
+      <div class="searchbar_options form_submit_btn int_multicity_booking_btn" style="left:63%"
+        [attr.id]="'tripAction0'">
+        <button class="site_cta line_cta cursor-pointer cursor-pointer" (click)="addRemoveCity(false,0)">+Add
+          City</button>
+      </div>
+    </div>
+    <div class="int_multicity_inner_dest" [attr.id]="'trip1'" style="display:none;">
+      <form action="" class="site_form int_multicity_form_one" style="justify-content:flex-start">
+        <div class="searchbar_options trip_no">
+          <label for="">TRIP 2</label>
+        </div>
+        <div class="searchbar_options searchbar_dest">
+          <div class="exchange_wrapper" (click)="exchangeDepartureArrival(1)">
+            <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(1)" (click)="flightFrom(1)">
+            <label for="">FROM</label>
+            <p>{{getSelectedData(1,'departure')}}<i class="fa fa-chevron-down"></i></p>
+            <div class="ng-autocomplete" *ngIf="isSuggDeparture2">
+              <ng-autocomplete [data]="tempAirportsDeparture2" [searchKeyword]="keywords" placeholder="From"
+                (selected)="selectEvent($event,'from',1)" (inputChanged)="onChangeSearch($event,'from',1)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate2"
+                [notFoundTemplate]="departureNotFound2" #suggDeparture2>
+              </ng-autocomplete>
+
+              <ng-template #departureTemplate2 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #departureNotFound2 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(1)" (click)="flightTo(1)">
+            <label for="">TO</label>
+            <p>{{getSelectedData(1,'return')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedData(1,'return')}}</option>
+            </select> -->
+            <div class="ng-autocomplete" *ngIf="isSuggReturn2">
+              <ng-autocomplete [data]="tempAirportsArrival2" [searchKeyword]="keywords" placeholder="To"
+                (selected)="selectEvent($event,'to',1)" (inputChanged)="onChangeSearch($event,'to',1)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate2"
+                [notFoundTemplate]="arrivalNotFoundTemplate2" #suggReturn2>
+              </ng-autocomplete>
+
+              <ng-template #arrivalTemplate2 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #arrivalNotFoundTemplate2 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="searchbar_options searchbar_sched" style="width:50%">
+          <div class="inp_group flat-datepick-from1 cursor-pointer"
+            (change)="changeDepartureReturnDate($event,'departure',1)" id="departureDate">
+            <label for="">DEPARTURE</label>
+            <p>{{getSelectedDate(1,'departure')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedDate(1,'departure')}}</option>
+            </select> -->
+          </div>
+        </div>
+      </form>
+      <div class="searchbar_options form_submit_btn int_multicity_booking_btn cursor-pointer"
+        [attr.id]="'tripAction1'" style="display:none;left:63%">
+        <span class="remove_destination cursor-pointer" (click)="addRemoveCity(true,1)"><i
+            class="fa fa-times-circle" aria-hidden="true"></i></span>
+        <button class="site_cta line_cta cursor-pointer" (click)="addRemoveCity(false,1)">+Add City</button>
+      </div>
+    </div>
+    <div class="int_multicity_inner_dest" [attr.id]="'trip2'" style="display:none">
+      <form action="" class="site_form int_multicity_form_one" style="justify-content:flex-start">
+        <div class="searchbar_options trip_no">
+          <label for="">TRIP 3</label>
+        </div>
+        <div class="searchbar_options searchbar_dest">
+          <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(2)">
+            <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+          </div>
+          <div class="inp_group" (clickOutside)="flightFromOutside(2)" (click)="flightFrom(2)">
+            <label for="">FROM</label>
+            <p>{{getSelectedData(2,'departure')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedData(2,'departure')}}</option>
+            </select> -->
+            <div class="ng-autocomplete" *ngIf="isSuggDeparture3">
+              <ng-autocomplete [data]="tempAirportsDeparture3" [searchKeyword]="keywords" placeholder="From"
+                (selected)="selectEvent($event,'from',2)" (inputChanged)="onChangeSearch($event,'from',2)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate3"
+                [notFoundTemplate]="departureNotFound3" #suggDeparture3>
+              </ng-autocomplete>
+
+              <ng-template #departureTemplate3 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #departureNotFound3 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(2)" (click)="flightTo(2)">
+            <label for="">TO</label>
+            <p>{{getSelectedData(2,'return')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedData(2,'return')}}</option>
+            </select> -->
+            <div class="ng-autocomplete" *ngIf="isSuggReturn3">
+              <ng-autocomplete [data]="tempAirportsArrival3" [searchKeyword]="keywords" placeholder="To"
+                (selected)="selectEvent($event,'to',2)" (inputChanged)="onChangeSearch($event,'to',2)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate3"
+                [notFoundTemplate]="arrivalNotFoundTemplate3" #suggReturn3>
+              </ng-autocomplete>
+
+              <ng-template #arrivalTemplate3 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #arrivalNotFoundTemplate3 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="searchbar_options searchbar_sched cursor-pointer" style="width:50%">
+          <div class="inp_group flat-datepick-from2 cursor-pointer"
+            (change)="changeDepartureReturnDate($event,'departure',2)" id="departureDate">
+            <label for="">DEPARTURE</label>
+            <p>{{getSelectedDate(2,'departure')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedDate(2,'departure')}}</option>
+            </select> -->
+          </div>
+        </div>
+      </form>
+      <div class="searchbar_options form_submit_btn int_multicity_booking_btn" [attr.id]="'tripAction2'"
+        style="display:none;left:63%">
+        <span class="remove_destination cursor-pointer" (click)="addRemoveCity(true,2)"><i
+            class="fa fa-times-circle" aria-hidden="true"></i></span>
+        <button class="site_cta line_cta cursor-pointer" (click)="addRemoveCity(false,2)">+Add City</button>
+      </div>
+    </div>
+    <div class="int_multicity_inner_dest" [attr.id]="'trip3'" style="display:none">
+      <form action="" class="site_form int_multicity_form_one" style="justify-content:flex-start">
+        <div class="searchbar_options trip_no">
+          <label for="">TRIP 4</label>
+        </div>
+        <div class="searchbar_options searchbar_dest">
+          <div class="exchange_wrapper cursor-pointer" (click)="exchangeDepartureArrival(3)">
+            <img src="../../../assets/dist/img/icons/exchange.svg" alt="">
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightFromOutside(3)" (click)="flightFrom(3)">
+            <label for="">FROM</label>
+            <p>{{getSelectedData(3,'departure')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedData(3,'departure')}}</option>
+            </select> -->
+            <div class="ng-autocomplete" *ngIf="isSuggDeparture4">
+              <ng-autocomplete [data]="tempAirportsDeparture4" [searchKeyword]="keywords" placeholder="From"
+                (selected)="selectEvent($event,'from',3)" (inputChanged)="onChangeSearch($event,'from',3)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="departureTemplate4"
+                [notFoundTemplate]="departureNotFound4" #suggDeparture4>
+              </ng-autocomplete>
+
+              <ng-template #departureTemplate4 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #departureNotFound4 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="inp_group cursor-pointer" (clickOutside)="flightToOutside(3)" (click)="flightTo(3)">
+            <label for="">TO</label>
+            <p>{{getSelectedData(3,'return')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedData(3,'return')}}</option>
+            </select> -->
+            <div class="ng-autocomplete" *ngIf="isSuggReturn4">
+              <ng-autocomplete [data]="tempAirportsArrival4" [searchKeyword]="keywords" placeholder="To"
+                (selected)="selectEvent($event,'to',3)" (inputChanged)="onChangeSearch($event,'to',3)"
+                (inputFocused)='onFocused($event)' [itemTemplate]="arrivalTemplate4"
+                [notFoundTemplate]="arrivalNotFoundTemplate4" #suggReturn4>
+              </ng-autocomplete>
+
+              <ng-template #arrivalTemplate4 let-item>
+                <div class="row air-search">
+                  <div class="col-md-2 air-search-icon">
+                    <img src="../../../assets/dist/img/ic-flight-onward.png" class="mr-1">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row air-search-country" [innerHTML]="item.cityname+', '+item.countryname">
+                    </div>
+                    <div class="row air-search-name" [innerHTML]="item.text">
+                    </div>
+                  </div>
+                  <div class="col-md-2 air-search-code" [innerHTML]="item.code">
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #arrivalNotFoundTemplate4 let-notFound>
+                <div [innerHTML]="notFound"></div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="searchbar_options searchbar_sched cursor-pointer" style="width:50%">
+          <div class="inp_group flat-datepick-from3 cursor-pointer"
+            (change)="changeDepartureReturnDate($event,'departure',3)" id="departureDate">
+            <label for="">DEPARTURE</label>
+            <p>{{getSelectedDate(3,'departure')}}<i class="fa fa-chevron-down"></i></p>
+            <!-- <select class="cursor-pointer" name="" id="" disabled>
+              <option value="">{{getSelectedDate(3,'departure')}}</option>
+            </select> -->
+          </div>
+        </div>
+      </form>
+      <div class="searchbar_options form_submit_btn int_multicity_booking_btn cursor-pointer" style="left:63%"
+        [attr.id]="'tripAction3'">
+        <span class="remove_destination cursor-pointer" (click)="addRemoveCity(true,3)"><i
+            class="fa fa-times-circle" aria-hidden="true"></i></span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+@media only screen and (max-width: 820px) {
+  .loader_wrapper {
+    width: -webkit-fill-available !important;
+    height: -webkit-fill-available !important;
+  }
+  .loader_mkt_image img {
+    height: 420px !important;
+  }
+  .loader_content_wrapper {
+    min-width: 600px !important;
+  }
+}
+@media only screen and (max-width: 600px){
+  .loader_content_wrapper{
+    min-width: 550px !important;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .loader_mkt_image img {
+    height: 490px !important;
+  }
+  .loader_content_wrapper{
+    min-width: 490px !important;
+  }
+}
+@media only screen and (min-width: 280px) and (max-width: 667px){
+  .loader_left_content{
+    display: none !important;
+  }
+  .loader_right_content{
+    display: none !important;
+  }
+  .loader_content_mobile{
+    display: flex !important;
+  }
+  .loader_content_wrapper{
+    min-width: 300px !important;
+  }
+  /* .loader_mobile_image img {
+    height: 490px !important;
+    max-width: 200px !important;
+  } */
+  .loader_gif_image img {
+    height: 200px !important;
+  }
+  /* .loader_mobile_left {
+    height: 300px !important;
+  } */
+}
